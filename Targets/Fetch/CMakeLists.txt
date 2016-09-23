@@ -27,10 +27,6 @@ set(gclient_sync
         ${DEPOTTOOLS_GCLIENT_EXECUTABLE} sync -n -D
 )
 
-if(WEBRTC_REVISION)
-    set(gclient_sync ${gclient_sync} -r ${WEBRTC_REVISION})
-endif()
-
 add_custom_command(
         OUTPUT  ${CMAKE_BINARY_DIR}/src/all.gyp
         COMMAND ${gclient_sync}
