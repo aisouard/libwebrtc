@@ -10,6 +10,13 @@ find_package(DepotTools REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 #
+# Options
+#
+
+option(BUILD_TESTS "Build test binaries" OFF)
+option(BUILD_EXAMPLES "Build examples binaries" OFF)
+
+#
 # Versioning
 #
 
@@ -37,6 +44,28 @@ set(LIBWEBRTC_LIBRARY_PROPERTIES ${LIBWEBRTC_LIBRARY_PROPERTIES}
         SOVERSION "${LIBWEBRTC_API_VERSION}"
 )
 
+#
+# Directories
+#
+
+if(NOT LIBWEBRTC_INSTALL_BIN_DIR)
+    set(LIBWEBRTC_INSTALL_BIN_DIR "bin")
+endif()
+if(NOT LIBWEBRTC_INSTALL_LIB_DIR)
+    set(LIBWEBRTC_INSTALL_LIB_DIR "lib")
+endif()
+if(NOT LIBWEBRTC_INSTALL_DATA_DIR)
+    set(LIBWEBRTC_INSTALL_DATA_DIR "share")
+endif()
+if(NOT LIBWEBRTC_INSTALL_INCLUDE_DIR)
+    set(LIBWEBRTC_INSTALL_INCLUDE_DIR "include")
+endif()
+if(NOT LIBWEBRTC_INSTALL_CMAKE_DIR)
+    set(LIBWEBRTC_INSTALL_CMAKE_DIR "lib")
+endif()
+
+set(LIBWEBRTC_LIBRARY ${CMAKE_STATIC_LIBRARY_PREFIX}webrtc${CMAKE_STATIC_LIBRARY_SUFFIX})
+set(LIBWEBRTC_BUILD_ROOT ${CMAKE_SOURCE_DIR}/src/out/Default)
 set(WEBRTC_CHROMIUM_DEPS git@github.com:aisouard/libwebrtc-chromium-deps.git)
 
 add_subdirectory(Targets)

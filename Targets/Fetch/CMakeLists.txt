@@ -1,96 +1,91 @@
+include(Common)
+
 #
 # Fetch
 #
 
-set(gclient_config
+set(GCLIENT_CONFIG_COMMAND
         ${DEPOTTOOLS_GCLIENT_EXECUTABLE} config --name src
         https://chromium.googlesource.com/external/webrtc.git
 )
 
-add_custom_command(
-        OUTPUT  ${CMAKE_BINARY_DIR}/.gclient
-        COMMAND ${gclient_config}
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        COMMENT "Configuring gclient to pull webrtc code"
-)
-
-add_custom_target(
-        webrtc_config ALL
-        DEPENDS ${CMAKE_BINARY_DIR}/.gclient
+add_libwebrtc_command(libwebrtc_config
+        ${CMAKE_BINARY_DIR}/.gclient
+        "${GCLIENT_CONFIG_COMMAND}"
+        ${CMAKE_BINARY_DIR}
+        "Configuring gclient to pull webrtc code"
 )
 
 #
 # Sync
 #
 
-set(gclient_sync
+set(GCLIENT_SYNC_COMMAND
         ${DEPOTTOOLS_GCLIENT_EXECUTABLE} sync -n -D
 )
 
-add_custom_command(
-        OUTPUT  ${CMAKE_BINARY_DIR}/src/all.gyp
-        COMMAND ${gclient_sync}
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        COMMENT "Retrieving WebRTC source code"
+add_libwebrtc_command(libwebrtc_sync
+        ${CMAKE_BINARY_DIR}/src/all.gyp
+        "${GCLIENT_SYNC_COMMAND}"
+        ${CMAKE_BINARY_DIR}
+        "Retrieving WebRTC source code"
+        libwebrtc_config
 )
-
-add_custom_target(
-        webrtc_sync ALL
-        DEPENDS ${CMAKE_BINARY_DIR}/src/all.gyp
-)
-
-add_dependencies(webrtc_sync webrtc_config)
 
 #
 # Sync Chromium
 #
 
-add_custom_command(
-        OUTPUT  ${CMAKE_BINARY_DIR}/src/chromium/src/DEPS
-        COMMAND git clone ${WEBRTC_CHROMIUM_DEPS} ${CMAKE_BINARY_DIR}/src/chromium/src
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        COMMENT "Retrieving Chromium dependencies"
+set(GIT_CLONE_COMMAND git clone ${LIBWEBRTC_CHROMIUM_DEPS} ${CMAKE_BINARY_DIR}/src/chromium/src)
+
+add_libwebrtc_command(libwebrtc_chromium_deps
+        ${CMAKE_BINARY_DIR}/src/chromium/src/DEPS
+        "${GIT_CLONE_COMMAND}"
+        ${CMAKE_BINARY_DIR}
+        "Retrieving Chromium dependencies"
+        libwebrtc_sync
 )
 
-add_custom_target(
-        webrtc_chromium_deps ALL
-        DEPENDS ${CMAKE_BINARY_DIR}/src/chromium/src/DEPS
-)
+#
+# Update Clang
+#
 
-add_dependencies(webrtc_chromium_deps webrtc_sync)
+set(UPDATE_CLAND_COMMAND ${LIBWEBRTC_ENV_COMMAND} python chromium/src/tools/clang/scripts/update.py)
+
+add_libwebrtc_command(libwebrtc_clang
+        ${CMAKE_BINARY_DIR}/src/chromium/src/third_party/llvm-build
+        "${UPDATE_CLAND_COMMAND}"
+        ${CMAKE_BINARY_DIR}/src
+        "Updating clang"
+        libwebrtc_chromium_deps
+)
 
 #
 # Setup Links
 #
 
-add_custom_command(
-        OUTPUT  ${CMAKE_BINARY_DIR}/src/build
-        COMMAND ${CMAKE_COMMAND} -E env \"PATH=${CMAKE_SOURCE_DIR}/Dependencies/depot_tools:$ENV{PATH}\" python setup_links.py
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src
-        COMMENT "Creating symbolic links"
-)
+set(SETUP_LINKS_COMMAND ${LIBWEBRTC_ENV_COMMAND} python setup_links.py)
 
-add_custom_target(
-        webrtc_links ALL
-        DEPENDS ${CMAKE_BINARY_DIR}/src/build
+add_libwebrtc_command(libwebrtc_links
+        ${CMAKE_BINARY_DIR}/src/tools/clang
+        "${SETUP_LINKS_COMMAND}"
+        ${CMAKE_BINARY_DIR}/src
+        "Creating symbolic links"
+        libwebrtc_clang
 )
-
-add_dependencies(webrtc_links webrtc_chromium_deps)
 
 #
 # Remove examples
 #
 
-add_custom_command(
-        OUTPUT  None
-        COMMAND sed -i "s/'include_examples%': 1/'include_examples%': 0/g" src/all.gyp
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        COMMENT "Patching build files"
-)
+if(NOT BUILD_EXAMPLES)
+    set(PATCH_COMMAND sed -i "s/'include_examples%': 1/'include_examples%': 0/g" src/all.gyp)
 
-add_custom_target(
-        webrtc_patch ALL
-        DEPENDS None
-)
-
-add_dependencies(webrtc_patch webrtc_links)
+    add_libwebrtc_command(libwebrtc_patch
+            None
+            "${PATCH_COMMAND}"
+            ${CMAKE_BINARY_DIR}
+            "Patching build definitions"
+            libwebrtc_links
+    )
+endif(NOT BUILD_EXAMPLES)

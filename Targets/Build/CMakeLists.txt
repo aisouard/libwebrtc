@@ -1,53 +1,82 @@
+include(Common)
+
 #
 # Generate build files
 #
 
-add_custom_command(
-        OUTPUT  ${CMAKE_BINARY_DIR}/Nevermind
-        COMMAND ${CMAKE_COMMAND} -E env \"PATH=${CMAKE_SOURCE_DIR}/Dependencies/depot_tools:$ENV{PATH}\" gn gen out/Default --args='is_debug=false rtc_include_tests=false'
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src
-        COMMENT "Generate build files"
+set(LIBWEBRTC_GEN_ARGS "")
+
+if(NOT CMAKE_BUILD_TYPE MATCHES DEBUG)
+    set(LIBWEBRTC_GEN_ARGS is_debug=false)
+endif(NOT CMAKE_BUILD_TYPE MATCHES DEBUG)
+
+if(NOT BUILD_TESTS)
+    set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS} rtc_include_tests=false)
+endif(NOT BUILD_TESTS)
+
+set(GENERATE_BUILD_DEPENDENCY libwebrtc_patch)
+if(NOT BUILD_EXAMPLES)
+    set(GENERATE_BUILD_DEPENDENCY libwebrtc_links)
+endif(NOT BUILD_EXAMPLES)
+
+set(GENERATE_COMMAND
+        ${LIBWEBRTC_ENV_COMMAND} gn gen out/Default --args='${LIBWEBRTC_GEN_ARGS}')
+
+add_libwebrtc_command(libwebrtc_generate_build
+        ${CMAKE_BINARY_DIR}/Nevermind
+        "${GENERATE_COMMAND}"
+        ${CMAKE_BINARY_DIR}/src
+        "Generate build files"
+        ${GENERATE_BUILD_DEPENDENCY}
 )
 
-add_custom_target(
-        webrtc_generate_build ALL
-        DEPENDS ${CMAKE_BINARY_DIR}/Nevermind
-)
+#
+# Revert examples
+#
 
-add_dependencies(webrtc_generate_build webrtc_links)
+if(NOT BUILD_EXAMPLES)
+    set(PATCH_COMMAND sed -i "s/'include_examples%': 0/'include_examples%': 1/g" src/all.gyp)
+
+    add_libwebrtc_command(libwebrtc_revert
+            None
+            "${PATCH_COMMAND}"
+            ${CMAKE_BINARY_DIR}
+            "Reverting build definitions"
+            libwebrtc_generate_build
+    )
+endif(NOT BUILD_EXAMPLES)
 
 #
 # Run ninja
 #
 
-add_custom_command(
-        OUTPUT  ${CMAKE_BINARY_DIR}/src/out/Default/obj/root.stamp
-        COMMAND ${CMAKE_COMMAND} -E env \"PATH=${CMAKE_SOURCE_DIR}/Dependencies/depot_tools:$ENV{PATH}\" ninja -C out/Default
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src
-        COMMENT "Build WebRTC"
-)
+set(NINJA_DEPENDENCY libwebrtc_generate_build)
+if(NOT BUILD_EXAMPLES)
+    set(GENERATE_BUILD_DEPENDENCY libwebrtc_revert)
+endif(NOT BUILD_EXAMPLES)
 
-add_custom_target(
-        webrtc_build ALL
-        DEPENDS ${CMAKE_BINARY_DIR}/src/out/Default/obj/root.stamp
-)
+set(BUILD_WEBRTC_COMMAND
+        ${LIBWEBRTC_ENV_COMMAND} ninja -C out/Default libjingle_peerconnection)
 
-add_dependencies(webrtc_build webrtc_generate_build)
+add_libwebrtc_command(libwebrtc_build
+        ${CMAKE_BINARY_DIR}/src/out/Default/obj/root.stamp
+        "${BUILD_WEBRTC_COMMAND}"
+        ${CMAKE_BINARY_DIR}/src
+        "Build WebRTC"
+        ${NINJA_DEPENDENCY}
+)
 
 #
 # Merge libraries into a single one
 #
 
-add_custom_command(
-        OUTPUT  ${CMAKE_BINARY_DIR}/libwebrtc.a
-        COMMAND python webrtc/build/merge_libs.py out/Default ${CMAKE_BINARY_DIR}/libwebrtc.a
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src
-        COMMENT "Merging libraries into libwebrtc.a"
-)
+set(MERGE_COMMAND
+        python webrtc/build/merge_libs.py out/Default ${CMAKE_BINARY_DIR}/${WEBRTC_LIBRARY})
 
-add_custom_target(
-        webrtc_merge ALL
-        DEPENDS ${CMAKE_BINARY_DIR}/libwebrtc.a
+add_libwebrtc_command(libwebrtc_merge
+        ${CMAKE_BINARY_DIR}/${WEBRTC_LIBRARY}
+        "${MERGE_COMMAND}"
+        ${CMAKE_BINARY_DIR}/src
+        "Merging libraries into ${WEBRTC_LIBRARY}"
+        libwebrtc_build
 )
-
-add_dependencies(webrtc_merge webrtc_build)
