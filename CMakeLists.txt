@@ -67,3 +67,7 @@ set(LIBWEBRTC_BUILD_ROOT ${CMAKE_SOURCE_DIR}/src/out/Default)
 set(WEBRTC_CHROMIUM_DEPS git@github.com:aisouard/libwebrtc-chromium-deps.git)
 
 add_subdirectory(Targets)
+
+if(BUILD_SAMPLES)
+    add_subdirectory(Samples)
+endif(BUILD_SAMPLES)
