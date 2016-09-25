@@ -39,7 +39,7 @@ add_libwebrtc_command(libwebrtc_sync
 set(GIT_CLONE_COMMAND git clone ${LIBWEBRTC_CHROMIUM_DEPS} ${CMAKE_BINARY_DIR}/src/chromium/src)
 
 add_libwebrtc_command(libwebrtc_chromium_deps
-        ${CMAKE_BINARY_DIR}/src/chromium/src/DEPS
+        ${CMAKE_BINARY_DIR}/src/chromium/src
         "${GIT_CLONE_COMMAND}"
         ${CMAKE_BINARY_DIR}
         "Retrieving Chromium dependencies"
@@ -73,19 +73,3 @@ add_libwebrtc_command(libwebrtc_links
         "Creating symbolic links"
         libwebrtc_clang
 )
-
-#
-# Remove examples
-#
-
-if(NOT BUILD_EXAMPLES)
-    set(PATCH_COMMAND sed -i "s/'include_examples%': 1/'include_examples%': 0/g" src/all.gyp)
-
-    add_libwebrtc_command(libwebrtc_patch
-            None
-            "${PATCH_COMMAND}"
-            ${CMAKE_BINARY_DIR}
-            "Patching build definitions"
-            libwebrtc_links
-    )
-endif(NOT BUILD_EXAMPLES)
