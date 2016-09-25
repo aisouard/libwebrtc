@@ -2,19 +2,17 @@ cmake_minimum_required(VERSION 3.2)
 project(libwebrtc)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
-    ${CMAKE_SOURCE_DIR}/CMakeModules)
+        ${CMAKE_SOURCE_DIR}/CMakeModules)
 
 find_package(Git REQUIRED)
 find_package(DepotTools REQUIRED)
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 #
 # Options
 #
 
 option(BUILD_TESTS "Build test binaries" OFF)
-option(BUILD_EXAMPLES "Build examples binaries" OFF)
+option(BUILD_SAMPLES "Build samples binaries" ON)
 
 #
 # Versioning
@@ -33,16 +31,16 @@ set(LIBWEBRTC_PATCH_VERSION 0)
 set(LIBWEBRTC_BUILD_VERSION ${GIT_COMMIT_HASH})
 set(LIBWEBRTC_VERSION
         ${LIBWEBRTC_MAJOR_VERSION}.${LIBWEBRTC_MINOR_VERSION}.${LIBWEBRTC_PATCH_VERSION}-${LIBWEBRTC_BUILD_VERSION}
-)
+        )
 
 set(LIBWEBRTC_API_VERSION
         "${LIBWEBRTC_MAJOR_VERSION}.${LIBWEBRTC_MINOR_VERSION}.${LIBWEBRTC_PATCH_VERSION}"
-)
+        )
 
 set(LIBWEBRTC_LIBRARY_PROPERTIES ${LIBWEBRTC_LIBRARY_PROPERTIES}
         VERSION "${LIBWEBRTC_VERSION}"
         SOVERSION "${LIBWEBRTC_API_VERSION}"
-)
+        )
 
 #
 # Directories
