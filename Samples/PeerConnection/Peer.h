@@ -9,7 +9,9 @@
 #include "webrtc/api/test/fakeconstraints.h"
 #include "webrtc/api/peerconnectioninterface.h"
 
-class Peer : public webrtc::PeerConnectionObserver {
+#include "IPeer.h"
+
+class Peer: public IPeer {
 public:
   Peer();
   ~Peer();

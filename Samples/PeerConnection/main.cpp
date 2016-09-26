@@ -12,7 +12,7 @@ enum {
   STATE_CHAT
 };
 
-static Peer *peer = NULL;
+static IPeer *peer = NULL;
 static int state = STATE_EXCHANGE;
 
 void HandleSDP(Json::Value object) {

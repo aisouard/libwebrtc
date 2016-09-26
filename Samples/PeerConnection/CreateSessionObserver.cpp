@@ -4,12 +4,11 @@
 
 #include "CreateSessionObserver.h"
 #include "Console.h"
-#include "Peer.h"
 #include "SetLocalSessionDescriptionObserver.h"
 
 using namespace webrtc;
 
-CreateSessionObserver::CreateSessionObserver(Peer *peer): _peer(peer) {
+CreateSessionObserver::CreateSessionObserver(IPeer *peer): _peer(peer) {
 }
 
 void CreateSessionObserver::OnSuccess(SessionDescriptionInterface* desc) {

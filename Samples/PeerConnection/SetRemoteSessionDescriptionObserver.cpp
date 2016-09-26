@@ -8,7 +8,7 @@
 
 
 SetRemoteSessionDescriptionObserver::SetRemoteSessionDescriptionObserver(
-    Peer *peer, webrtc::SessionDescriptionInterface* desc):
+    IPeer *peer, webrtc::SessionDescriptionInterface* desc):
     _peer(peer), _desc(desc) {
 }
 

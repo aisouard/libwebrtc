@@ -6,17 +6,17 @@
 #define LIBWEBRTC_CREATEOFFEROBSERVER_H
 
 #include <webrtc/api/jsep.h>
-#include "Peer.h"
+#include "IPeer.h"
 
 class CreateSessionObserver: public webrtc::CreateSessionDescriptionObserver {
 public:
-  CreateSessionObserver(Peer *peer);
+  CreateSessionObserver(IPeer *peer);
 
   void OnSuccess(webrtc::SessionDescriptionInterface* desc);
   void OnFailure(const std::string& error);
 
 private:
-  Peer *_peer;
+  IPeer *_peer;
 
 protected:
   ~CreateSessionObserver() {}

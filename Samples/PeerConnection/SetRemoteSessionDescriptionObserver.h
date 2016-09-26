@@ -6,18 +6,18 @@
 #define LIBWEBRTC_SETREMOTESESSIONDESCRIPTIONOBSERVER_H
 
 #include <webrtc/api/jsep.h>
-#include "Peer.h"
+#include "IPeer.h"
 
 class SetRemoteSessionDescriptionObserver:
     public webrtc::SetSessionDescriptionObserver {
 public:
-  SetRemoteSessionDescriptionObserver(Peer *peer, webrtc::SessionDescriptionInterface* desc);
+  SetRemoteSessionDescriptionObserver(IPeer *peer, webrtc::SessionDescriptionInterface* desc);
 
   void OnSuccess();
   void OnFailure(const std::string& error);
 
 private:
-  Peer *_peer;
+  IPeer *_peer;
   webrtc::SessionDescriptionInterface* _desc;
 
 protected:
