@@ -4,18 +4,20 @@
 
 #include <iostream>
 #include <third_party/jsoncpp/source/include/json/writer.h>
-#include "Peer.h"
-#include "Core.h"
-#include "UnixConsole.h"
-#include "DataChannelObserver.h"
 
+#include "Core.h"
+#include "DataChannelObserver.h"
+#include "Peer.h"
+#include "PeerConnectionObserver.h"
+
+using webrtc::DataChannelInit;
 using webrtc::PeerConnectionInterface;
 using webrtc::MediaConstraintsInterface;
-using webrtc::DataChannelInit;
+using webrtc::SessionDescriptionInterface;
+
 using webrtc::MediaStreamInterface;
 using webrtc::DataChannelInterface;
 using webrtc::IceCandidateInterface;
-using webrtc::SessionDescriptionInterface;
 
 Peer::Peer() {
   PeerConnectionInterface::RTCConfiguration config;
@@ -32,9 +34,10 @@ Peer::Peer() {
 
   _dataChannel = NULL;
   _dataChannelObserver = NULL;
+  _peerConnectionObserver = new PeerConnectionObserver(this);
   _peerConnection = Core::GetPeerConnectionFactory()->
       CreatePeerConnection(config, &_mediaConstraints,
-                           NULL, NULL, this);
+                           NULL, NULL, _peerConnectionObserver);
 
   _mediaConstraints.AddOptional(
       MediaConstraintsInterface::kEnableDtlsSrtp,
@@ -52,6 +55,7 @@ Peer::Peer() {
 Peer::~Peer() {
   if (_dataChannel) {
     _dataChannel->Close();
+    _dataChannel->UnregisterObserver();
     _dataChannel = NULL;
   }
 
@@ -100,87 +104,12 @@ bool Peer::IsConnected() {
   return _dataChannel->state() == webrtc::DataChannelInterface::kOpen;
 }
 
+void Peer::SetDataChannel(webrtc::DataChannelInterface *dataChannel) {
+  _dataChannel = dataChannel;
+}
+
 void Peer::SendMessage(const std::string& message) {
   webrtc::DataBuffer buffer(message);
 
   _dataChannel->Send(buffer);
-}
-
-/*
- * webrtc::PeerConnectionObserver methods
- */
-void Peer::OnSignalingChange(
-    PeerConnectionInterface::SignalingState new_state) {
-  Console::Print("[Peer::OnSignalingChange] new signaling state: %d",
-                 new_state);
-}
-
-void Peer::OnAddStream(rtc::scoped_refptr<MediaStreamInterface> stream) {
-  Console::Print("[Peer::OnAddStream]");
-}
-
-void Peer::OnRemoveStream(rtc::scoped_refptr<MediaStreamInterface> stream) {
-  Console::Print("[Peer::OnRemoveStream]");
-}
-
-void Peer::OnDataChannel(
-    rtc::scoped_refptr<DataChannelInterface> data_channel) {
-  Console::Print("[Peer::OnDataChannel] %s", data_channel->label().c_str());
-  _dataChannel = data_channel;
-
-  _dataChannelObserver = new DataChannelObserver(_dataChannel);
-  _dataChannel->RegisterObserver(_dataChannelObserver);
-}
-
-void Peer::OnRenegotiationNeeded() {
-}
-
-void Peer::OnIceConnectionChange(
-    PeerConnectionInterface::IceConnectionState new_state) {
-  if (new_state == PeerConnectionInterface::kIceConnectionCompleted) {
-    Console::Print("Connected!");
-  } else if (new_state > PeerConnectionInterface::kIceConnectionCompleted) {
-    Console::Print("Disconnected.");
-  }
-}
-
-void Peer::OnIceGatheringChange(
-    PeerConnectionInterface::IceGatheringState new_state) {
-  if (new_state == PeerConnectionInterface::kIceGatheringGathering) {
-    Console::Print("Gathering ICE candidates, please wait.");
-    return;
-  }
-
-  if (new_state != PeerConnectionInterface::kIceGatheringComplete) {
-    return;
-  }
-
-  Json::FastWriter writer;
-  writer.write(_iceCandidates);
-
-  Console::Print("Done, paste this array of ICE candidates once requested." \
-                 "\n\n%s", writer.write(_iceCandidates).c_str());
-}
-
-void Peer::OnIceCandidate(const IceCandidateInterface* candidate) {
-  Json::Value jmessage;
-
-  jmessage["sdpMid"] = candidate->sdp_mid();
-  jmessage["sdpMLineIndex"] = candidate->sdp_mline_index();
-  std::string sdp;
-  if (!candidate->ToString(&sdp)) {
-    Console::Print("[Peer::OnIceCandidate] Failed to serialize candidate");
-    return;
-  }
-  jmessage["candidate"] = sdp;
-  _iceCandidates.append(jmessage);
-}
-
-void Peer::OnIceCandidatesRemoved(
-    const std::vector<cricket::Candidate>& candidates) {
-  Console::Print("[Peer::OnIceCandidatesRemoved]");
-
-}
-
-void Peer::OnIceConnectionReceivingChange(bool receiving) {
 }
