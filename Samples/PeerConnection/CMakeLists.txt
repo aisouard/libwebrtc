@@ -15,6 +15,18 @@ set(PEERCONNECTION_SOURCE_FILES
         SetRemoteSessionDescriptionObserver.cpp
 )
 
+set(PEERCONNECTION_HEADER_FILES
+        Console.h
+        Core.h
+        CreateSessionObserver.h
+        DataChannelObserver.h
+        IPeer.h
+        Peer.h
+        PeerConnectionObserver.h
+        SetLocalSessionDescriptionObserver.h
+        SetRemoteSessionDescriptionObserver.h
+)
+
 include_directories(${CMAKE_SOURCE_DIR}/out/src)
 
 if(WIN)
@@ -24,7 +36,7 @@ else(WIN)
     set(PEERCONNECTION_SOURCE_FILES ${PEERCONNECTION_SOURCE_FILES} UnixConsole.cpp)
 endif(WIN)
 
-add_executable(PeerConnection ${PEERCONNECTION_SOURCE_FILES})
+add_executable(PeerConnection ${PEERCONNECTION_SOURCE_FILES} ${PEERCONNECTION_HEADER_FILES})
 
 set(PEERCONNECTION_LIBRARIES ${CMAKE_BINARY_DIR}/${LIBWEBRTC_LIBRARY} Threads::Threads)
 

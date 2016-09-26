@@ -4,7 +4,7 @@
 
 #include <third_party/jsoncpp/source/include/json/writer.h>
 #include "SetLocalSessionDescriptionObserver.h"
-#include "UnixConsole.h"
+#include "Console.h"
 
 SetLocalSessionDescriptionObserver::SetLocalSessionDescriptionObserver(
     webrtc::SessionDescriptionInterface* desc): _desc(desc) {

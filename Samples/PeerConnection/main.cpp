@@ -5,7 +5,7 @@
 #include "DataChannelObserver.h"
 #include "Peer.h"
 #include "SetRemoteSessionDescriptionObserver.h"
-#include "UnixConsole.h"
+#include "Console.h"
 
 enum {
   STATE_EXCHANGE = 0,

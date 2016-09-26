@@ -10,7 +10,7 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <unistd.h>
-#include "UnixConsole.h"
+#include "Console.h"
 
 static int ttyErase;
 static int ttyEof;
