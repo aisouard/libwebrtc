@@ -64,7 +64,7 @@ endif()
 
 set(LIBWEBRTC_LIBRARY ${CMAKE_STATIC_LIBRARY_PREFIX}webrtc${CMAKE_STATIC_LIBRARY_SUFFIX})
 set(LIBWEBRTC_BUILD_ROOT ${CMAKE_SOURCE_DIR}/src/out/Default)
-set(WEBRTC_CHROMIUM_DEPS git@github.com:aisouard/libwebrtc-chromium-deps.git)
+set(LIBWEBRTC_CHROMIUM_DEPS git@github.com:aisouard/libwebrtc-chromium-deps.git)
 
 add_subdirectory(Targets)
 

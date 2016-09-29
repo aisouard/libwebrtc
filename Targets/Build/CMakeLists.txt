@@ -30,7 +30,8 @@ add_libwebrtc_command(libwebrtc_generate_build
 #
 
 set(BUILD_WEBRTC_COMMAND
-        ${LIBWEBRTC_ENV_COMMAND} ninja -C out/Default libjingle_peerconnection)
+        ${LIBWEBRTC_ENV_COMMAND} ninja -C out/Default
+        libjingle_peerconnection field_trial_default metrics_default)
 
 add_libwebrtc_command(libwebrtc_build
         ${CMAKE_BINARY_DIR}/src/out/Default/obj/root.stamp
@@ -44,11 +45,14 @@ add_libwebrtc_command(libwebrtc_build
 # Merge libraries into a single one
 #
 
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/${LIBWEBRTC_INSTALL_CMAKE_DIR})
+
 set(MERGE_COMMAND
-        python webrtc/build/merge_libs.py out/Default ${CMAKE_BINARY_DIR}/${WEBRTC_LIBRARY})
+        python webrtc/build/merge_libs.py out/Default
+        ${CMAKE_BINARY_DIR}/${LIBWEBRTC_INSTALL_CMAKE_DIR}/${LIBWEBRTC_LIBRARY})
 
 add_libwebrtc_command(libwebrtc_merge
-        ${CMAKE_BINARY_DIR}/${WEBRTC_LIBRARY}
+        ${CMAKE_BINARY_DIR}/${LIBWEBRTC_INSTALL_CMAKE_DIR}/${LIBWEBRTC_LIBRARY}
         "${MERGE_COMMAND}"
         ${CMAKE_BINARY_DIR}/src
         "Merging libraries into ${WEBRTC_LIBRARY}"
