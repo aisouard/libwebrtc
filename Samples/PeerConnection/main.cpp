@@ -7,13 +7,7 @@
 #include "SetRemoteSessionDescriptionObserver.h"
 #include "Console.h"
 
-enum {
-  STATE_EXCHANGE = 0,
-  STATE_CHAT
-};
-
 static IPeer *peer = NULL;
-static int state = STATE_EXCHANGE;
 
 void HandleSDP(Json::Value object) {
   std::string type = object["type"].asString();
