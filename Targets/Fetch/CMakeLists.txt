@@ -21,7 +21,8 @@ add_libwebrtc_command(libwebrtc_config
 #
 
 set(GCLIENT_SYNC_COMMAND
-        ${DEPOTTOOLS_GCLIENT_EXECUTABLE} sync -n -D
+        ${DEPOTTOOLS_GCLIENT_EXECUTABLE} sync
+        --revision ${LIBWEBRTC_WEBRTC_REVISION} -n -D
 )
 
 add_libwebrtc_command(libwebrtc_sync
