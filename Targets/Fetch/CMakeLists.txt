@@ -51,11 +51,11 @@ add_libwebrtc_command(libwebrtc_chromium_deps
 # Update Clang
 #
 
-set(UPDATE_CLAND_COMMAND ${LIBWEBRTC_ENV_COMMAND} python chromium/src/tools/clang/scripts/update.py)
+set(UPDATE_CLANG_COMMAND python chromium/src/tools/clang/scripts/update.py)
 
 add_libwebrtc_command(libwebrtc_clang
         ${CMAKE_BINARY_DIR}/src/chromium/src/third_party/llvm-build
-        "${UPDATE_CLAND_COMMAND}"
+        "${UPDATE_CLANG_COMMAND}"
         ${CMAKE_BINARY_DIR}/src
         "Updating clang"
         libwebrtc_chromium_deps
@@ -65,7 +65,7 @@ add_libwebrtc_command(libwebrtc_clang
 # Setup Links
 #
 
-set(SETUP_LINKS_COMMAND ${LIBWEBRTC_ENV_COMMAND} python setup_links.py)
+set(SETUP_LINKS_COMMAND python setup_links.py)
 
 add_libwebrtc_command(libwebrtc_links
         ${CMAKE_BINARY_DIR}/src/tools/clang

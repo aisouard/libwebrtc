@@ -1,5 +1,3 @@
-set(LIBWEBRTC_ENV_COMMAND ${CMAKE_COMMAND} -E env \"PATH=${CMAKE_SOURCE_DIR}/Dependencies/depot_tools:$ENV{PATH}\")
-
 macro(add_libwebrtc_command
         ARG_NAME
         ARG_OUTPUT
@@ -11,7 +9,7 @@ macro(add_libwebrtc_command
 
     add_custom_command(
             OUTPUT  ${ARG_OUTPUT}
-            COMMAND ${ARG_COMMAND}
+            COMMAND export "PATH=${CMAKE_SOURCE_DIR}/Dependencies/depot_tools:$ENV{PATH}" && ${ARG_COMMAND}
             WORKING_DIRECTORY ${ARG_WORKING_DIRECTORY}
             COMMENT ${ARG_COMMENT}
     )

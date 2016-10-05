@@ -32,7 +32,7 @@ include_directories(${CMAKE_SOURCE_DIR}/out/src)
 if(WIN)
     add_definitions(-DWEBRTC_WIN)
 else(WIN)
-    add_definitions(-DWEBRTC_POSIX -std=c++11 -D_GLIBCXX_USE_CXX11_ABI=0)
+    add_definitions(-DWEBRTC_POSIX -std=gnu++0x -D_GLIBCXX_USE_CXX11_ABI=0)
     set(PEERCONNECTION_SOURCE_FILES ${PEERCONNECTION_SOURCE_FILES}
             UnixConsole.cpp)
 endif(WIN)
@@ -41,9 +41,7 @@ add_executable(PeerConnection
         ${PEERCONNECTION_SOURCE_FILES}
         ${PEERCONNECTION_HEADER_FILES})
 
-set(PEERCONNECTION_LIBRARIES
-        ${CMAKE_BINARY_DIR}/${LIBWEBRTC_INSTALL_CMAKE_DIR}/${LIBWEBRTC_LIBRARY}
-        Threads::Threads)
+set(PEERCONNECTION_LIBRARIES ${LIBWEBRTC_LIBRARY_PATH} Threads::Threads)
 
 if(UNIX AND NOT APPLE)
     set(PEERCONNECTION_LIBRARIES ${PEERCONNECTION_LIBRARIES}

@@ -3,27 +3,56 @@
 #
 
 install(
-        FILES ${CMAKE_BINARY_DIR}/${LIBWEBRTC_LIBRARY}
-        DESTINATION ${LIBWEBRTC_INSTALL_LIB_DIR}
-        COMPONENT Libraries
+    FILES ${LIBWEBRTC_LIBRARY_PATH}
+    DESTINATION ${LIBWEBRTC_INSTALL_LIB_DIR}
+    COMPONENT Libraries
 )
 
 #
 # Install headers
 #
 
-file(
-        GLOB_RECURSE header_files
-        RELATIVE ${CMAKE_BINARY_DIR}/src
-        FOLLOW_SYMLINKS
-        ${CMAKE_BINARY_DIR}/src/webrtc/*.h
+install(
+    DIRECTORY ${CMAKE_BINARY_DIR}/src/webrtc
+    DESTINATION ${LIBWEBRTC_INSTALL_INCLUDE_DIR}
+    FILES_MATCHING PATTERN "*.h"
 )
 
-foreach(f ${header_files})
-    get_filename_component(RELATIVE_PATH ${f} DIRECTORY)
-    install(
-            FILES ${CMAKE_BINARY_DIR}/src/${f}
-            DESTINATION ${LIBWEBRTC_INSTALL_INCLUDE_DIR}/${RELATIVE_PATH}
-            COMPONENT Headers
-    )
-endforeach()
+#
+# Create package
+#
+
+set(CPACK_PACKAGE_NAME "${LIBWEBRTC_MAJOR_VERSION}")
+set(CPACK_PACKAGE_VERSION_MAJOR "${LIBWEBRTC_MAJOR_VERSION}")
+set(CPACK_PACKAGE_VERSION_MINOR "${LIBWEBRTC_MINOR_VERSION}")
+set(CPACK_PACKAGE_VERSION_PATCH "${LIBWEBRTC_PATCH_VERSION}")
+
+if(WIN)
+    set(CPACK_GENERATOR "ZIP")
+else(WIN)
+    set(CPACK_GENERATOR "TGZ")
+endif(WIN)
+
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
+    set(LIBWEBRTC_ARCH "arm")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^i.86$")
+    if(APPLE)
+        set(LIBWEBRTC_ARCH "x86")
+    else()
+        set(LIBWEBRTC_ARCH "i386")
+    endif()
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^x86.64$")
+    set(LIBWEBRTC_ARCH "x86_64")
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "powerpc")
+    set(LIBWEBRTC_ARCH "ppc")
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "powerpc64")
+    set(LIBWEBRTC_ARCH "ppc64")
+else()
+    set(LIBWEBRTC_ARCH "${CMAKE_SYSTEM_PROCESSOR}")
+endif()
+
+set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY 0)
+set(CPACK_PACKAGE_FILE_NAME "libwebrtc-${GIT_COMMIT_TAG}-${CMAKE_SYSTEM_NAME}-${LIBWEBRTC_ARCH}")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "libwebrtc")
+
+include(CPack)
