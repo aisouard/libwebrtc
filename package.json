@@ -1,6 +1,6 @@
 {
   "name": "libwebrtc-src",
-  "version": "0.0.1-rc.2",
+  "version": "0.0.1-rc.3",
   "description": "libwebrtc source code",
   "main": "index.js",
   "config": {
