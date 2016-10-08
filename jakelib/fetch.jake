@@ -1,5 +1,6 @@
 'use strict';
 
+var crypto = require('crypto');
 var download = require('download');
 var fs = require('fs');
 var getPackageName = require('./common').getPackageName;
@@ -10,33 +11,66 @@ var WebRTCUrl = pkg.config.webrtc.url;
 var WebRTCRev = pkg.config.webrtc.revision;
 var ChromiumUrl = pkg.config.chromium.url;
 
+function checksum(bytes) {
+  return crypto
+    .createHash('md5')
+    .update(bytes, 'utf8')
+    .digest('hex')
+}
+
 namespace('fetch', function () {
-  task('precompiled', {async: true}, function () {
-    var packageName = getPackageName();
-    var url = pkg.config.url + '/' + pkg.version + '/' + packageName;
+  task('precompiled', ['check-file'], function () {
+  });
+
+  task('check-file', function () {
+    try {
+      var data = fs.readFileSync(getPackageName());
+
+      if (checksum(data) !== pkg.config.webrtc.checksum) {
+        throw new Error('Invalid checksum');
+      }
+
+      jake.Task['fetch:extract'].invoke();
+    } catch (e) {
+      jake.Task['fetch:download'].invoke();
+    }
+  });
+
+  task('download', {async: true}, function () {
+    var url = pkg.config.url + '/' + pkg.version + '/' + getPackageName();
 
     console.log('Downloading', url);
     download(url, '.')
       .then(function () {
-        console.log('Extracting', packageName);
-        jake.exec('tar xf ' + packageName, function () {
-          console.log('Deleting', packageName);
-          fs.unlinkSync(packageName);
-          console.log('Done');
+        var task = jake.Task['fetch:extract'];
+
+        task.addListener('complete', function () {
           complete();
         });
+
+        task.invoke();
       })
       .catch(function (err) {
         var task = jake.Task['fetch:source'];
 
         console.log('Failed, building libwebrtc from source.');
         task.addListener('complete', function () {
-          console.log('Build done.');
           complete();
         });
 
         task.invoke();
       });
+  });
+
+  task('extract', {async: true}, function () {
+    var packageName = getPackageName();
+
+    console.log('Extracting', packageName);
+    jake.exec('tar xf ' + packageName, function () {
+      console.log('Deleting', packageName);
+      fs.unlinkSync(packageName);
+      complete();
+    });
   });
 
   task('gclient', {async: true}, function () {

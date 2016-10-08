@@ -8,7 +8,8 @@
     "url": "https://github.com/aisouard/libwebrtc/releases/download",
     "webrtc": {
       "url": "https://chromium.googlesource.com/external/webrtc.git",
-      "revision": "7502401788fcba5c9f81a9e4701e2f0831e78698"
+      "revision": "7502401788fcba5c9f81a9e4701e2f0831e78698",
+      "checksum": "9fc7a9b4c576278a328c276cfb233459"
     },
     "chromium": {
       "url": "https://github.com/aisouard/libwebrtc-chromium-deps.git"
