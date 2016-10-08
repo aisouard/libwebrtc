@@ -1,0 +1,33 @@
+{
+  "name": "libwebrtc-src",
+  "version": "0.0.1-rc.1",
+  "description": "libwebrtc source code",
+  "main": "index.js",
+  "config": {
+    "filename": "libwebrtc-{VERSION}-{PLATFORM}-{ARCH}",
+    "url": "https://github.com/aisouard/libwebrtc/releases/download",
+    "webrtc": {
+      "url": "https://chromium.googlesource.com/external/webrtc.git",
+      "revision": "7502401788fcba5c9f81a9e4701e2f0831e78698"
+    },
+    "chromium": {
+      "url": "https://github.com/aisouard/libwebrtc-chromium-deps.git"
+    }
+  },
+  "scripts": {
+    "install": "jake",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com//aisouard/libwebrtc"
+  },
+  "author": "Axel Isouard <axel@isouard.fr>",
+  "license": "MIT",
+  "dependencies": {
+    "download": "^5.0.2",
+    "fs-extra": "^0.30.0",
+    "jake": "^8.0.14",
+    "npm": "^3.10.8"
+  }
+}
