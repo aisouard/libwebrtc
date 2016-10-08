@@ -1,6 +1,7 @@
 'use strict';
 
 var download = require('download');
+var fs = require('fs');
 var getPackageName = require('./common').getPackageName;
 var os = require('os');
 var pkg = require('../package.json');
@@ -19,6 +20,8 @@ namespace('fetch', function () {
       .then(function () {
         console.log('Extracting', packageName);
         jake.exec('tar xf ' + packageName, function () {
+          console.log('Deleting', packageName);
+          fs.unlinkSync(packageName);
           console.log('Done');
           complete();
         });
