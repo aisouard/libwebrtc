@@ -24,6 +24,7 @@ install:
 
 script:
 - make package
+- md5sum libwebrtc*.tar.gz
 
 deploy:
   provider: releases
