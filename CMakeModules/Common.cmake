@@ -1,3 +1,13 @@
+set(ENV_COMMAND export)
+set(ENV_SEP ":")
+set(DEPOTTOOLS_PATH ${CMAKE_SOURCE_DIR}/Dependencies/depot_tools)
+
+if(WIN32)
+    set(ENV_COMMAND set)
+    set(ENV_SEP ";")
+    set(DEPOTTOOLS_PATH "${DEPOTTOOLS_PATH};${DEPOTTOOLS_PATH}/python276_bin;")
+endif(WIN32)
+
 macro(add_libwebrtc_command
         ARG_NAME
         ARG_OUTPUT
@@ -5,11 +15,13 @@ macro(add_libwebrtc_command
         ARG_WORKING_DIRECTORY
         ARG_COMMENT
 )
-    set (ARG_DEPENDENCIES ${ARGN})
+    set(ARG_DEPENDENCIES ${ARGN})
 
     add_custom_command(
             OUTPUT  ${ARG_OUTPUT}
-            COMMAND export "PATH=${CMAKE_SOURCE_DIR}/Dependencies/depot_tools:$ENV{PATH}" && ${ARG_COMMAND}
+            COMMAND ${ENV_COMMAND} "DEPOT_TOOLS_WIN_TOOLCHAIN=0"
+            COMMAND ${ENV_COMMAND} "PATH=${DEPOTTOOLS_PATH}${ENV_SEP}$ENV{PATH}"
+            COMMAND ${ARG_COMMAND}
             WORKING_DIRECTORY ${ARG_WORKING_DIRECTORY}
             COMMENT ${ARG_COMMENT}
     )

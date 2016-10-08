@@ -14,7 +14,7 @@ if(NOT BUILD_TESTS)
     set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS} rtc_include_tests=false)
 endif(NOT BUILD_TESTS)
 
-set(GENERATE_COMMAND gn gen out/Default --args='${LIBWEBRTC_GEN_ARGS}')
+set(GENERATE_COMMAND gn gen out/Default --args="${LIBWEBRTC_GEN_ARGS}")
 
 add_libwebrtc_command(libwebrtc_generate_build
         ${CMAKE_BINARY_DIR}/Nevermind
