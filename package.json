@@ -1,6 +1,6 @@
 {
   "name": "libwebrtc-src",
-  "version": "0.0.1-rc.3",
+  "version": "0.0.1-rc.4",
   "description": "libwebrtc source code",
   "main": "index.js",
   "config": {
@@ -9,7 +9,7 @@
     "webrtc": {
       "url": "https://chromium.googlesource.com/external/webrtc.git",
       "revision": "7502401788fcba5c9f81a9e4701e2f0831e78698",
-      "checksum": "9fc7a9b4c576278a328c276cfb233459"
+      "checksum": "298b2c8d977478252cdf4f44d24a53e8"
     },
     "chromium": {
       "url": "https://github.com/aisouard/libwebrtc-chromium-deps.git"
