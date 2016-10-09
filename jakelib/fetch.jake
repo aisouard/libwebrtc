@@ -1,6 +1,5 @@
 'use strict';
 
-var crypto = require('crypto');
 var download = require('download');
 var fs = require('fs');
 var getPackageName = require('./common').getPackageName;
@@ -11,29 +10,8 @@ var WebRTCUrl = pkg.config.webrtc.url;
 var WebRTCRev = pkg.config.webrtc.revision;
 var ChromiumUrl = pkg.config.chromium.url;
 
-function checksum(bytes) {
-  return crypto
-    .createHash('md5')
-    .update(bytes, 'utf8')
-    .digest('hex')
-}
-
 namespace('fetch', function () {
-  task('precompiled', ['check-file'], function () {
-  });
-
-  task('check-file', function () {
-    try {
-      var data = fs.readFileSync(getPackageName());
-
-      if (checksum(data) !== pkg.config.webrtc.checksum) {
-        throw new Error('Invalid checksum');
-      }
-
-      jake.Task['fetch:extract'].invoke();
-    } catch (e) {
-      jake.Task['fetch:download'].invoke();
-    }
+  task('precompiled', ['download'], function () {
   });
 
   task('download', {async: true}, function () {
@@ -45,6 +23,7 @@ namespace('fetch', function () {
         var task = jake.Task['fetch:extract'];
 
         task.addListener('complete', function () {
+          console.log('Done');
           complete();
         });
 
@@ -67,20 +46,19 @@ namespace('fetch', function () {
 
     console.log('Extracting', packageName);
     jake.exec('tar xf ' + packageName, function () {
-      console.log('Deleting', packageName);
       fs.unlinkSync(packageName);
       complete();
     });
   });
 
-  task('gclient', {async: true}, function () {
+  task('submodules', {async: true}, function () {
     console.log('Updating submodules...');
     jake.exec(['git submodule init', 'git submodule update'], {printStdout: true}, function () {
       complete();
     });
   });
 
-  task('configure', ['fetch:gclient'], {async: true}, function () {
+  task('configure', ['fetch:submodules'], {async: true}, function () {
     console.log('Configuring gclient to fetch WebRTC code');
     process.env.PATH = process.cwd() + '/Dependencies/depot_tools:' + process.env.PATH;
     jake.exec('gclient config --name src ' + WebRTCUrl, {printStdout: true}, function () {
