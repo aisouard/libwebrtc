@@ -8,7 +8,7 @@ function getPackageName() {
   var platform = os.platform();
   var arch = os.arch();
   var nodever = process.version;
-  var suffix = (platform === 'windows') ? '.zip' : '.tar.gz';
+  var suffix = (platform === 'win32') ? '.zip' : '.tar.gz';
 
   return pkg.config.filename
       .replace('{VERSION}', version)

@@ -45,7 +45,7 @@ namespace('fetch', function () {
     var packageName = getPackageName();
 
     console.log('Extracting', packageName);
-    jake.exec('tar xf ' + packageName, function () {
+    jake.exec('tar xf ' + packageName, { printStdout: true, printStderr: true }, function () {
       fs.unlinkSync(packageName);
       complete();
     });
@@ -59,37 +59,44 @@ namespace('fetch', function () {
   });
 
   task('configure', ['fetch:submodules'], {async: true}, function () {
+    var pathSep = (os.platform() === 'win32') ? '\\' : '/';
+    var envSep = (os.platform() === 'win32') ? ';' : ':';
+
+    if (os.platform() === 'win32') {
+      process.env.DEPOT_TOOLS_WIN_TOOLCHAIN = 0;
+    }
+
     console.log('Configuring gclient to fetch WebRTC code');
-    process.env.PATH = process.cwd() + '/Dependencies/depot_tools:' + process.env.PATH;
-    jake.exec('gclient config --name src ' + WebRTCUrl, {printStdout: true}, function () {
+    process.env.PATH = process.cwd() + pathSep + 'Dependencies' + pathSep + 'depot_tools' + envSep + process.env.PATH;
+    jake.exec('gclient config --name src ' + WebRTCUrl, { printStdout: true, printStderr: true }, function () {
       complete();
     });
   });
 
   task('sync', ['fetch:configure'], {async: true}, function () {
     console.log('Retrieving WebRTC source code');
-    jake.exec('gclient sync --revision ' + WebRTCRev + ' -n -D', {printStdout: true}, function () {
+    jake.exec('gclient sync --revision ' + WebRTCRev + ' -n -D', { printStdout: true, printStderr: true }, function () {
       complete();
     });
   });
 
   task('chromium', ['fetch:sync'], {async: true}, function () {
     console.log('Retrieving Chromium dependencies');
-    jake.exec('git clone ' + ChromiumUrl + ' src/chromium/src', { breakOnError: false, printStdout: true }, function () {
+    jake.exec('git clone ' + ChromiumUrl + ' src/chromium/src', { breakOnError: false, printStdout: true, printStderr: true }, function () {
       complete();
     });
   });
 
   task('clang', ['fetch:chromium'], {async: true}, function () {
     console.log('Updating clang');
-    jake.exec('python src/chromium/src/tools/clang/scripts/update.py', {printStdout: true}, function () {
+    jake.exec('python src/chromium/src/tools/clang/scripts/update.py', { printStdout: true, printStderr: true }, function () {
       complete();
     });
   });
 
   task('links', ['fetch:clang'], {async: true}, function () {
     console.log('Creating symbolic links');
-    jake.exec('python src/setup_links.py', {printStdout: true}, function () {
+    jake.exec('python src/setup_links.py', { printStdout: true, printStderr: true }, function () {
       complete();
     });
   });

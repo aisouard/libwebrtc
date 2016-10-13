@@ -1,4 +1,12 @@
+set(ENV_COMMAND export)
+set(ENV_SEP ":")
 set(DEPOTTOOLS_PATH ${CMAKE_SOURCE_DIR}/Dependencies/depot_tools)
+
+if(WIN32)
+    set(ENV_COMMAND set)
+    set(ENV_SEP ";")
+    set(DEPOTTOOLS_PATH "${DEPOTTOOLS_PATH};${DEPOTTOOLS_PATH}/python276_bin;")
+endif(WIN32)
 
 macro(add_libwebrtc_command
       ARG_NAME
