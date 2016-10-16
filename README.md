@@ -66,8 +66,8 @@ supported platforms and architectures.
 ### Windows
 
 * Windows 7 x64 or later, x86 operating systems are unsupported.
-* Visual Studio 2015 Update 2 - Download the [Installer](vs2015-installer) or
-[ISO image](vs2015-iso)
+* Visual Studio 2015 Update 2 - Download the [Installer][vs2015-installer] or
+[ISO image][vs2015-iso]
 
   Make sure that you install the following components:
   
@@ -79,3 +79,5 @@ supported platforms and architectures.
 [appveyor-href]:https://ci.appveyor.com/project/aisouard/libwebrtc
 [travis-img]:https://travis-ci.org/aisouard/libwebrtc.svg?branch=master
 [travis-href]:https://travis-ci.org/aisouard/libwebrtc
+[vs2015-installer]:https://go.microsoft.com/fwlink/?LinkId=615448&clcid=0x409
+[vs2015-iso]:https://go.microsoft.com/fwlink/?LinkId=615448&clcid=0x409
