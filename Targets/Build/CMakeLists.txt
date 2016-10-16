@@ -44,11 +44,11 @@ add_libwebrtc_command(libwebrtc_build
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/${LIBWEBRTC_INSTALL_LIB_DIR})
 
 set(MERGE_COMMAND
-    python webrtc/build/merge_libs.py out/Default ${LIBWEBRTC_LIBRARY_PATH})
+    python ${CMAKE_SOURCE_DIR}/merge_libs_wrapper.py src/out/Default ${LIBWEBRTC_LIBRARY_PATH})
 
 add_libwebrtc_command(libwebrtc_merge
                       ${LIBWEBRTC_LIBRARY_PATH}
                       "${MERGE_COMMAND}"
-                      ${CMAKE_BINARY_DIR}/src
+                      ${CMAKE_BINARY_DIR}
                       "Merging libraries into ${LIBWEBRTC_LIBRARY_NAME}"
                       libwebrtc_build)
