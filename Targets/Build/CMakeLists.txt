@@ -8,7 +8,17 @@ set(LIBWEBRTC_GEN_ARGS use_gold=false)
 
 if (NOT CMAKE_BUILD_TYPE MATCHES DEBUG)
   set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS} is_debug=false)
+elseif (NOT CMAKE_BUILD_TYPE MATCHES DEBUG)
+  set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS} is_debug=true)
 endif (NOT CMAKE_BUILD_TYPE MATCHES DEBUG)
+
+if (WIN32)
+  set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS})
+elseif (APPLE)
+  set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS})
+elseif (UNIX AND NOT APPLE)
+  set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS})
+endif (WIN32)
 
 if (NOT BUILD_TESTS)
   set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS} rtc_include_tests=false)
@@ -44,11 +54,11 @@ add_libwebrtc_command(libwebrtc_build
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/${LIBWEBRTC_INSTALL_LIB_DIR})
 
 set(MERGE_COMMAND
-    python ${CMAKE_SOURCE_DIR}/merge_libs_wrapper.py src/out/Default ${LIBWEBRTC_LIBRARY_PATH})
+    python ${CMAKE_SOURCE_DIR}/merge_libs_wrapper.py . ${LIBWEBRTC_LIBRARY_PATH})
 
 add_libwebrtc_command(libwebrtc_merge
                       ${LIBWEBRTC_LIBRARY_PATH}
                       "${MERGE_COMMAND}"
-                      ${CMAKE_BINARY_DIR}
+                      ${CMAKE_BINARY_DIR}/src/out/Default/obj
                       "Merging libraries into ${LIBWEBRTC_LIBRARY_NAME}"
                       libwebrtc_build)

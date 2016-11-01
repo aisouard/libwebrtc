@@ -3,6 +3,11 @@
 //
 
 #include "webrtc/base/ssladapter.h"
+#ifdef WIN32
+#include "webrtc/base/win32socketinit.h"
+#include "webrtc/base/win32socketserver.h"
+#include <Windows.h>
+#endif
 #include "Core.h"
 
 rtc::Thread *Core::_signalingThread = NULL;
@@ -10,6 +15,12 @@ rtc::Thread *Core::_workerThread = NULL;
 webrtc::PeerConnectionFactoryInterface *Core::_peerConnectionFactory = NULL;
 
 bool Core::Init() {
+#if 0
+  rtc::EnsureWinsockInit();
+  rtc::Win32Thread w32_thread;
+  rtc::ThreadManager::Instance()->SetCurrentThread(&w32_thread);
+#endif
+
   rtc::InitializeSSL();
   rtc::InitRandom(rtc::Time());
   rtc::ThreadManager::Instance()->WrapCurrentThread();
