@@ -51,14 +51,35 @@ add_libwebrtc_command(libwebrtc_build
 # Merge libraries into a single one
 #
 
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/${LIBWEBRTC_INSTALL_LIB_DIR})
+if (WIN32)
+  set(LIBWEBRTC_OBJ_EXT *.obj)
+elseif (UNIX AND NOT APPLE)
+  set(LIBWEBRTC_OBJ_EXT *.o)
+elseif (APPLE)
+  set(LIBWEBRTC_OBJ_EXT *.a)
+endif (WIN32)
 
-set(MERGE_COMMAND
-    python ${CMAKE_SOURCE_DIR}/merge_libs_wrapper.py . ${LIBWEBRTC_LIBRARY_PATH})
+file(GLOB_RECURSE LIBWEBRTC_OBJ_FILES
+     ${CMAKE_BINARY_DIR}/src/out/Default/obj/${LIBWEBRTC_OBJ_EXT})
 
-add_libwebrtc_command(libwebrtc_merge
-                      ${LIBWEBRTC_LIBRARY_PATH}
-                      "${MERGE_COMMAND}"
-                      ${CMAKE_BINARY_DIR}/src/out/Default/obj
-                      "Merging libraries into ${LIBWEBRTC_LIBRARY_NAME}"
-                      libwebrtc_build)
+file(GLOB_RECURSE LIBWEBRTC_OBJ_EXCLUDED
+     ${CMAKE_BINARY_DIR}/src/out/Default/obj/third_party/yasm/gen*/${LIBWEBRTC_OBJ_EXT}
+     ${CMAKE_BINARY_DIR}/src/out/Default/obj/third_party/yasm/re2c/${LIBWEBRTC_OBJ_EXT}
+     ${CMAKE_BINARY_DIR}/src/out/Default/obj/third_party/yasm/yasm/${LIBWEBRTC_OBJ_EXT}
+     ${CMAKE_BINARY_DIR}/src/out/Default/obj/third_party/protobuf/protoc/${LIBWEBRTC_OBJ_EXT}
+     ${CMAKE_BINARY_DIR}/src/out/Default/obj/third_party/protobuf/protobuf_full/${LIBWEBRTC_OBJ_EXT})
+
+list(REMOVE_ITEM LIBWEBRTC_OBJ_FILES ${LIBWEBRTC_OBJ_EXCLUDED})
+
+add_library(webrtc STATIC ${LIBWEBRTC_OBJ_FILES})
+
+set_source_files_properties(${LIBWEBRTC_OBJ_FILES} PROPERTIES
+                            EXTERNAL_OBJECT true
+                            GENERATED true)
+
+set_target_properties(webrtc PROPERTIES
+                      LINKER_LANGUAGE C)
+
+install(TARGETS webrtc
+        DESTINATION ${LIBWEBRTC_INSTALL_LIB_DIR}
+        COMPONENT Libraries)

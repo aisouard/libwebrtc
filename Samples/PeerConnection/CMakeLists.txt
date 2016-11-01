@@ -46,7 +46,7 @@ add_executable(PeerConnection
         ${PEERCONNECTION_SOURCE_FILES}
         ${PEERCONNECTION_HEADER_FILES})
 
-set(PEERCONNECTION_LIBRARIES ${LIBWEBRTC_LIBRARY_PATH} Threads::Threads)
+set(PEERCONNECTION_LIBRARIES webrtc Threads::Threads)
 
 if(WIN32)
     set(PEERCONNECTION_LIBRARIES ${PEERCONNECTION_LIBRARIES} msdmo.lib wmcodecdspuuid.lib dmoguids.lib ole32.lib secur32.lib)

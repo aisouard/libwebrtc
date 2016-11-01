@@ -1,14 +1,4 @@
 #
-# Install library
-#
-
-install(
-    FILES ${LIBWEBRTC_LIBRARY_PATH}
-    DESTINATION ${LIBWEBRTC_INSTALL_LIB_DIR}
-    COMPONENT Libraries
-)
-
-#
 # Install headers
 #
 
