@@ -1,0 +1,45 @@
+cmake_minimum_required(VERSION 2.8)
+project(libwebrtc)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
+    ${CMAKE_SOURCE_DIR}/CMakeModules)
+
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+
+if (WIN32)
+  set(LIBWEBRTC_OBJ_EXT obj)
+elseif (UNIX AND NOT APPLE)
+  set(LIBWEBRTC_OBJ_EXT o)
+elseif (APPLE)
+  set(LIBWEBRTC_OBJ_EXT a)
+endif (WIN32)
+
+file(GLOB_RECURSE LIBWEBRTC_OBJ_FILES
+     ${LIBWEBRTC_OUTPUT_DIR}/obj/*.${LIBWEBRTC_OBJ_EXT})
+
+file(GLOB_RECURSE LIBWEBRTC_OBJ_EXCLUDED
+     ${LIBWEBRTC_OUTPUT_DIR}/obj/third_party/yasm/gen*/*.${LIBWEBRTC_OBJ_EXT}
+     ${LIBWEBRTC_OUTPUT_DIR}/obj/third_party/yasm/re2c/*.${LIBWEBRTC_OBJ_EXT}
+     ${LIBWEBRTC_OUTPUT_DIR}/obj/third_party/yasm/yasm/*.${LIBWEBRTC_OBJ_EXT}
+     ${LIBWEBRTC_OUTPUT_DIR}/obj/third_party/protobuf/protoc/*.${LIBWEBRTC_OBJ_EXT}
+     ${LIBWEBRTC_OUTPUT_DIR}/obj/third_party/protobuf/protobuf_full/*.${LIBWEBRTC_OBJ_EXT})
+
+list(LENGTH LIBWEBRTC_OBJ_EXCLUDED LIBWEBRTC_OBJ_EXCLUDED_LEN)
+
+if(${LIBWEBRTC_OBJ_EXCLUDED_LEN} GREATER "0")
+  list(REMOVE_ITEM LIBWEBRTC_OBJ_FILES ${LIBWEBRTC_OBJ_EXCLUDED})
+endif()
+
+add_library(webrtc STATIC ${LIBWEBRTC_OBJ_FILES})
+
+set_source_files_properties(${LIBWEBRTC_OBJ_FILES} PROPERTIES
+                            EXTERNAL_OBJECT true
+                            GENERATED true)
+
+set_target_properties(webrtc PROPERTIES
+                      LINKER_LANGUAGE C)
+
+install(TARGETS webrtc
+        DESTINATION ${LIBWEBRTC_INSTALL_LIB_DIR}
+        COMPONENT Libraries)

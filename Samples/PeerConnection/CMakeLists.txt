@@ -57,3 +57,5 @@ elseif(UNIX AND NOT APPLE)
 endif(WIN32)
 
 target_link_libraries(PeerConnection ${PEERCONNECTION_LIBRARIES})
+
+add_dependencies(PeerConnection libwebrtc_merge)
