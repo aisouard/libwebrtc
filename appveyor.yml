@@ -13,7 +13,7 @@ build:
 before_build:
   - cd c:\projects\libwebrtc
   - git submodule update --init --recursive
-  - cmake -DCMAKE_INSTALL_PREFIX=c:\projects\libwebrtc .
+  - cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX=c:\projects\libwebrtc .
 
 after_build:
   - 7z a -t7z c:\projects\libwebrtc\libwebrtc-win32-x64.7z -m0=lzma2 -mx=9 -aoa -mfb=64 -md=32m -ms=on -md=1024m include lib
