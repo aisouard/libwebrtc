@@ -8,7 +8,7 @@ configuration: Release
 clone_folder: c:\projects\libwebrtc
 
 build:
-  project: INSTALL.vcxproj
+  project: ALL_BUILD.vcxproj
 
 before_build:
   - cd c:\projects\libwebrtc
