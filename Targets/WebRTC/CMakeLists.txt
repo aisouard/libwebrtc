@@ -112,10 +112,11 @@ add_libwebrtc_command(webrtc-build
 #
 ExternalProject_Add(libwebrtc
                     DEPENDS webrtc-build
-                    INSTALL_COMMAND ""
+                    INSTALL_DIR ${CMAKE_BINARY_DIR}/install
                     SOURCE_DIR ${CMAKE_SOURCE_DIR}/Targets/libwebrtc
                     BINARY_DIR ${CMAKE_BINARY_DIR}/libwebrtc
 
                     CMAKE_ARGS
-                    -DLIBWEBRTC_OUTPUT_DIR:STRING=${CMAKE_BINARY_DIR}/src/out/Default
-                    -DLIBWEBRTC_INSTALL_LIB_DIR:PATH=${LIBWEBRTC_INSTALL_LIB_DIR})
+                    -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install
+                    -DLIBWEBRTC_INCLUDE_DIR:STRING=${CMAKE_BINARY_DIR}/src/webrtc
+                    -DLIBWEBRTC_OUTPUT_DIR:PATH=${CMAKE_BINARY_DIR}/src/out/Default)
