@@ -10,6 +10,16 @@ ExternalProject_Add(chromium
                     BUILD_COMMAND ""
                     INSTALL_COMMAND "")
 
+set(GCLIENT_CONFIG_COMMAND
+    ${DEPOTTOOLS_GCLIENT_EXECUTABLE} config --name src
+    https://chromium.googlesource.com/external/webrtc.git)
+
+set(GCLIENT_SYNC_COMMAND
+    ${DEPOTTOOLS_GCLIENT_EXECUTABLE} sync
+    --revision ${LIBWEBRTC_WEBRTC_REVISION} -n -D)
+
+set(SETUP_LINKS_COMMAND ${PYTHON_EXECUTABLE} src/setup_links.py)
+
 ExternalProject_Add(webrtc
                     DEPENDS chromium
 
@@ -18,21 +28,22 @@ ExternalProject_Add(webrtc
                     SOURCE_DIR ${CMAKE_BINARY_DIR}
                     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
 
-                    DOWNLOAD_COMMAND ""
-                    CONFIGURE_COMMAND ""
-                    BUILD_COMMAND ""
+                    DOWNLOAD_COMMAND ${GCLIENT_CONFIG_COMMAND}
+                    UPDATE_COMMAND ${GCLIENT_SYNC_COMMAND}
+                    CONFIGURE_COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/src/chromium/src/third_party/llvm-build/Release+Asserts
+                    BUILD_COMMAND ${SETUP_LINKS_COMMAND}
                     INSTALL_COMMAND ""
 
-                    LOG_DOWNLOAD 0
+                    LOG_DOWNLOAD 1
+                    LOG_CONFIGURE 1
                     LOG_UPDATE 0
-                    LOG_CONFIGURE 0
                     LOG_BUILD 0
                     LOG_TEST 0
                     LOG_INSTALL 0)
 
 #
 # Configure gclient
-#
+#[[
 set(GCLIENT_CONFIG_COMMAND
     ${DEPOTTOOLS_GCLIENT_EXECUTABLE} config --name src
     https://chromium.googlesource.com/external/webrtc.git)
@@ -73,7 +84,7 @@ ExternalProject_Add_Step(webrtc links
                          COMMENT "Generate symbolic links"
                          WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src)
 
-#
+#]]
 # Generate build files
 #
 set(LIBWEBRTC_GEN_ARGS use_gold=false)
@@ -105,6 +116,17 @@ add_libwebrtc_command(webrtc-generate
                       webrtc)
 
 #
+# Update clang
+#
+set(UPDATE_CLANG_COMMAND ${PYTHON_EXECUTABLE} chromium/src/tools/clang/scripts/update.py)
+add_libwebrtc_command(webrtc-clang
+                      "Clang"
+                      "${UPDATE_CLANG_COMMAND}"
+                      ${CMAKE_BINARY_DIR}/src
+                      "Updating clang"
+                      webrtc-generate)
+
+#
 # Run the build command
 #
 set(LIBWEBRTC_BUILD_CMD ninja -C out/Default)
@@ -113,7 +135,7 @@ add_libwebrtc_command(webrtc-ninja
                       "${LIBWEBRTC_BUILD_CMD}"
                       ${CMAKE_BINARY_DIR}/src
                       "Building WebRTC"
-                      webrtc-generate)
+                      webrtc-clang)
 
 #
 # Link the library
