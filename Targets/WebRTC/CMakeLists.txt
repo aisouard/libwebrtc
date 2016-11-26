@@ -2,9 +2,10 @@ include(Common)
 include(ExternalProject)
 
 ExternalProject_Add(chromium
+                    URL ${LIBWEBRTC_CHROMIUM_DEPS}
+                    URL_HASH MD5=0ad83a7a7ba20ef4af548578cbc893b7
                     SOURCE_DIR ${CMAKE_BINARY_DIR}/src/chromium/src
 
-                    GIT_REPOSITORY ${LIBWEBRTC_CHROMIUM_DEPS}
                     CONFIGURE_COMMAND ""
                     BUILD_COMMAND ""
                     INSTALL_COMMAND "")

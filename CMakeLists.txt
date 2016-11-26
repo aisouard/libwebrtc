@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 2.8)
 project(libwebrtc)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
@@ -8,6 +8,11 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
 
 find_package(Git REQUIRED)
+if (WIN32)
+  set(PYTHON_EXECUTABLE ${CMAKE_SOURCE_DIR}/Dependencies/depot_tools/python.bat)
+else (WIN32)
+  find_package(PythonInterp REQUIRED)
+endif (WIN32)
 find_package(DepotTools REQUIRED)
 
 #
@@ -59,7 +64,7 @@ set(LIBWEBRTC_LIBRARY_NAME ${CMAKE_STATIC_LIBRARY_PREFIX}webrtc${CMAKE_STATIC_LI
 set(LIBWEBRTC_LIBRARY_PATH ${CMAKE_BINARY_DIR}/${LIBWEBRTC_INSTALL_LIB_DIR}/${LIBWEBRTC_LIBRARY_NAME})
 
 set(LIBWEBRTC_BUILD_ROOT ${CMAKE_SOURCE_DIR}/src/out/Default)
-set(LIBWEBRTC_CHROMIUM_DEPS https://github.com/aisouard/libwebrtc-chromium-deps.git)
+set(LIBWEBRTC_CHROMIUM_DEPS https://github.com/aisouard/libwebrtc-chromium-deps/archive/e413140453b5b47a717d61695b4c607585279ce3.zip)
 
 add_subdirectory(Targets)
 
