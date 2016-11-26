@@ -107,7 +107,7 @@ add_libwebrtc_command(webrtc-generate
 # Run the build command
 #
 set(LIBWEBRTC_BUILD_CMD ninja -C out/Default)
-add_libwebrtc_command(webrtc-build
+add_libwebrtc_command(webrtc-ninja
                       "Build"
                       "${LIBWEBRTC_BUILD_CMD}"
                       ${CMAKE_BINARY_DIR}/src
@@ -118,13 +118,11 @@ add_libwebrtc_command(webrtc-build
 # Link the library
 #
 ExternalProject_Add(libwebrtc
-                    DEPENDS webrtc-build
+                    DEPENDS webrtc-ninja
 
                     INSTALL_DIR ${CMAKE_BINARY_DIR}/install
                     SOURCE_DIR ${CMAKE_SOURCE_DIR}/Targets/libwebrtc
                     BINARY_DIR ${CMAKE_BINARY_DIR}/libwebrtc
-
-                    PATCH_COMMAND ""
 
                     CMAKE_ARGS
                     -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install

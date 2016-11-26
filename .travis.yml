@@ -25,7 +25,7 @@ install:
 - cmake ..
 
 script:
-- make package
+- VERBOSE=1 make package
 - md5sum libwebrtc*.tar.gz
 
 deploy:
