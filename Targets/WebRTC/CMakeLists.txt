@@ -20,7 +20,14 @@ ExternalProject_Add(webrtc
                     DOWNLOAD_COMMAND ""
                     CONFIGURE_COMMAND ""
                     BUILD_COMMAND ""
-                    INSTALL_COMMAND "")
+                    INSTALL_COMMAND ""
+
+                    LOG_DOWNLOAD 0
+                    LOG_UPDATE 0
+                    LOG_CONFIGURE 0
+                    LOG_BUILD 0
+                    LOG_TEST 0
+                    LOG_INSTALL 0)
 
 #
 # Configure gclient
@@ -112,9 +119,12 @@ add_libwebrtc_command(webrtc-build
 #
 ExternalProject_Add(libwebrtc
                     DEPENDS webrtc-build
+
                     INSTALL_DIR ${CMAKE_BINARY_DIR}/install
                     SOURCE_DIR ${CMAKE_SOURCE_DIR}/Targets/libwebrtc
                     BINARY_DIR ${CMAKE_BINARY_DIR}/libwebrtc
+
+                    PATCH_COMMAND ""
 
                     CMAKE_ARGS
                     -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install

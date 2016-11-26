@@ -20,7 +20,9 @@ addons:
 install:
 - git submodule init
 - git submodule update
-- cmake .
+- mkdir out
+- cd out
+- cmake ..
 
 script:
 - make package
