@@ -8,16 +8,13 @@ configuration: Release
 clone_folder: c:\projects\libwebrtc
 
 build:
-  project: ALL_BUILD.vcxproj
+  project: PACKAGE.vcxproj
 
 before_build:
   - cd c:\projects\libwebrtc
   - git submodule update --init --recursive
   - cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX=c:\projects\libwebrtc .
 
-after_build:
-  - 7z a -t7z c:\projects\libwebrtc\libwebrtc-win32-x64.7z -m0=lzma2 -mx=9 -aoa -mfb=64 -md=32m -ms=on -md=1024m include lib
-
 artifacts:
-  - path: libwebrtc-win32-x64.7z
-    name: libwebrtc-win32-x64.7z
+  - path: libwebrtc-0.0.1-rc.4-win32-x64.7z
+    name: libwebrtc-0.0.1-rc.4-win32-x64.7z
