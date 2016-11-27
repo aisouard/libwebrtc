@@ -1,4 +1,12 @@
+matrix:
+  include:
+    - os: linux
+      sudo: required
+    - os: osx
+      osx_image: xcode8
+
 language: cpp
+
 addons:
   apt:
     packages:
@@ -16,7 +24,7 @@ addons:
     - libpulse-dev
     - libudev-dev
 
-install:
+before_install:
 - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
 - mkdir -p ${DEPS_DIR} && cd ${DEPS_DIR}
 - |
@@ -25,11 +33,12 @@ install:
     mkdir cmake && travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
     export PATH=${DEPS_DIR}/cmake/bin:${PATH}
   else
-    if ! brew ls --version cmake &>/dev/null; then brew install cmake; fi
+    if ! brew ls --version cmake &>/dev/null; then brew update && brew install cmake; fi
   fi
 - cd ${TRAVIS_BUILD_DIR}
 - cmake --version
 
+install:
 - git submodule init
 - git submodule update
 - mkdir out
