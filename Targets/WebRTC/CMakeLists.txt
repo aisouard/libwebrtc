@@ -1,6 +1,8 @@
 include(Common)
 include(ExternalProject)
 
+set(ENV{DEPOT_TOOLS_WIN_TOOLCHAIN} "0")
+
 ExternalProject_Add(chromium
                     URL ${LIBWEBRTC_CHROMIUM_DEPS}
                     URL_HASH MD5=0ad83a7a7ba20ef4af548578cbc893b7
@@ -42,49 +44,6 @@ ExternalProject_Add(webrtc
                     LOG_INSTALL 0)
 
 #
-# Configure gclient
-#[[
-set(GCLIENT_CONFIG_COMMAND
-    ${DEPOTTOOLS_GCLIENT_EXECUTABLE} config --name src
-    https://chromium.googlesource.com/external/webrtc.git)
-ExternalProject_Add_Step(webrtc config
-                         COMMAND ${GCLIENT_CONFIG_COMMAND}
-                         COMMENT "Configure gclient"
-                         WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-
-#
-# Synchronize
-#
-set(GCLIENT_SYNC_COMMAND
-    ${DEPOTTOOLS_GCLIENT_EXECUTABLE} sync
-    --revision ${LIBWEBRTC_WEBRTC_REVISION} -n -D)
-ExternalProject_Add_Step(webrtc sync
-                         DEPENDEES config
-                         COMMAND ${GCLIENT_SYNC_COMMAND}
-                         COMMENT "Synchronize WebRTC"
-                         WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-
-#
-# Update clang
-#
-set(UPDATE_CLANG_COMMAND python chromium/src/tools/clang/scripts/update.py)
-ExternalProject_Add_Step(webrtc clang
-                         DEPENDEES sync
-                         COMMAND ${UPDATE_CLANG_COMMAND}
-                         COMMENT "Update clang"
-                         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src)
-
-#
-# Generate symbolic links
-#
-set(SETUP_LINKS_COMMAND python setup_links.py)
-ExternalProject_Add_Step(webrtc links
-                         DEPENDEES clang
-                         COMMAND ${SETUP_LINKS_COMMAND}
-                         COMMENT "Generate symbolic links"
-                         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src)
-
-#]]
 # Generate build files
 #
 set(LIBWEBRTC_GEN_ARGS use_gold=false)
@@ -143,11 +102,11 @@ add_libwebrtc_command(webrtc-ninja
 ExternalProject_Add(libwebrtc
                     DEPENDS webrtc-ninja
 
-                    INSTALL_DIR ${CMAKE_BINARY_DIR}/install
+                    INSTALL_DIR ${CMAKE_BINARY_DIR}
                     SOURCE_DIR ${CMAKE_SOURCE_DIR}/Targets/libwebrtc
                     BINARY_DIR ${CMAKE_BINARY_DIR}/libwebrtc
 
                     CMAKE_ARGS
-                    -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install
+                    -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}
                     -DLIBWEBRTC_INCLUDE_DIR:STRING=${CMAKE_BINARY_DIR}/src/webrtc
                     -DLIBWEBRTC_OUTPUT_DIR:PATH=${CMAKE_BINARY_DIR}/src/out/Default)
