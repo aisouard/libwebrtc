@@ -12,8 +12,8 @@ if (WIN32)
 elseif (UNIX AND NOT APPLE)
   set(LIBWEBRTC_OBJ_EXT o)
 elseif (APPLE)
-  set(LIBWEBRTC_OBJ_EXT a)
-endif (WIN32)
+  set(LIBWEBRTC_OBJ_EXT o)
+endif ()
 
 file(GLOB_RECURSE LIBWEBRTC_OBJ_FILES
      ${LIBWEBRTC_OUTPUT_DIR}/obj/*.${LIBWEBRTC_OBJ_EXT})
@@ -40,7 +40,6 @@ set_source_files_properties(${LIBWEBRTC_OBJ_FILES} PROPERTIES
 set_target_properties(webrtc PROPERTIES
                       LINKER_LANGUAGE C
                       LIBRARY_OUTPUT_DIRECTORY ${LIBWEBRTC_OUTPUT_DIR})
-
 
 #
 # Install headers

@@ -18,7 +18,7 @@ void HandleSDP(Json::Value object) {
       webrtc::CreateSessionDescription(type, sdp, &error));
 
   if (!desc) {
-    Console::Print("Can't parse the SDP: %s", error.description);
+    Console::Print("Can't parse the SDP: %s", error.description.c_str());
     return;
   }
 
@@ -38,7 +38,7 @@ void HandleICECandidate(Json::Value object) {
       webrtc::CreateIceCandidate(sdp_mid, sdp_mlineindex, sdp, &error));
 
   if (!candidate.get()) {
-    Console::Print("Can't parse the ICE candidate: %s", error.description);
+    Console::Print("Can't parse the ICE candidate: %s", error.description.c_str());
     return;
   }
 

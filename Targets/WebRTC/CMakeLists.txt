@@ -22,7 +22,7 @@ set(GCLIENT_SYNC_COMMAND
 
 set(SETUP_LINKS_COMMAND ${PYTHON_EXECUTABLE} src/setup_links.py)
 
-ExternalProject_Add(webrtc
+ExternalProject_Add(webrtc-src
                     DEPENDS chromium
 
                     PREFIX ${CMAKE_BINARY_DIR}
@@ -72,7 +72,7 @@ add_libwebrtc_command(webrtc-generate
                       "${LIBWEBRTC_GEN_CMD}"
                       ${CMAKE_BINARY_DIR}/src
                       "Generating build files"
-                      webrtc)
+                      webrtc-src)
 
 #
 # Update clang
