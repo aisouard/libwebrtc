@@ -88,7 +88,7 @@ add_libwebrtc_command(webrtc-clang
 #
 # Run the build command
 #
-set(LIBWEBRTC_BUILD_CMD ninja -C out/Default)
+set(LIBWEBRTC_BUILD_CMD ninja ${NINJA_ARGS} -C out/Default)
 add_libwebrtc_command(webrtc-ninja
                       "Build"
                       "${LIBWEBRTC_BUILD_CMD}"
