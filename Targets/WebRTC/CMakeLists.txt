@@ -20,6 +20,13 @@ set(GCLIENT_SYNC_COMMAND
     ${DEPOTTOOLS_GCLIENT_EXECUTABLE} sync
     --revision ${LIBWEBRTC_WEBRTC_REVISION} -n -D)
 
+set(RETRIEVE_SYSROOT_COMMAND "")
+if (UNIX AND NOT APPLE)
+  set(RETRIEVE_SYSROOT_COMMAND ${CMAKE_BINARY_DIR}/src/build/linux/sysroot_scripts/install-sysroot.py --arch=amd64)
+endif (UNIX AND NOT APPLE)
+
+set(UPDATE_CLANG_COMMAND ${PYTHON_EXECUTABLE} src/chromium/src/tools/clang/scripts/update.py)
+
 set(SETUP_LINKS_COMMAND ${PYTHON_EXECUTABLE} src/setup_links.py)
 
 ExternalProject_Add(webrtc-src
@@ -31,9 +38,10 @@ ExternalProject_Add(webrtc-src
                     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
 
                     DOWNLOAD_COMMAND ${GCLIENT_CONFIG_COMMAND}
-                    UPDATE_COMMAND ${GCLIENT_SYNC_COMMAND}
-                    CONFIGURE_COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/src/chromium/src/third_party/llvm-build/Release+Asserts
-                    BUILD_COMMAND ${SETUP_LINKS_COMMAND}
+                    PATCH_COMMAND ${GCLIENT_SYNC_COMMAND}
+                    UPDATE_COMMAND ${UPDATE_CLANG_COMMAND}
+                    CONFIGURE_COMMAND ${SETUP_LINKS_COMMAND}
+                    BUILD_COMMAND ${RETRIEVE_SYSROOT_COMMAND}
                     INSTALL_COMMAND ""
 
                     LOG_DOWNLOAD 1
@@ -75,17 +83,6 @@ add_libwebrtc_command(webrtc-generate
                       webrtc-src)
 
 #
-# Update clang
-#
-set(UPDATE_CLANG_COMMAND ${PYTHON_EXECUTABLE} chromium/src/tools/clang/scripts/update.py)
-add_libwebrtc_command(webrtc-clang
-                      "Clang"
-                      "${UPDATE_CLANG_COMMAND}"
-                      ${CMAKE_BINARY_DIR}/src
-                      "Updating clang"
-                      webrtc-generate)
-
-#
 # Run the build command
 #
 set(LIBWEBRTC_BUILD_CMD ninja ${NINJA_ARGS} -C out/Default)
@@ -94,7 +91,7 @@ add_libwebrtc_command(webrtc-ninja
                       "${LIBWEBRTC_BUILD_CMD}"
                       ${CMAKE_BINARY_DIR}/src
                       "Building WebRTC"
-                      webrtc-clang)
+                      webrtc-generate)
 
 #
 # Link the library
