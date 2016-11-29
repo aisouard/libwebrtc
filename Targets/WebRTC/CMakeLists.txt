@@ -5,7 +5,7 @@ set(ENV{DEPOT_TOOLS_WIN_TOOLCHAIN} "0")
 
 ExternalProject_Add(chromium
                     URL ${LIBWEBRTC_CHROMIUM_DEPS}
-                    URL_HASH MD5=d6aad8c950e1a99caaf27513fa147cac
+                    URL_HASH MD5=cf057cf1d0919940ad1e68a829a80f2d
                     SOURCE_DIR ${CMAKE_BINARY_DIR}/src/chromium/src
 
                     CONFIGURE_COMMAND ""
