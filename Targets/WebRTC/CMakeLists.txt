@@ -20,7 +20,7 @@ set(GCLIENT_SYNC_COMMAND
     ${DEPOTTOOLS_GCLIENT_EXECUTABLE} sync
     --revision ${LIBWEBRTC_WEBRTC_REVISION} -n -D)
 
-set(RETRIEVE_SYSROOT_COMMAND "")
+set(RETRIEVE_SYSROOT_COMMAND echo)
 if (UNIX AND NOT APPLE)
   set(RETRIEVE_SYSROOT_COMMAND ${CMAKE_BINARY_DIR}/src/build/linux/sysroot_scripts/install-sysroot.py --arch=amd64)
 endif (UNIX AND NOT APPLE)
