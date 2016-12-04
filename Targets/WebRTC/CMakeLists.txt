@@ -1,8 +1,6 @@
 include(Common)
 include(ExternalProject)
 
-set(ENV{DEPOT_TOOLS_WIN_TOOLCHAIN} "0")
-
 ExternalProject_Add(chromium
                     URL ${LIBWEBRTC_CHROMIUM_DEPS}
                     URL_HASH MD5=cf057cf1d0919940ad1e68a829a80f2d
@@ -24,9 +22,9 @@ if (UNIX AND NOT APPLE)
   set(RETRIEVE_SYSROOT_COMMAND ${CMAKE_BINARY_DIR}/src/build/linux/sysroot_scripts/install-sysroot.py --arch=amd64)
 endif (UNIX AND NOT APPLE)
 
-set(UPDATE_CLANG_COMMAND ${PYTHON_EXECUTABLE} src/chromium/src/tools/clang/scripts/update.py)
+set(UPDATE_CLANG_COMMAND cmake -E env "DEPOT_TOOLS_WIN_TOOLCHAIN=0" ${PYTHON_EXECUTABLE} src/chromium/src/tools/clang/scripts/update.py)
 
-set(SETUP_LINKS_COMMAND ${PYTHON_EXECUTABLE} src/setup_links.py)
+set(SETUP_LINKS_COMMAND cmake -E env "DEPOT_TOOLS_WIN_TOOLCHAIN=0" ${PYTHON_EXECUTABLE} src/setup_links.py)
 
 ExternalProject_Add(webrtc-src
                     DEPENDS chromium
