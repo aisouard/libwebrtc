@@ -20,7 +20,6 @@ set(GCLIENT_SYNC_COMMAND
     ${DEPOTTOOLS_GCLIENT_EXECUTABLE} sync
     --revision ${LIBWEBRTC_WEBRTC_REVISION} -n -D)
 
-set(RETRIEVE_SYSROOT_COMMAND echo)
 if (UNIX AND NOT APPLE)
   set(RETRIEVE_SYSROOT_COMMAND ${CMAKE_BINARY_DIR}/src/build/linux/sysroot_scripts/install-sysroot.py --arch=amd64)
 endif (UNIX AND NOT APPLE)
@@ -41,7 +40,7 @@ ExternalProject_Add(webrtc-src
                     PATCH_COMMAND ${GCLIENT_SYNC_COMMAND}
                     UPDATE_COMMAND ${UPDATE_CLANG_COMMAND}
                     CONFIGURE_COMMAND ${SETUP_LINKS_COMMAND}
-                    BUILD_COMMAND ${RETRIEVE_SYSROOT_COMMAND}
+                    BUILD_COMMAND "${RETRIEVE_SYSROOT_COMMAND}"
                     INSTALL_COMMAND ""
 
                     LOG_DOWNLOAD 1
