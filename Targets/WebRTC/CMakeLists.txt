@@ -1,6 +1,30 @@
-include(Common)
 include(ExternalProject)
 
+#
+# Generate environment variables
+#
+set(PATH_SEP ":")
+if (WIN32)
+  set(PATH_SEP ";")
+endif (WIN32)
+
+set(WEBRTC_PATH "${CMAKE_SOURCE_DIR}/Dependencies/depot_tools${PATH_SEP}")
+if (WIN32)
+  set(WEBRTC_PATH "${WEBRTC_PATH}${CMAKE_SOURCE_DIR}/Dependencies/depot_tools/python276_bin${PATH_SEP}")
+endif (WIN32)
+
+set(WEBRTC_PATH "${WEBRTC_PATH}$ENV{PATH}")
+
+set(WEBRTC_ENV "PATH=${WEBRTC_PATH} PYTHONPATH=${CMAKE_BINARY_DIR}/src/build")
+if (WIN32)
+  set(WEBRTC_ENV "${WEBRTC_ENV} DEPOT_TOOLS_WIN_TOOLCHAIN=0")
+endif (WIN32)
+
+set(WEBRTC_CMD_PREFIX ${CMAKE_COMMAND} -E env \"${WEBRTC_ENV}\")
+
+#
+# Download chromium dependencies
+#
 ExternalProject_Add(chromium
                     URL ${LIBWEBRTC_CHROMIUM_DEPS}
                     URL_HASH MD5=${LIBWEBRTC_CHROMIUM_DEPS_HASH}
@@ -10,11 +34,14 @@ ExternalProject_Add(chromium
                     BUILD_COMMAND ""
                     INSTALL_COMMAND "")
 
-set(GCLIENT_CONFIG_COMMAND
+#
+# Retrieve WebRTC source code
+#
+set(GCLIENT_CONFIG_COMMAND ${WEBRTC_CMD_PREFIX}
     ${DEPOTTOOLS_GCLIENT_EXECUTABLE} config --name src
     https://chromium.googlesource.com/external/webrtc.git)
 
-set(GCLIENT_SYNC_COMMAND
+set(GCLIENT_SYNC_COMMAND ${WEBRTC_CMD_PREFIX}
     ${DEPOTTOOLS_GCLIENT_EXECUTABLE} sync
     --revision ${LIBWEBRTC_WEBRTC_REVISION} -n -D)
 
@@ -22,9 +49,9 @@ if (UNIX AND NOT APPLE)
   set(RETRIEVE_SYSROOT_COMMAND ${CMAKE_BINARY_DIR}/src/build/linux/sysroot_scripts/install-sysroot.py --arch=amd64)
 endif (UNIX AND NOT APPLE)
 
-set(UPDATE_CLANG_COMMAND cmake -E env "DEPOT_TOOLS_WIN_TOOLCHAIN=0" ${PYTHON_EXECUTABLE} src/chromium/src/tools/clang/scripts/update.py)
+set(UPDATE_CLANG_COMMAND ${PYTHON_EXECUTABLE} src/chromium/src/tools/clang/scripts/update.py)
 
-set(SETUP_LINKS_COMMAND cmake -E env "DEPOT_TOOLS_WIN_TOOLCHAIN=0" ${PYTHON_EXECUTABLE} src/setup_links.py)
+set(SETUP_LINKS_COMMAND ${PYTHON_EXECUTABLE} src/setup_links.py)
 
 ExternalProject_Add(webrtc-src
                     DEPENDS chromium
@@ -71,24 +98,32 @@ if (NOT BUILD_TESTS)
   set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS} rtc_include_tests=false)
 endif (NOT BUILD_TESTS)
 
-set(LIBWEBRTC_GEN_CMD gn gen out/Default --args=\"${LIBWEBRTC_GEN_ARGS}\")
-add_libwebrtc_command(webrtc-generate
-                      "Generate"
-                      "${LIBWEBRTC_GEN_CMD}"
-                      ${CMAKE_BINARY_DIR}/src
-                      "Generating build files"
-                      webrtc-src)
+add_custom_command(
+    OUTPUT "Generate"
+    COMMAND ${WEBRTC_CMD_PREFIX} gn gen out/Default --args=\"${LIBWEBRTC_GEN_ARGS}\"
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src
+    COMMENT "Generating build files")
+
+add_custom_target(
+    webrtc-generate ALL
+    DEPENDS "Generate")
+
+add_dependencies(webrtc-generate webrtc-src)
 
 #
 # Run the build command
 #
-set(LIBWEBRTC_BUILD_CMD ninja ${NINJA_ARGS} -C out/Default)
-add_libwebrtc_command(webrtc-ninja
-                      "Build"
-                      "${LIBWEBRTC_BUILD_CMD}"
-                      ${CMAKE_BINARY_DIR}/src
-                      "Building WebRTC"
-                      webrtc-generate)
+add_custom_command(
+    OUTPUT "Build"
+    COMMAND ${WEBRTC_CMD_PREFIX} ninja ${NINJA_ARGS} -C out/Default
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src
+    COMMENT "Building WebRTC")
+
+add_custom_target(
+    webrtc-ninja ALL
+    DEPENDS "Build")
+
+add_dependencies(webrtc-ninja webrtc-generate)
 
 #
 # Link the library
