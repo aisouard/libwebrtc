@@ -65,8 +65,8 @@ set(LIBWEBRTC_LIBRARY_NAME ${CMAKE_STATIC_LIBRARY_PREFIX}webrtc${CMAKE_STATIC_LI
 set(LIBWEBRTC_LIBRARY_PATH ${CMAKE_BINARY_DIR}/${LIBWEBRTC_INSTALL_LIB_DIR}/${LIBWEBRTC_LIBRARY_NAME})
 
 set(LIBWEBRTC_BUILD_ROOT ${CMAKE_SOURCE_DIR}/src/out/Default)
-set(LIBWEBRTC_CHROMIUM_DEPS https://github.com/aisouard/libwebrtc-chromium-deps/archive/5d383c86c0480f00044911df22984605ce069960.zip)
-
+set(LIBWEBRTC_CHROMIUM_DEPS https://github.com/aisouard/libwebrtc-chromium-deps/releases/download/v0.1-5e821a/libwebrtc-chromium-deps-5e821a778b85878bafcc8128f64333fd518c79a5.zip)
+set(LIBWEBRTC_CHROMIUM_DEPS_HASH 47c50d293494fb9bc66289a386730b71)
 add_subdirectory(Targets)
 
 if (BUILD_SAMPLES)

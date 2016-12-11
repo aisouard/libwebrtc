@@ -3,7 +3,7 @@ include(ExternalProject)
 
 ExternalProject_Add(chromium
                     URL ${LIBWEBRTC_CHROMIUM_DEPS}
-                    URL_HASH MD5=cf057cf1d0919940ad1e68a829a80f2d
+                    URL_HASH MD5=${LIBWEBRTC_CHROMIUM_DEPS_HASH}
                     SOURCE_DIR ${CMAKE_BINARY_DIR}/src/chromium/src
 
                     CONFIGURE_COMMAND ""
