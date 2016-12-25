@@ -3,11 +3,6 @@ include(ExternalProject)
 #
 # Generate environment variables
 #
-set(PATH_SEP ":")
-if (WIN32)
-  set(PATH_SEP ";")
-endif (WIN32)
-
 set(WEBRTC_PATH ${CMAKE_SOURCE_DIR}/Dependencies/depot_tools)
 
 if (WIN32)
@@ -29,7 +24,8 @@ get_filename_component(CHROMIUM_PYTHONPATH
                        "${CMAKE_BINARY_DIR}/src/build"
                        REALPATH)
 
-set(WEBRTC_ENV "PATH=${WEBRTC_PATH_STR} PYTHONPATH=${CHROMIUM_PYTHONPATH} DEPOT_TOOLS_WIN_TOOLCHAIN=0")
+set(WEBRTC_ENV PATH=${WEBRTC_PATH_STR} PYTHONPATH=${CHROMIUM_PYTHONPATH} DEPOT_TOOLS_WIN_TOOLCHAIN=0)
+set(WEBRTC_PREFIX ${CMAKE_COMMAND} -E env \\\"${WEBRTC_ENV}\\\")
 
 #
 # Download chromium dependencies
@@ -69,30 +65,11 @@ ExternalProject_Add(webrtc-src
                     SOURCE_DIR ${CMAKE_BINARY_DIR}
                     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
 
-                    DOWNLOAD_COMMAND
-                      ${CMAKE_COMMAND}
-                        -E env \"${WEBRTC_ENV}\"
-                        ${GCLIENT_CONFIG_COMMAND}
-
-                    PATCH_COMMAND
-                      ${CMAKE_COMMAND}
-                        -E env \"${WEBRTC_ENV}\"
-                        ${GCLIENT_SYNC_COMMAND}
-
-                    UPDATE_COMMAND
-                      ${CMAKE_COMMAND}
-                        -E env \"${WEBRTC_ENV}\"
-                        ${UPDATE_CLANG_COMMAND}
-
-                    CONFIGURE_COMMAND
-                      ${CMAKE_COMMAND}
-                        -E env \"${WEBRTC_ENV}\"
-                        ${SETUP_LINKS_COMMAND}
-
-                    BUILD_COMMAND
-                      ${CMAKE_COMMAND}
-                        -E env \"${WEBRTC_ENV}\"
-                        "${RETRIEVE_SYSROOT_COMMAND}"
+                    DOWNLOAD_COMMAND ${WEBRTC_PREFIX} ${GCLIENT_CONFIG_COMMAND}
+                    PATCH_COMMAND ${WEBRTC_PREFIX} ${GCLIENT_SYNC_COMMAND}
+                    UPDATE_COMMAND ${WEBRTC_PREFIX} ${UPDATE_CLANG_COMMAND}
+                    CONFIGURE_COMMAND ${WEBRTC_PREFIX} ${SETUP_LINKS_COMMAND}
+                    BUILD_COMMAND ${RETRIEVE_SYSROOT_COMMAND}
 
                     INSTALL_COMMAND ""
 
@@ -121,13 +98,13 @@ if (NOT BUILD_TESTS)
   set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS} rtc_include_tests=false)
 endif (NOT BUILD_TESTS)
 
+set(WEBRTC_PREFIX ${CMAKE_COMMAND} -E env \"${WEBRTC_ENV}\")
+set(LIBWEBRTC_GEN_COMMAND gn gen out/Default --args=\"${LIBWEBRTC_GEN_ARGS}\")
+
 add_custom_command(
     OUTPUT "Generate"
 
-    COMMAND
-      ${CMAKE_COMMAND}
-        -E env \"${WEBRTC_ENV}\"
-        gn gen out/Default --args=\"${LIBWEBRTC_GEN_ARGS}\"
+    COMMAND ${WEBRTC_PREFIX} ${LIBWEBRTC_GEN_COMMAND}
 
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src
     COMMENT "Generating build files")
@@ -141,13 +118,12 @@ add_dependencies(webrtc-generate webrtc-src)
 #
 # Run the build command
 #
+set(LIBWEBRTC_BUILD_COMMAND ninja ${NINJA_ARGS} -C out/Default)
+
 add_custom_command(
     OUTPUT "Build"
 
-    COMMAND
-      ${CMAKE_COMMAND}
-        -E env \"${WEBRTC_ENV}\"
-        ninja ${NINJA_ARGS} -C out/Default
+    COMMAND ${WEBRTC_PREFIX} ${LIBWEBRTC_BUILD_COMMAND}
 
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src
     COMMENT "Building WebRTC")
