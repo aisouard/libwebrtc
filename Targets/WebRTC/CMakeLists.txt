@@ -28,18 +28,6 @@ set(WEBRTC_ENV PATH=${WEBRTC_PATH_STR} PYTHONPATH=${CHROMIUM_PYTHONPATH} DEPOT_T
 set(WEBRTC_PREFIX ${CMAKE_COMMAND} -E env \\\"${WEBRTC_ENV}\\\")
 
 #
-# Download chromium dependencies
-#
-ExternalProject_Add(chromium
-                    URL ${LIBWEBRTC_CHROMIUM_DEPS}
-                    URL_HASH MD5=${LIBWEBRTC_CHROMIUM_DEPS_HASH}
-                    SOURCE_DIR ${CMAKE_BINARY_DIR}/src/chromium/src
-
-                    CONFIGURE_COMMAND ""
-                    BUILD_COMMAND ""
-                    INSTALL_COMMAND "")
-
-#
 # Retrieve WebRTC source code
 #
 set(GCLIENT_CONFIG_COMMAND ${DEPOTTOOLS_GCLIENT_EXECUTABLE} config --name src https://chromium.googlesource.com/external/webrtc.git)
@@ -53,13 +41,9 @@ if (UNIX AND NOT APPLE)
   set(RETRIEVE_SYSROOT_COMMAND ${CMAKE_BINARY_DIR}/src/build/linux/sysroot_scripts/install-sysroot.py --arch=amd64)
 endif (UNIX AND NOT APPLE)
 
-set(UPDATE_CLANG_COMMAND ${PYTHON_EXECUTABLE} src/chromium/src/tools/clang/scripts/update.py)
-
-set(SETUP_LINKS_COMMAND ${PYTHON_EXECUTABLE} src/setup_links.py)
+set(UPDATE_CLANG_COMMAND ${PYTHON_EXECUTABLE} src/tools/clang/scripts/update.py)
 
 ExternalProject_Add(webrtc-src
-                    DEPENDS chromium
-
                     PREFIX ${CMAKE_BINARY_DIR}
                     BINARY_DIR ${CMAKE_BINARY_DIR}
                     SOURCE_DIR ${CMAKE_BINARY_DIR}
@@ -68,12 +52,34 @@ ExternalProject_Add(webrtc-src
                     DOWNLOAD_COMMAND ${WEBRTC_PREFIX} ${GCLIENT_CONFIG_COMMAND}
                     PATCH_COMMAND ${WEBRTC_PREFIX} ${GCLIENT_SYNC_COMMAND}
                     UPDATE_COMMAND ${WEBRTC_PREFIX} ${UPDATE_CLANG_COMMAND}
-                    CONFIGURE_COMMAND ${WEBRTC_PREFIX} ${SETUP_LINKS_COMMAND}
                     BUILD_COMMAND ${RETRIEVE_SYSROOT_COMMAND}
 
                     INSTALL_COMMAND ""
 
                     LOG_DOWNLOAD 1)
+
+#
+# Retrieve buildtools binaries
+#
+set(WEBRTC_PREFIX ${CMAKE_COMMAND} -E env \"${WEBRTC_ENV}\")
+add_custom_command(
+    OUTPUT "Buildtools"
+
+    COMMAND ${WEBRTC_PREFIX} download_from_google_storage --no_resume --platform=linux* --no_auth --bucket chromium-gn -s src/buildtools/linux64/gn.sha1
+    COMMAND ${WEBRTC_PREFIX} download_from_google_storage --no_resume --platform=linux* --no_auth --bucket chromium-clang-format -s src/buildtools/linux64/clang-format.sha1
+    COMMAND ${WEBRTC_PREFIX} download_from_google_storage --no_resume --platform=darwin --no_auth --bucket chromium-gn -s src/buildtools/mac/gn.sha1
+    COMMAND ${WEBRTC_PREFIX} download_from_google_storage --no_resume --platform=darwin --no_auth --bucket chromium-clang-format -s src/buildtools/mac/clang-format.sha1
+    COMMAND ${WEBRTC_PREFIX} download_from_google_storage --no_resume --platform=win32 --no_auth --bucket chromium-gn -s src/buildtools/win/gn.exe.sha1
+    COMMAND ${WEBRTC_PREFIX} download_from_google_storage --no_resume --platform=win32 --no_auth --bucket chromium-clang-format -s src/buildtools/win/clang-format.exe.sha1
+
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMENT "Populating buildtools folder")
+
+add_custom_target(
+    webrtc-buildtools ALL
+    DEPENDS "Buildtools")
+
+add_dependencies(webrtc-buildtools webrtc-src)
 
 #
 # Generate build files
@@ -113,7 +119,7 @@ add_custom_target(
     webrtc-generate ALL
     DEPENDS "Generate")
 
-add_dependencies(webrtc-generate webrtc-src)
+add_dependencies(webrtc-generate webrtc-buildtools)
 
 #
 # Run the build command
