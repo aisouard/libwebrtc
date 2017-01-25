@@ -15,17 +15,38 @@ endif (WIN32)
 list(APPEND WEBRTC_PATH $ENV{PATH})
 
 if (WIN32)
-  string(REGEX REPLACE "\\\\" "/" WEBRTC_PATH_STR "${WEBRTC_PATH}")
+  string(REGEX REPLACE "/" "\\\\" WEBRTC_PATH "${WEBRTC_PATH}")
+  string(REGEX REPLACE ";" "\\\;" WEBRTC_PATH "${WEBRTC_PATH}")
 else (WIN32)
-  string(REGEX REPLACE ";" ":" WEBRTC_PATH_STR "${WEBRTC_PATH}")
+  string(REGEX REPLACE ";" ":" WEBRTC_PATH "${WEBRTC_PATH}")
 endif (WIN32)
 
 get_filename_component(CHROMIUM_PYTHONPATH
                        "${CMAKE_BINARY_DIR}/src/build"
                        REALPATH)
 
-set(WEBRTC_ENV PATH=${WEBRTC_PATH_STR} PYTHONPATH=${CHROMIUM_PYTHONPATH} DEPOT_TOOLS_WIN_TOOLCHAIN=0)
-set(WEBRTC_PREFIX ${CMAKE_COMMAND} -E env \\\"${WEBRTC_ENV}\\\")
+if (WIN32)
+  set(PREFIX_FILENAME ${CMAKE_BINARY_DIR}/prefix.bat)
+  set(PREFIX_COMMAND set)
+  set(PREFIX_HEADER "@ECHO OFF")
+  set(PREFIX_EVAL "%*")
+  set(PREFIX_EXECUTE cmd /c ${PREFIX_FILENAME})
+  set(PREFIX_NEWLINE \r\n)
+else (WIN32)
+  set(PREFIX_FILENAME ${CMAKE_BINARY_DIR}/prefix.sh)
+  set(PREFIX_COMMAND export)
+  set(PREFIX_HEADER "")
+  set(PREFIX_EVAL eval\ $@)
+  set(PREFIX_EXECUTE /bin/sh ${PREFIX_FILENAME})
+  set(PREFIX_NEWLINE \n)
+endif (WIN32)
+
+file(WRITE ${PREFIX_FILENAME} ${PREFIX_HEADER}${PREFIX_NEWLINE})
+file(APPEND ${PREFIX_FILENAME} ${PREFIX_COMMAND}\ PATH=${WEBRTC_PATH}${PREFIX_NEWLINE})
+file(APPEND ${PREFIX_FILENAME} ${PREFIX_COMMAND}\ PYTHONPATH=${CHROMIUM_PYTHONPATH}${PREFIX_NEWLINE})
+file(APPEND ${PREFIX_FILENAME} ${PREFIX_COMMAND}\ DEPOT_TOOLS_WIN_TOOLCHAIN=0${PREFIX_NEWLINE})
+file(APPEND ${PREFIX_FILENAME} ${PREFIX_COMMAND}\ DEPOT_TOOLS_UPDATE=0${PREFIX_NEWLINE})
+file(APPEND ${PREFIX_FILENAME} ${PREFIX_EVAL}${PREFIX_NEWLINE})
 
 #
 # Retrieve WebRTC source code
@@ -49,9 +70,9 @@ ExternalProject_Add(webrtc-src
                     SOURCE_DIR ${CMAKE_BINARY_DIR}
                     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
 
-                    DOWNLOAD_COMMAND ${WEBRTC_PREFIX} ${GCLIENT_CONFIG_COMMAND}
-                    PATCH_COMMAND ${WEBRTC_PREFIX} ${GCLIENT_SYNC_COMMAND}
-                    UPDATE_COMMAND ${WEBRTC_PREFIX} ${UPDATE_CLANG_COMMAND}
+                    DOWNLOAD_COMMAND ${PREFIX_EXECUTE} ${GCLIENT_CONFIG_COMMAND}
+                    UPDATE_COMMAND ${PREFIX_EXECUTE} ${GCLIENT_SYNC_COMMAND}
+                    CONFIGURE_COMMAND ${PREFIX_EXECUTE} ${UPDATE_CLANG_COMMAND}
                     BUILD_COMMAND ${RETRIEVE_SYSROOT_COMMAND}
 
                     INSTALL_COMMAND ""
@@ -61,16 +82,15 @@ ExternalProject_Add(webrtc-src
 #
 # Retrieve buildtools binaries
 #
-set(WEBRTC_PREFIX ${CMAKE_COMMAND} -E env \"${WEBRTC_ENV}\")
 add_custom_command(
     OUTPUT "Buildtools"
 
-    COMMAND ${WEBRTC_PREFIX} download_from_google_storage --no_resume --platform=linux* --no_auth --bucket chromium-gn -s src/buildtools/linux64/gn.sha1
-    COMMAND ${WEBRTC_PREFIX} download_from_google_storage --no_resume --platform=linux* --no_auth --bucket chromium-clang-format -s src/buildtools/linux64/clang-format.sha1
-    COMMAND ${WEBRTC_PREFIX} download_from_google_storage --no_resume --platform=darwin --no_auth --bucket chromium-gn -s src/buildtools/mac/gn.sha1
-    COMMAND ${WEBRTC_PREFIX} download_from_google_storage --no_resume --platform=darwin --no_auth --bucket chromium-clang-format -s src/buildtools/mac/clang-format.sha1
-    COMMAND ${WEBRTC_PREFIX} download_from_google_storage --no_resume --platform=win32 --no_auth --bucket chromium-gn -s src/buildtools/win/gn.exe.sha1
-    COMMAND ${WEBRTC_PREFIX} download_from_google_storage --no_resume --platform=win32 --no_auth --bucket chromium-clang-format -s src/buildtools/win/clang-format.exe.sha1
+    COMMAND ${PREFIX_EXECUTE} download_from_google_storage --no_resume --platform=linux* --no_auth --bucket chromium-gn -s src/buildtools/linux64/gn.sha1
+    COMMAND ${PREFIX_EXECUTE} download_from_google_storage --no_resume --platform=linux* --no_auth --bucket chromium-clang-format -s src/buildtools/linux64/clang-format.sha1
+    COMMAND ${PREFIX_EXECUTE} download_from_google_storage --no_resume --platform=darwin --no_auth --bucket chromium-gn -s src/buildtools/mac/gn.sha1
+    COMMAND ${PREFIX_EXECUTE} download_from_google_storage --no_resume --platform=darwin --no_auth --bucket chromium-clang-format -s src/buildtools/mac/clang-format.sha1
+    COMMAND ${PREFIX_EXECUTE} download_from_google_storage --no_resume --platform=win32 --no_auth --bucket chromium-gn -s src/buildtools/win/gn.exe.sha1
+    COMMAND ${PREFIX_EXECUTE} download_from_google_storage --no_resume --platform=win32 --no_auth --bucket chromium-clang-format -s src/buildtools/win/clang-format.exe.sha1
 
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMENT "Populating buildtools folder")
@@ -92,25 +112,26 @@ elseif (NOT CMAKE_BUILD_TYPE MATCHES DEBUG)
   set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS} is_debug=true)
 endif (NOT CMAKE_BUILD_TYPE MATCHES DEBUG)
 
-if (WIN32)
-  set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS})
-elseif (APPLE)
-  set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS})
-elseif (UNIX AND NOT APPLE)
-  set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS})
-endif (WIN32)
-
 if (NOT BUILD_TESTS)
   set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS} rtc_include_tests=false)
 endif (NOT BUILD_TESTS)
 
-set(WEBRTC_PREFIX ${CMAKE_COMMAND} -E env \"${WEBRTC_ENV}\")
-set(LIBWEBRTC_GEN_COMMAND gn gen out/Default --args=\"${LIBWEBRTC_GEN_ARGS}\")
+if (WIN32)
+  set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS})
+  set(LIBWEBRTC_GEN_COMMAND gn gen out/Default --args="${LIBWEBRTC_GEN_ARGS}")
+elseif (APPLE)
+  set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS})
+  set(LIBWEBRTC_GEN_COMMAND gn gen out/Default --args='"${LIBWEBRTC_GEN_ARGS}"')
+elseif (UNIX AND NOT APPLE)
+  set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS})
+  set(LIBWEBRTC_GEN_COMMAND gn gen out/Default --args='"${LIBWEBRTC_GEN_ARGS}"')
+endif (WIN32)
+
 
 add_custom_command(
     OUTPUT "Generate"
 
-    COMMAND ${WEBRTC_PREFIX} ${LIBWEBRTC_GEN_COMMAND}
+    COMMAND ${PREFIX_EXECUTE} ${LIBWEBRTC_GEN_COMMAND}
 
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src
     COMMENT "Generating build files")
@@ -129,7 +150,7 @@ set(LIBWEBRTC_BUILD_COMMAND ninja ${NINJA_ARGS} -C out/Default)
 add_custom_command(
     OUTPUT "Build"
 
-    COMMAND ${WEBRTC_PREFIX} ${LIBWEBRTC_BUILD_COMMAND}
+    COMMAND ${PREFIX_EXECUTE} ${LIBWEBRTC_BUILD_COMMAND}
 
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src
     COMMENT "Building WebRTC")
