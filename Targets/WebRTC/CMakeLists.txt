@@ -1,61 +1,10 @@
 include(ExternalProject)
-
-#
-# Generate environment variables
-#
-set(WEBRTC_PATH ${CMAKE_SOURCE_DIR}/Dependencies/depot_tools)
-
-if (WIN32)
-  get_filename_component(DEPOT_TOOLS_PYTHON_PATH
-                         "${DEPOT_TOOLS_PATH}/python276_bin"
-                         REALPATH)
-  list(APPEND WEBRTC_PATH ${DEPOT_TOOLS_PYTHON_PATH})
-endif (WIN32)
-
-list(APPEND WEBRTC_PATH $ENV{PATH})
-
-if (WIN32)
-  string(REGEX REPLACE "/" "\\\\" WEBRTC_PATH "${WEBRTC_PATH}")
-  string(REGEX REPLACE ";" "\\\;" WEBRTC_PATH "${WEBRTC_PATH}")
-else (WIN32)
-  string(REGEX REPLACE ";" ":" WEBRTC_PATH "${WEBRTC_PATH}")
-endif (WIN32)
-
-get_filename_component(CHROMIUM_PYTHONPATH
-                       "${CMAKE_BINARY_DIR}/src/build"
-                       REALPATH)
-
-if (WIN32)
-  set(PREFIX_FILENAME ${CMAKE_BINARY_DIR}/prefix.bat)
-  set(PREFIX_COMMAND set)
-  set(PREFIX_HEADER "@ECHO OFF")
-  set(PREFIX_EVAL "%*")
-  set(PREFIX_EXECUTE cmd /c ${PREFIX_FILENAME})
-  set(PREFIX_NEWLINE \r\n)
-else (WIN32)
-  set(PREFIX_FILENAME ${CMAKE_BINARY_DIR}/prefix.sh)
-  set(PREFIX_COMMAND export)
-  set(PREFIX_HEADER "")
-  set(PREFIX_EVAL eval\ $@)
-  set(PREFIX_EXECUTE /bin/sh ${PREFIX_FILENAME})
-  set(PREFIX_NEWLINE \n)
-endif (WIN32)
-
-file(WRITE ${PREFIX_FILENAME} ${PREFIX_HEADER}${PREFIX_NEWLINE})
-file(APPEND ${PREFIX_FILENAME} ${PREFIX_COMMAND}\ PATH=${WEBRTC_PATH}${PREFIX_NEWLINE})
-file(APPEND ${PREFIX_FILENAME} ${PREFIX_COMMAND}\ PYTHONPATH=${CHROMIUM_PYTHONPATH}${PREFIX_NEWLINE})
-file(APPEND ${PREFIX_FILENAME} ${PREFIX_COMMAND}\ DEPOT_TOOLS_WIN_TOOLCHAIN=0${PREFIX_NEWLINE})
-file(APPEND ${PREFIX_FILENAME} ${PREFIX_COMMAND}\ DEPOT_TOOLS_UPDATE=0${PREFIX_NEWLINE})
-file(APPEND ${PREFIX_FILENAME} ${PREFIX_EVAL}${PREFIX_NEWLINE})
-
-#
-# Retrieve WebRTC source code
-#
-set(GCLIENT_CONFIG_COMMAND ${DEPOTTOOLS_GCLIENT_EXECUTABLE} config --name src https://chromium.googlesource.com/external/webrtc.git)
+include(LibWebRTCPrefix)
+include(LibWebRTCConfig)
 
 set(GCLIENT_SYNC_COMMAND
     ${DEPOTTOOLS_GCLIENT_EXECUTABLE} sync
-    --revision ${LIBWEBRTC_WEBRTC_REVISION} -n -D)
+    --revision ${LIBWEBRTC_WEBRTC_REVISION} -D)
 
 set(RETRIEVE_SYSROOT_COMMAND echo)
 if (UNIX AND NOT APPLE)
@@ -70,9 +19,9 @@ ExternalProject_Add(webrtc-src
                     SOURCE_DIR ${CMAKE_BINARY_DIR}
                     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
 
-                    DOWNLOAD_COMMAND ${PREFIX_EXECUTE} ${GCLIENT_CONFIG_COMMAND}
-                    UPDATE_COMMAND ${PREFIX_EXECUTE} ${GCLIENT_SYNC_COMMAND}
-                    CONFIGURE_COMMAND ${PREFIX_EXECUTE} ${UPDATE_CLANG_COMMAND}
+                    #DOWNLOAD_COMMAND ${PREFIX_EXECUTE} ${GCLIENT_CONFIG_COMMAND}
+                    DOWNLOAD_COMMAND ${PREFIX_EXECUTE} ${GCLIENT_SYNC_COMMAND}
+                    UPDATE_COMMAND ${PREFIX_EXECUTE} ${UPDATE_CLANG_COMMAND}
                     BUILD_COMMAND ${RETRIEVE_SYSROOT_COMMAND}
 
                     INSTALL_COMMAND ""
@@ -104,7 +53,7 @@ add_dependencies(webrtc-buildtools webrtc-src)
 #
 # Generate build files
 #
-set(LIBWEBRTC_GEN_ARGS use_gold=false)
+set(LIBWEBRTC_GEN_ARGS use_gold=false target_cpu=\\"${TARGET_CPU}\\" target_os=\\"${TARGET_OS}\\")
 
 if (NOT CMAKE_BUILD_TYPE MATCHES DEBUG)
   set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS} is_debug=false)
@@ -174,4 +123,5 @@ ExternalProject_Add(libwebrtc
                     CMAKE_ARGS
                     -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}
                     -DLIBWEBRTC_INCLUDE_DIR:STRING=${CMAKE_BINARY_DIR}/src/webrtc
-                    -DLIBWEBRTC_OUTPUT_DIR:PATH=${CMAKE_BINARY_DIR}/src/out/Default)
+                    -DLIBWEBRTC_OUTPUT_DIR:PATH=${CMAKE_BINARY_DIR}/src/out/Default
+                    -DTARGET_OS:STRING=${TARGET_OS})
