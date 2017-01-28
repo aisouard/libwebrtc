@@ -1,9 +1,6 @@
-# libwebrtc
+# libwebrtc [![Build Status][travis-img]][travis-href] [![Build Status][appveyor-img]][appveyor-href]
 
-[![Build Status][travis-img]][travis-href]
-[![Build Status][appveyor-img]][appveyor-href]
-
-Build scripts to help retrieving and compiling WebRTC C++ native libraries.
+> CMake script for retrieving, building and linking Google's WebRTC into a single static library.
 
 ## Status
 
@@ -12,62 +9,62 @@ supported platforms and architectures.
 
 <table>
   <tr>
-    <th></th>
     <th colspan="3">Linux</th>
-    <th colspan="2">Mac OS X</th>
+    <th colspan="2">macOS</th>
     <th colspan="2">Windows</th>
     <th colspan="1">iOS</th>
-    <th colspan="1">Android</th>
+    <th colspan="4">Android</th>
+  </tr>
+  <tr>
+    <td align="center">x86</td>
+    <td align="center">x64</td>
+    <td align="center">arm</td>
+    <td align="center">x86</td>
+    <td align="center">x64</td>
+    <td align="center">x86</td>
+    <td align="center">x64</td>
+    <td align="center">arm</td>
+    <td align="center">arm</td>
+    <td align="center">arm64</td>
+    <td align="center">x86</td>
+    <td align="center">x64</td>
   </tr>
   <tr>
     <td></td>
-    <td>x86</td>
-    <td>x64</td>
-    <td>arm</td>
-    <td>x86</td>
-    <td>x64</td>
-    <td>x86</td>
-    <td>x64</td>
-    <td>arm</td>
-    <td>arm</td>
-  </tr>
-  <tr>
-    <th>CMake 2.8</th>
-    <td>-</td>
-    <td bgcolor="#C0F73E">Done</td>
-    <td>-</td>
-    <td>-</td>
-    <td>-</td>
-    <td>-</td>
-    <td bgcolor="#C0F73E">Done</td>
-    <td>-</td>
-    <td>-</td>
-  </tr>
-  <tr>
-    <th>Jake</th>
-    <td>-</td>
-    <td bgcolor="#C0F73E">Done</td>
-    <td>-</td>
-    <td>-</td>
-    <td>-</td>
-    <td>-</td>
-    <td bgcolor="#C0F73E">Done</td>
-    <td>-</td>
-    <td>-</td>
+    <td align="center">✔</td>
+    <td></td>
+    <td></td>
+    <td align="center">✔</td>
+    <td></td>
+    <td align="center">✔</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
   </tr>
 </table>
 
 ## Prerequisites
 
-### Linux
+- CMake 3.5 or later,
+- Python 2.7 (optional for Windows)
 
-### Mac OS X
+### Debian & Ubuntu
+
+Install the required development packages
+
+```
+# apt-get install build-essential libglib2.0-dev libgtk2.0-dev libxtst-dev \
+                  libxss-dev libpci-dev libdbus-1-dev libgconf2-dev \
+                  libgnome-keyring-dev libnss3-dev libasound2-dev libpulse-dev \
+                  libudev-dev
+```
 
 ### Windows
 
 * Windows 7 x64 or later, x86 operating systems are unsupported.
-* Visual Studio 2015 Update 2 - Download the [Installer][vs2015-installer] or
-[ISO image][vs2015-iso]
+* Visual Studio 2015 **with updates** - Download the [Installer][vs2015-installer]
 
   Make sure that you install the following components:
   
@@ -79,5 +76,100 @@ supported platforms and architectures.
 [appveyor-href]:https://ci.appveyor.com/project/aisouard/libwebrtc
 [travis-img]:https://travis-ci.org/aisouard/libwebrtc.svg?branch=master
 [travis-href]:https://travis-ci.org/aisouard/libwebrtc
-[vs2015-installer]:https://go.microsoft.com/fwlink/?LinkId=615448&clcid=0x409
-[vs2015-iso]:https://go.microsoft.com/fwlink/?LinkId=615448&clcid=0x409
+[osx1011sdk]: https://github.com/phracker/MacOSX-SDKs/releases/download/MacOSX10.11.sdk/MacOSX10.11.sdk.tar.xz
+[vs2015-installer]:https://www.microsoft.com/en-US/download/details.aspx?id=48146
+
+## Getting Started
+
+Clone the repository, initialize the submodules if `depot_tools` is not
+installed on your system or not defined inside your `PATH` environment variable.
+Create an output directory and browse inside it.
+
+```
+$ git clone https://github.com/aisouard/libwebrtc.git
+$ cd libwebrtc
+$ git submodule init
+$ git submodule update
+$ mkdir out
+$ cd out
+```
+
+Windows users **must** append `Win64` if they are using a Visual Studio
+generator. The `libwebrtc.sln` project solution will be located inside the
+current directory output directory.
+
+```
+> cmake -G "Visual Studio 14 2015 Win64" ..
+```
+
+Unix users will just have to run `$ cmake ..` to generate the Makefiles, then
+run the following commands.
+
+```
+$ make
+$ make package
+# make install
+```
+
+The library will be located inside the `lib` folder of the current output
+directory. The `include` folder will contain the header files.
+
+## Advanced Usage
+
+The library will be compiled and usable on the same host's platform and
+architecture. Here are some CMake flags which could be useful if you need to
+perform cross-compiling.
+
+- **BUILD_SAMPLES**
+
+    Build `PeerConnection` sample, source code located inside the
+    Samples/PeerConnection directory.
+
+- **BUILD_TESTS**
+
+    Build WebRTC tests. (not supported yet)
+
+- **NINJA_ARGS**
+
+    Arguments to pass while executing the `ninja` command. For instance, you can
+    define the number of cores you would like to use, in order to speed-up the
+    build process:
+    
+    `cmake -DNINJA_ARGS="-j 4" ..`
+
+- **TARGET_OS**
+
+    Target operating system, the value will be used inside the `--target_os`
+    argument of the `gn gen` command. The value **must** be one of the following:
+    
+    - `android`
+    - `chromeos`
+    - `ios`
+    - `linux`
+    - `mac`
+    - `nacl`
+    - `win`
+
+- **TARGET_CPU**
+
+    Target architecture, the value will be used inside the `--target_cpu`
+    argument of the `gn gen` command. The value **must** be one of the following:
+    
+    - `x86`
+    - `x64`
+    - `arm`
+    - `arm64`
+    - `mipsel`
+
+## Contributing
+
+Feel free to open an issue if you wish a bug to be fixed, to discuss a new
+feature or to ask a question. I'm open to pull requests, as long as your
+modifications are working on the three major OS (Windows, macOS and Linux).
+
+Don't forget to put your name and e-mail address inside the `AUTHORS` file!
+You can also reach me on Twitter for further discussion.
+
+## License
+
+MIT © 
