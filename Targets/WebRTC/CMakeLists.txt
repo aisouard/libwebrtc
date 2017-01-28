@@ -100,7 +100,7 @@ libwebrtc_command(
 #
 libwebrtc_command(
     NAME webrtc-build
-    COMMAND ninja -C out/Default
+    COMMAND ninja ${NINJA_ARGS} -C out/Default
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/src"
     COMMENT "Building WebRTC"
     DEPENDS webrtc-generate
