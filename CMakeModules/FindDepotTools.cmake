@@ -1,11 +1,11 @@
 if (WIN32)
   find_program(DEPOTTOOLS_GCLIENT_EXECUTABLE
                NAMES gclient.bat
-               PATHS ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/depot_tools)
+               PATHS ${CMAKE_CURRENT_SOURCE_DIR}/depot_tools)
 else (WIN32)
   find_program(DEPOTTOOLS_GCLIENT_EXECUTABLE
                NAMES gclient
-               PATHS ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/depot_tools)
+               PATHS ${CMAKE_CURRENT_SOURCE_DIR}/depot_tools)
 endif (WIN32)
 
 include(${CMAKE_ROOT}/Modules/FindPackageHandleStandardArgs.cmake)
