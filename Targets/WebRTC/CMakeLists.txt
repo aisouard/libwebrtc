@@ -1,127 +1,125 @@
 include(ExternalProject)
-include(LibWebRTCPrefix)
+include(LibWebRTCCommand)
 include(LibWebRTCConfig)
+include(LibWebRTCPrefix)
 
-set(GCLIENT_SYNC_COMMAND
-    ${DEPOTTOOLS_GCLIENT_EXECUTABLE} sync
-    --revision ${LIBWEBRTC_WEBRTC_REVISION} -D)
+ExternalProject_Add(
+    webrtc-src
+    PREFIX ${CMAKE_BINARY_DIR}
+    BINARY_DIR ${CMAKE_BINARY_DIR}
+    SOURCE_DIR ${CMAKE_BINARY_DIR}
+    DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
 
-set(RETRIEVE_SYSROOT_COMMAND echo)
+    DOWNLOAD_COMMAND ${PREFIX_EXECUTE} ${DEPOTTOOLS_GCLIENT_EXECUTABLE} sync --revision ${LIBWEBRTC_WEBRTC_REVISION} -D -n
+    BUILD_COMMAND ${PREFIX_EXECUTE} ${PYTHON_EXECUTABLE} src/tools/clang/scripts/update.py
+    INSTALL_COMMAND ""
+
+    LOG_DOWNLOAD 1
+)
+
+set(_NEXT_DEPENDS webrtc-src)
 if (UNIX AND NOT APPLE)
-  set(RETRIEVE_SYSROOT_COMMAND ${CMAKE_BINARY_DIR}/src/build/linux/sysroot_scripts/install-sysroot.py --arch=amd64)
+  libwebrtc_command(
+      NAME webrtc-install-sysroot
+      COMMAND ${CMAKE_BINARY_DIR}/src/build/linux/sysroot_scripts/install-sysroot.py --running-as-hook
+      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+      COMMENT "Installing Linux sysroots"
+      DEPENDS webrtc-src
+  )
+  set(_NEXT_DEPENDS webrtc-install-sysroot)
+
+  set(_PLATFORM linux*)
+  set(_FOLDER linux64)
+elseif (APPLE)
+  set(_PLATFORM darwin)
+  set(_FOLDER mac)
+elseif (WIN32)
+  libwebrtc_command(
+      NAME webrtc-vs-toolchain
+      COMMAND ${PYTHON_EXECUTABLE} src/build/vs_toolchain.py update
+      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+      COMMENT "Updating Visual Studio toolchain"
+      DEPENDS webrtc-src
+  )
+  set(_NEXT_DEPENDS webrtc-vs-toolchain)
+
+  set(_PLATFORM win32)
+  set(_FOLDER win)
+  set(_SUFFIX .exe)
 endif (UNIX AND NOT APPLE)
 
-set(UPDATE_CLANG_COMMAND ${PYTHON_EXECUTABLE} src/tools/clang/scripts/update.py)
+libwebrtc_command(
+    NAME webrtc-fetch-gn
+    COMMAND download_from_google_storage --no_resume --platform=${_PLATFORM} --no_auth --bucket chromium-gn -s src/buildtools/${_FOLDER}/gn${_SUFFIX}.sha1
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+    COMMENT "Fetching gn binary"
+    DEPENDS ${_NEXT_DEPENDS}
+)
 
-ExternalProject_Add(webrtc-src
-                    PREFIX ${CMAKE_BINARY_DIR}
-                    BINARY_DIR ${CMAKE_BINARY_DIR}
-                    SOURCE_DIR ${CMAKE_BINARY_DIR}
-                    DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
-
-                    #DOWNLOAD_COMMAND ${PREFIX_EXECUTE} ${GCLIENT_CONFIG_COMMAND}
-                    DOWNLOAD_COMMAND ${PREFIX_EXECUTE} ${GCLIENT_SYNC_COMMAND}
-                    UPDATE_COMMAND ${PREFIX_EXECUTE} ${UPDATE_CLANG_COMMAND}
-                    BUILD_COMMAND ${RETRIEVE_SYSROOT_COMMAND}
-
-                    INSTALL_COMMAND ""
-
-                    LOG_DOWNLOAD 1)
-
-#
-# Retrieve buildtools binaries
-#
-add_custom_command(
-    OUTPUT "Buildtools"
-
-    COMMAND ${PREFIX_EXECUTE} download_from_google_storage --no_resume --platform=linux* --no_auth --bucket chromium-gn -s src/buildtools/linux64/gn.sha1
-    COMMAND ${PREFIX_EXECUTE} download_from_google_storage --no_resume --platform=linux* --no_auth --bucket chromium-clang-format -s src/buildtools/linux64/clang-format.sha1
-    COMMAND ${PREFIX_EXECUTE} download_from_google_storage --no_resume --platform=darwin --no_auth --bucket chromium-gn -s src/buildtools/mac/gn.sha1
-    COMMAND ${PREFIX_EXECUTE} download_from_google_storage --no_resume --platform=darwin --no_auth --bucket chromium-clang-format -s src/buildtools/mac/clang-format.sha1
-    COMMAND ${PREFIX_EXECUTE} download_from_google_storage --no_resume --platform=win32 --no_auth --bucket chromium-gn -s src/buildtools/win/gn.exe.sha1
-    COMMAND ${PREFIX_EXECUTE} download_from_google_storage --no_resume --platform=win32 --no_auth --bucket chromium-clang-format -s src/buildtools/win/clang-format.exe.sha1
-
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-    COMMENT "Populating buildtools folder")
-
-add_custom_target(
-    webrtc-buildtools ALL
-    DEPENDS "Buildtools")
-
-add_dependencies(webrtc-buildtools webrtc-src)
+libwebrtc_command(
+    NAME webrtc-fetch-clang-format
+    COMMAND download_from_google_storage --no_resume --platform=${_PLATFORM} --no_auth --bucket chromium-clang-format -s src/buildtools/${_FOLDER}/clang-format${_SUFFIX}.sha1
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+    COMMENT "Fetching clang-format binary"
+    DEPENDS webrtc-fetch-gn
+)
 
 #
 # Generate build files
 #
-set(LIBWEBRTC_GEN_ARGS use_gold=false target_cpu=\\"${TARGET_CPU}\\" target_os=\\"${TARGET_OS}\\")
+set(_GEN_ARGS use_gold=false target_cpu="${TARGET_CPU}" target_os="${TARGET_OS}")
 
 if (NOT CMAKE_BUILD_TYPE MATCHES DEBUG)
-  set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS} is_debug=false)
+  set(_GEN_ARGS ${_GEN_ARGS} is_debug=false)
 elseif (NOT CMAKE_BUILD_TYPE MATCHES DEBUG)
-  set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS} is_debug=true)
+  set(_GEN_ARGS ${_GEN_ARGS} is_debug=true)
 endif (NOT CMAKE_BUILD_TYPE MATCHES DEBUG)
 
 if (NOT BUILD_TESTS)
-  set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS} rtc_include_tests=false)
+  set(_GEN_ARGS ${_GEN_ARGS} rtc_include_tests=false)
 endif (NOT BUILD_TESTS)
 
 if (WIN32)
-  set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS})
-  set(LIBWEBRTC_GEN_COMMAND gn gen out/Default --args="${LIBWEBRTC_GEN_ARGS}")
-elseif (APPLE)
-  set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS})
-  set(LIBWEBRTC_GEN_COMMAND gn gen out/Default --args='"${LIBWEBRTC_GEN_ARGS}"')
-elseif (UNIX AND NOT APPLE)
-  set(LIBWEBRTC_GEN_ARGS ${LIBWEBRTC_GEN_ARGS})
-  set(LIBWEBRTC_GEN_COMMAND gn gen out/Default --args='"${LIBWEBRTC_GEN_ARGS}"')
+  set(_GEN_ARGS ${_GEN_ARGS})
+  set(_GEN_COMMAND gn gen out/Default --args=${_GEN_ARGS})
+elseif (UNIX)
+  set(_GEN_ARGS ${_GEN_ARGS})
+  set(_GEN_COMMAND gn gen out/Default --args='${_GEN_ARGS}')
 endif (WIN32)
 
-
-add_custom_command(
-    OUTPUT "Generate"
-
-    COMMAND ${PREFIX_EXECUTE} ${LIBWEBRTC_GEN_COMMAND}
-
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src
-    COMMENT "Generating build files")
-
-add_custom_target(
-    webrtc-generate ALL
-    DEPENDS "Generate")
-
-add_dependencies(webrtc-generate webrtc-buildtools)
+libwebrtc_command(
+    NAME webrtc-generate
+    COMMAND ${_GEN_COMMAND}
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/src"
+    COMMENT "Generating build files"
+    DEPENDS webrtc-fetch-clang-format
+)
 
 #
-# Run the build command
+# Run ninja
 #
-set(LIBWEBRTC_BUILD_COMMAND ninja ${NINJA_ARGS} -C out/Default)
-
-add_custom_command(
-    OUTPUT "Build"
-
-    COMMAND ${PREFIX_EXECUTE} ${LIBWEBRTC_BUILD_COMMAND}
-
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src
-    COMMENT "Building WebRTC")
-
-add_custom_target(
-    webrtc-ninja ALL
-    DEPENDS "Build")
-
-add_dependencies(webrtc-ninja webrtc-generate)
+libwebrtc_command(
+    NAME webrtc-build
+    COMMAND ninja -C out/Default
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/src"
+    COMMENT "Building WebRTC"
+    DEPENDS webrtc-generate
+)
 
 #
 # Link the library
 #
-ExternalProject_Add(libwebrtc
-                    DEPENDS webrtc-ninja
+ExternalProject_Add(
+    libwebrtc
+    DEPENDS webrtc-build
 
-                    INSTALL_DIR ${CMAKE_BINARY_DIR}
-                    SOURCE_DIR ${CMAKE_SOURCE_DIR}/Targets/libwebrtc
-                    BINARY_DIR ${CMAKE_BINARY_DIR}/libwebrtc
+    INSTALL_DIR ${CMAKE_BINARY_DIR}
+    SOURCE_DIR ${CMAKE_SOURCE_DIR}/Targets/libwebrtc
+    BINARY_DIR ${CMAKE_BINARY_DIR}/libwebrtc
 
-                    CMAKE_ARGS
-                    -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}
-                    -DLIBWEBRTC_INCLUDE_DIR:STRING=${CMAKE_BINARY_DIR}/src/webrtc
-                    -DLIBWEBRTC_OUTPUT_DIR:PATH=${CMAKE_BINARY_DIR}/src/out/Default
-                    -DTARGET_OS:STRING=${TARGET_OS})
+    CMAKE_ARGS
+    -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}
+    -DLIBWEBRTC_INCLUDE_DIR:STRING=${CMAKE_BINARY_DIR}/src/webrtc
+    -DLIBWEBRTC_OUTPUT_DIR:PATH=${CMAKE_BINARY_DIR}/src/out/Default
+    -DTARGET_OS:STRING=${TARGET_OS}
+)

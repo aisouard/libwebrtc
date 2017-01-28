@@ -23,7 +23,11 @@ file(GLOB_RECURSE LIBWEBRTC_OBJ_EXCLUDED
      ${LIBWEBRTC_OUTPUT_DIR}/obj/third_party/yasm/re2c/*.${LIBWEBRTC_OBJ_EXT}
      ${LIBWEBRTC_OUTPUT_DIR}/obj/third_party/yasm/yasm/*.${LIBWEBRTC_OBJ_EXT}
      ${LIBWEBRTC_OUTPUT_DIR}/obj/third_party/protobuf/protoc/*.${LIBWEBRTC_OBJ_EXT}
-     ${LIBWEBRTC_OUTPUT_DIR}/obj/third_party/protobuf/protobuf_full/*.${LIBWEBRTC_OBJ_EXT})
+     ${LIBWEBRTC_OUTPUT_DIR}/obj/third_party/protobuf/protobuf_full/*.${LIBWEBRTC_OBJ_EXT}
+     ${LIBWEBRTC_OUTPUT_DIR}/obj/webrtc/examples/*.${LIBWEBRTC_OBJ_EXT}
+     ${LIBWEBRTC_OUTPUT_DIR}/obj/webrtc/tools/*.${LIBWEBRTC_OBJ_EXT}
+     ${LIBWEBRTC_OUTPUT_DIR}/obj/webrtc/modules/video_capture/video_capture/video_capture_external.${LIBWEBRTC_OBJ_EXT}
+     ${LIBWEBRTC_OUTPUT_DIR}/obj/webrtc/modules/video_capture/video_capture/device_info_external.${LIBWEBRTC_OBJ_EXT})
 
 list(LENGTH LIBWEBRTC_OBJ_EXCLUDED LIBWEBRTC_OBJ_EXCLUDED_LEN)
 
@@ -31,12 +35,7 @@ if (${LIBWEBRTC_OBJ_EXCLUDED_LEN} GREATER "0")
   list(REMOVE_ITEM LIBWEBRTC_OBJ_FILES ${LIBWEBRTC_OBJ_EXCLUDED})
 endif ()
 
-if (TARGET_OS STREQUAL "android")
-  set(ANDROID_NDK ${CMAKE_INSTALL_PREFIX}/src/third_party/android_tools/ndk)
-  add_library(webrtc SHARED ${LIBWEBRTC_OBJ_FILES})
-else ()
-  add_library(webrtc STATIC ${LIBWEBRTC_OBJ_FILES})
-endif ()
+add_library(webrtc STATIC ${LIBWEBRTC_OBJ_FILES})
 
 set_source_files_properties(${LIBWEBRTC_OBJ_FILES} PROPERTIES
                             EXTERNAL_OBJECT true
