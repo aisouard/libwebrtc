@@ -67,7 +67,7 @@ libwebrtc_command(
 #
 # Generate build files
 #
-set(_GEN_ARGS use_gold=false target_cpu="${TARGET_CPU}" target_os="${TARGET_OS}")
+set(_GEN_ARGS use_gold=false target_cpu=\\"${TARGET_CPU}\\" target_os=\\"${TARGET_OS}\\")
 
 if (NOT CMAKE_BUILD_TYPE MATCHES DEBUG)
   set(_GEN_ARGS ${_GEN_ARGS} is_debug=false)
@@ -81,10 +81,10 @@ endif (NOT BUILD_TESTS)
 
 if (WIN32)
   set(_GEN_ARGS ${_GEN_ARGS})
-  set(_GEN_COMMAND gn gen out/Default --args=${_GEN_ARGS})
+  set(_GEN_COMMAND gn gen out/Default --args="${_GEN_ARGS}")
 elseif (UNIX)
   set(_GEN_ARGS ${_GEN_ARGS})
-  set(_GEN_COMMAND gn gen out/Default --args='${_GEN_ARGS}')
+  set(_GEN_COMMAND gn gen out/Default --args='"${_GEN_ARGS}"')
 endif (WIN32)
 
 libwebrtc_command(

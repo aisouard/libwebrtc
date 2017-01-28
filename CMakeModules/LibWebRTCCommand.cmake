@@ -14,7 +14,6 @@ function(libwebrtc_command)
       COMMAND ${PREFIX_EXECUTE} ${COMMAND_COMMAND}
       COMMAND ${CMAKE_COMMAND} -E touch ${STAMP_FILE}
       WORKING_DIRECTORY ${COMMAND_WORKING_DIRECTORY}
-      VERBATIM
   )
 
   add_custom_target(${COMMAND_NAME} ALL DEPENDS ${STAMP_FILE})
