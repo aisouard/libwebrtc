@@ -65,6 +65,43 @@ libwebrtc_command(
 )
 
 #
+# Android dependencies
+#
+set(_NEXT_DEPENDS webrtc-fetch-clang-format)
+if (TARGET_OS STREQUAL "android")
+  libwebrtc_command(
+      NAME webrtc-android-fetch-play-services
+      COMMAND ${PYTHON_EXECUTABLE} src/build/android/play_services/update.py download
+      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+      COMMENT "Fetching Google Play Services"
+      DEPENDS webrtc-fetch-clang-format
+  )
+
+  libwebrtc_command(
+      NAME webrtc-android-update-lastchange
+      COMMAND ${PYTHON_EXECUTABLE} src/build/util/lastchange.py -o src/build/util/LASTCHANGE
+      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+      COMMENT "Updating src/build/util/LASTCHANGE"
+      DEPENDS webrtc-android-fetch-play-services
+  )
+
+  set(_NEXT_DEPENDS webrtc-android-update-lastchange)
+  foreach(_DEPENDENCY_NAME android-support-test-runner espresso guava hamcrest javax-inject)
+    string(REPLACE "-" "_" _DEPENDENCY_FOLDER ${_DEPENDENCY_NAME})
+
+    libwebrtc_command(
+        NAME webrtc-android-fetch-${_DEPENDENCY_NAME}
+        COMMAND ${PYTHON_EXECUTABLE} src/build/android/update_deps/update_third_party_deps.py download -b chromium-${_DEPENDENCY_NAME} -l third_party/${_DEPENDENCY_FOLDER}
+        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+        COMMENT "Fetching Android dependency: ${_DEPENDENCY_NAME}"
+        DEPENDS ${_NEXT_DEPENDS}
+    )
+
+    set(_NEXT_DEPENDS webrtc-android-fetch-${_DEPENDENCY_NAME})
+  endforeach(_DEPENDENCY_NAME)
+endif (TARGET_OS STREQUAL "android")
+
+#
 # Generate build files
 #
 set(_GEN_ARGS use_gold=false target_cpu=\\"${TARGET_CPU}\\" target_os=\\"${TARGET_OS}\\")
@@ -92,7 +129,7 @@ libwebrtc_command(
     COMMAND ${_GEN_COMMAND}
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/src"
     COMMENT "Generating build files"
-    DEPENDS webrtc-fetch-clang-format
+    DEPENDS ${_NEXT_DEPENDS}
 )
 
 #
