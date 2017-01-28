@@ -72,13 +72,6 @@ Install the required development packages
   * Universal Windows Apps Development Tools > Tools
   * Universal Windows Apps Development Tools > Windows 10 SDK (**10.0.10586**)
 
-[appveyor-img]:https://ci.appveyor.com/api/projects/status/yd1s303md3tt4w9a?svg=true
-[appveyor-href]:https://ci.appveyor.com/project/aisouard/libwebrtc
-[travis-img]:https://travis-ci.org/aisouard/libwebrtc.svg?branch=master
-[travis-href]:https://travis-ci.org/aisouard/libwebrtc
-[osx1011sdk]: https://github.com/phracker/MacOSX-SDKs/releases/download/MacOSX10.11.sdk/MacOSX10.11.sdk.tar.xz
-[vs2015-installer]:https://www.microsoft.com/en-US/download/details.aspx?id=48146
-
 ## Getting Started
 
 Clone the repository, initialize the submodules if `depot_tools` is not
@@ -168,8 +161,17 @@ feature or to ask a question. I'm open to pull requests, as long as your
 modifications are working on the three major OS (Windows, macOS and Linux).
 
 Don't forget to put your name and e-mail address inside the `AUTHORS` file!
-You can also reach me on Twitter for further discussion.
+You can also reach me on [Twitter][twitter] for further discussion.
 
 ## License
 
-MIT © 
+MIT © [Axel Isouard][author]
+
+[appveyor-img]:https://ci.appveyor.com/api/projects/status/yd1s303md3tt4w9a?svg=true
+[appveyor-href]:https://ci.appveyor.com/project/aisouard/libwebrtc
+[travis-img]:https://travis-ci.org/aisouard/libwebrtc.svg?branch=master
+[travis-href]:https://travis-ci.org/aisouard/libwebrtc
+[osx1011sdk]: https://github.com/phracker/MacOSX-SDKs/releases/download/MacOSX10.11.sdk/MacOSX10.11.sdk.tar.xz
+[vs2015-installer]:https://www.microsoft.com/en-US/download/details.aspx?id=48146
+[twitter]:https://twitter.com/aisouard
+[author]:https://axel.isouard.fr
