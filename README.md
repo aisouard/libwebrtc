@@ -30,7 +30,7 @@ supported platforms and architectures.
     <td align="center">x64</td>
   </tr>
   <tr>
-    <td></td>
+    <td align="center">✔</td>
     <td align="center">✔</td>
     <td></td>
     <td></td>
