@@ -10,7 +10,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
 
 find_package(Git REQUIRED)
 if (WIN32)
-  set(PYTHON_EXECUTABLE ${CMAKE_SOURCE_DIR}/Dependencies/depot_tools/python.bat)
+  set(PYTHON_EXECUTABLE ${CMAKE_SOURCE_DIR}/depot_tools/python.bat)
 else (WIN32)
   find_package(PythonInterp REQUIRED)
 endif (WIN32)
