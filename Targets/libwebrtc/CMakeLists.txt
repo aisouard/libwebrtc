@@ -49,8 +49,11 @@ set_target_properties(webrtc PROPERTIES
 # Install headers
 #
 install(DIRECTORY ${LIBWEBRTC_INCLUDE_DIR}
-        DESTINATION "include"
+        DESTINATION "include/libwebrtc"
         FILES_MATCHING PATTERN "*.h")
+
+install(FILES ${CMAKE_INSTALL_PREFIX}/libwebrtc.h
+        DESTINATION "include/libwebrtc")
 
 #
 # Install library
