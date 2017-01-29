@@ -61,6 +61,11 @@ Install the required development packages
                   libudev-dev
 ```
 
+### macOS
+
+- OS X 10.11 or later,
+- Xcode 7.3.1 or later
+
 ### Windows
 
 * Windows 7 x64 or later, x86 operating systems are unsupported.
