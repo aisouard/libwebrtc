@@ -112,6 +112,36 @@ $ make package
 The library will be located inside the `lib` folder of the current output
 directory. The `include` folder will contain the header files.
 
+## Using WebRTC in your project
+
+Copy the `CMakeModules/FindLibWebRTC.cmake` file inside your CMake modules
+directory. Let CMake find your libwebrtc headers and libraries with the
+`find_package(LibWebRTC)` the following CMake variables will be created:
+
+- **LIBWEBRTC_DEFINITIONS** - Preprocessor definitions, such as enabling C++11
+features, to be used with `add_definitions`
+- **LIBWEBRTC_INCLUDE_DIRS** - Include directories, use it with
+`include_directories`
+- **LIBWEBRTC_LIBRARIES** - List of required libraries to link your software,
+use it with `target_link_libraries`
+
+Here is what a CMakeLists.txt file should look like:
+
+```
+project(sample)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/CMakeModules)
+
+find_package(LibWebRTC REQUIRED)
+
+set(SOURCE_FILES main.cpp)
+
+include_directories(${LIBWEBRTC_INCLUDE_DIRS})
+add_definitions(${LIBWEBRTC_DEFINITIONS})
+add_executable(sample ${SOURCE_FILES})
+target_link_libraries(sample ${LIBWEBRTC_LIBRARIES})
+```
+
 ## Advanced Usage
 
 The library will be compiled and usable on the same host's platform and
