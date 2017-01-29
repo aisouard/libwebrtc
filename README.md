@@ -1,4 +1,4 @@
-# libwebrtc [![Build Status][travis-img]][travis-href] [![Build Status][appveyor-img]][appveyor-href]
+# libwebrtc [![License][license-img]][license-href] [![Build Status][travis-img]][travis-href] [![Build Status][appveyor-img]][appveyor-href]
 
 > CMake script for retrieving, building and linking Google's WebRTC into a single static library.
 
@@ -170,8 +170,10 @@ You can also reach me on [Twitter][twitter] for further discussion.
 
 ## License
 
-MIT © [Axel Isouard][author]
+Apache License 2.0 © [Axel Isouard][author]
 
+[license-img]:https://img.shields.io/badge/License-Apache%202.0-blue.svg
+[license-href]:https://opensource.org/licenses/Apache-2.0
 [appveyor-img]:https://ci.appveyor.com/api/projects/status/yd1s303md3tt4w9a?svg=true
 [appveyor-href]:https://ci.appveyor.com/project/aisouard/libwebrtc
 [travis-img]:https://travis-ci.org/aisouard/libwebrtc.svg?branch=master
