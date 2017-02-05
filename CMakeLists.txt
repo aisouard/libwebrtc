@@ -15,9 +15,9 @@ find_package(Git REQUIRED)
 find_package(DepotTools REQUIRED)
 
 if (WIN32)
-  set(PYTHON_EXECUTABLE ${CMAKE_SOURCE_DIR}/depot_tools/python.bat)
+  set(PYTHON_EXECUTABLE ${DEPOTTOOLS_PATH}/python.bat)
 else (WIN32)
-  find_package(PythonInterp REQUIRED)
+  find_package(PythonInterp 2.7 REQUIRED)
 endif (WIN32)
 
 #
