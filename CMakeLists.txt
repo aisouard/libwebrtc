@@ -9,13 +9,16 @@ if (CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_CONFIGURATION_TYPES Debug Release)
 endif (CMAKE_CONFIGURATION_TYPES)
 
+#
+# Required packages
 find_package(Git REQUIRED)
+find_package(DepotTools REQUIRED)
+
 if (WIN32)
   set(PYTHON_EXECUTABLE ${CMAKE_SOURCE_DIR}/depot_tools/python.bat)
 else (WIN32)
   find_package(PythonInterp REQUIRED)
 endif (WIN32)
-find_package(DepotTools REQUIRED)
 
 #
 # Set the project's version
