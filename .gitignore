@@ -4,3 +4,4 @@
 *.gclient
 /node_modules/
 *.gclient_entries
+/cmake-build-debug/
