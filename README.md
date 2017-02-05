@@ -48,7 +48,7 @@ supported platforms and architectures.
     <td></td>
     <td></td>
     <td align="center">✔</td>
-    <td></td>
+    <td align="center">✔</td>
     <td align="center">✔</td>
     <td></td>
     <td></td>
@@ -82,7 +82,7 @@ Install the required development packages
 
 ### Windows
 
-* Windows 7 x64 or later, x86 operating systems are unsupported.
+* Windows 7 x64 or later,
 * Visual Studio 2015 **with updates** - Download the [Installer][vs2015-installer]
 
   Make sure that you install the following components:
@@ -106,13 +106,8 @@ $ mkdir out
 $ cd out
 ```
 
-Windows users **must** append `Win64` if they are using a Visual Studio
-generator. The `libwebrtc.sln` project solution will be located inside the
-current directory output directory.
-
-```
-> cmake -G "Visual Studio 14 2015 Win64" ..
-```
+Windows users will have to open the `libwebrtc.sln` located inside the current
+directory output directory and build the `ALL_BUILD` project.
 
 Unix users will just have to run `$ cmake ..` to generate the Makefiles, then
 run the following commands.
