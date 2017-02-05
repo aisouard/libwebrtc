@@ -117,6 +117,10 @@ endif (LIBRARY_TYPE STREQUAL STATIC)
 
 if (MSVC OR XCODE)
   set(_GEN_ARGS ${_GEN_ARGS} is_debug=$<$<CONFIG:Debug>:true>$<$<CONFIG:Release>:false>)
+elseif (CMAKE_BUILD_TYPE MATCHES Debug)
+  set(_GEN_ARGS ${_GEN_ARGS} is_debug=true)
+else (MSVC OR XCODE)
+  set(_GEN_ARGS ${_GEN_ARGS} is_debug=false)
 endif (MSVC OR XCODE)
 
 if (WIN32)
