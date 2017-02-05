@@ -1,6 +1,9 @@
-cmake_minimum_required(VERSION 2.8)
-cmake_policy(SET CMP0057 NEW)
+cmake_minimum_required(VERSION 3.0)
 project(libwebrtc)
+
+#
+# Allow the use of IN_LIST operand
+cmake_policy(SET CMP0057 NEW)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
     ${CMAKE_SOURCE_DIR}/CMakeModules)
