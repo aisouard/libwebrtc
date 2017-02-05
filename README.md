@@ -1,5 +1,7 @@
 # libwebrtc [![License][license-img]][license-href] [![Build Status][travis-img]][travis-href] [![Build Status][appveyor-img]][appveyor-href]
 
+[![Join the chat at https://gitter.im/aisouard/libwebrtc](https://badges.gitter.im/aisouard/libwebrtc.svg)](https://gitter.im/aisouard/libwebrtc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 > CMake script for retrieving, building and linking Google's WebRTC into a single static library.
 
 ## Status
