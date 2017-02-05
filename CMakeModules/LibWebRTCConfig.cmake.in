@@ -1,0 +1,63 @@
+# - Config file for 'LibWebRTC' package
+# It defines the following variables
+#
+#  LIBWEBRTC_INCLUDE_DIRS    - include directories
+#  LIBWEBRTC_LIBRARY_DIRS    - library directories
+#  LIBWEBRTC_LIBRARIES       - libraries to link against
+#  LIBWEBRTC_CMAKE_DIR       - path to the CMake modules
+#  LIBWEBRTC_USE_FILE        - path to the CMake use file
+#
+# - Version variables:
+#  LIBWEBRTC_MAJOR_VERSION   - major version
+#  LIBWEBRTC_MINOR_VERSION   - minor version
+#  LIBWEBRTC_PATCH_VERSION   - patch version
+#  LIBWEBRTC_BUILD_VERSION   - version suffix, release candidate etc
+#  LIBWEBRTC_WEBRTC_REVISION - WebRTC's Git revision used for that release
+#  LIBWEBRTC_API_VERSION     - full version without build prefix
+#  LIBWEBRTC_VERSION         - full version with build prefix
+#
+# - Library type and targets variables:
+#  LIBWEBRTC_LIBRARY_TYPE    - STATIC or SHARED
+#  LIBWEBRTC_TARGET_OS       - android, chromeos, ios, linux, nacl, mac or win
+#  LIBWEBRTC_TARGET_CPU      - x86, x64, arm, arm64 or mipsel
+
+# LibWebRTC version number
+set(LIBWEBRTC_MAJOR_VERSION "@LIBWEBRTC_MAJOR_VERSION@")
+set(LIBWEBRTC_MINOR_VERSION "@LIBWEBRTC_MINOR_VERSION@")
+set(LIBWEBRTC_PATCH_VERSION "@LIBWEBRTC_PATCH_VERSION@")
+set(LIBWEBRTC_BUILD_VERSION "@LIBWEBRTC_BUILD_VERSION@")
+set(LIBWEBRTC_WEBRTC_REVISION "@LIBWEBRTC_WEBRTC_REVISION@")
+set(LIBWEBRTC_API_VERSION "@LIBWEBRTC_API_VERSION@")
+set(LIBWEBRTC_VERSION "@LIBWEBRTC_VERSION@")
+
+# LibWebRTC library type, target OS and target CPU
+set(LIBWEBRTC_LIBRARY_TYPE "@LIBRARY_TYPE@")
+set(LIBWEBRTC_TARGET_OS "@TARGET_OS@")
+set(LIBWEBRTC_TARGET_CPU "@TARGET_CPU@")
+
+# Include directory
+set(LIBWEBRTC_INCLUDE_DIRS "@INSTALL_INCLUDE_DIR@")
+
+# Libraries directory
+set(LIBWEBRTC_LIBRARY_DIRS "@INSTALL_LIB_DIR@")
+
+# Set the expected libraries variable
+set(LIBWEBRTC_LIBRARIES @LIBWEBRTC_LIBRARIES@)
+
+# The C and C++ flags added by LibWebRTC to the cmake-configured flags.
+set(LIBWEBRTC_REQUIRED_C_FLAGS "@LIBWEBRTC_REQUIRED_C_FLAGS@")
+set(LIBWEBRTC_REQUIRED_CXX_FLAGS "@LIBWEBRTC_REQUIRED_CXX_FLAGS@")
+set(LIBWEBRTC_REQUIRED_C_FLAGS_DEBUG "@LIBWEBRTC_REQUIRED_C_FLAGS_DEBUG@")
+set(LIBWEBRTC_REQUIRED_C_FLAGS_RELEASE "@LIBWEBRTC_REQUIRED_C_FLAGS_RELEASE@")
+set(LIBWEBRTC_REQUIRED_CXX_FLAGS_DEBUG "@LIBWEBRTC_REQUIRED_CXX_FLAGS_DEBUG@")
+set(LIBWEBRTC_REQUIRED_CXX_FLAGS_RELEASE "@LIBWEBRTC_REQUIRED_CXX_FLAGS_RELEASE@")
+set(LIBWEBRTC_REQUIRED_SHARED_LINKER_FLAGS "@LIBWEBRTC_REQUIRED_SHARED_LINKER_FLAGS@")
+set(LIBWEBRTC_REQUIRED_STATIC_LINKER_FLAGS "@LIBWEBRTC_REQUIRED_STATIC_LINKER_FLAGS@")
+set(LIBWEBRTC_DEFINITIONS "@LIBWEBRTC_DEFINITIONS@")
+
+# The location of the UseLibWebRTC.cmake file.
+set(LIBWEBRTC_CMAKE_DIR "@INSTALL_CMAKE_DIR@")
+set(LIBWEBRTC_USE_FILE "${LIBWEBRTC_CMAKE_DIR}/UseLibWebRTC.cmake")
+
+# Import LibWebRTC targets.
+include("${LIBWEBRTC_CMAKE_DIR}/LibWebRTCTargets.cmake")

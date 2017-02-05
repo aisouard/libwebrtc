@@ -1,0 +1,14 @@
+# The full LibWebRTC version number.
+set(PACKAGE_VERSION "@LIBWEBRTC_API_VERSION@")
+
+# This version is compatible only with matching major.minor versions.
+if ("@LIBWEBRTC_MAJOR_VERSION@.@LIBWEBRTC_MINOR_VERSION@" VERSION_EQUAL
+    "${PACKAGE_FIND_VERSION_MAJOR}.${PACKAGE_FIND_VERSION_MINOR}")
+  # This version is compatible with equal or lesser patch versions.
+  if (NOT "@LIBWEBRTC_PATCH_VERSION@" VERSION_LESS "${PACKAGE_FIND_VERSION_PATCH}")
+    set(PACKAGE_VERSION_COMPATIBLE 1)
+    if ("@LIBWEBRTC_PATCH_VERSION@" VERSION_EQUAL "${PACKAGE_FIND_VERSION_PATCH}")
+      set(PACKAGE_VERSION_EXACT 1)
+    endif ()
+  endif ()
+endif ()
