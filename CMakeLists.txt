@@ -44,21 +44,20 @@ option(BUILD_TESTS "Build test binaries" OFF)
 set(NINJA_ARGS "" CACHE STRING "Ninja arguments to pass before compiling WebRTC")
 
 #
-# Directories
-#
+# Offer the user the choice of overriding the installation directories
+set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
+set(INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
+set(INSTALL_INCLUDE_DIR include CACHE PATH "Installation directory for header files")
+set(INSTALL_CMAKE_DIR lib/cmake/LibWebRTC CACHE PATH "Installation directory for CMake files")
 
-if (NOT LIBWEBRTC_INSTALL_BIN_DIR)
-  set(LIBWEBRTC_INSTALL_BIN_DIR "bin")
-endif ()
-if (NOT LIBWEBRTC_INSTALL_LIB_DIR)
-  set(LIBWEBRTC_INSTALL_LIB_DIR "lib")
-endif ()
-if (NOT LIBWEBRTC_INSTALL_DATA_DIR)
-  set(LIBWEBRTC_INSTALL_DATA_DIR "share")
-endif ()
-if (NOT LIBWEBRTC_INSTALL_INCLUDE_DIR)
-  set(LIBWEBRTC_INSTALL_INCLUDE_DIR "include")
-endif ()
+#
+# Make relative paths absolute (needed later on)
+foreach(p LIB BIN INCLUDE CMAKE)
+  set(var INSTALL_${p}_DIR)
+  if(NOT IS_ABSOLUTE "${${var}}")
+    set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
+  endif()
+endforeach()
 
 #
 # Target OS
