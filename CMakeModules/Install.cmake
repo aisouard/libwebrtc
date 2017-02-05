@@ -32,6 +32,16 @@ install(FILES ${CMAKE_BINARY_DIR}/LibWebRTCConfigVersion.cmake
         COMPONENT cmake)
 
 #
+# Install pkg-config file
+if (UNIX)
+  configure_file(${CMAKE_MODULE_PATH}/LibWebRTC.pc.in
+                 ${CMAKE_BINARY_DIR}/LibWebRTC.pc @ONLY)
+  install(FILES ${CMAKE_BINARY_DIR}/LibWebRTC.pc
+          DESTINATION ${INSTALL_LIB_DIR}/pkg-config
+          COMPONENT cmake)
+endif (UNIX)
+
+#
 # Install CMake Use file
 install(FILES ${CMAKE_MODULE_PATH}/UseLibWebRTC.cmake
         DESTINATION ${INSTALL_CMAKE_DIR}
