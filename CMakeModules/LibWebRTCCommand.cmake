@@ -1,4 +1,5 @@
 include(CMakeParseArguments)
+include(Prefix)
 
 function(libwebrtc_command)
   set(ONE_VALUE_ARGS NAME COMMENT DEPENDS WORKING_DIRECTORY)
