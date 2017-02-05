@@ -44,12 +44,15 @@ install(DIRECTORY ${WEBRTC_SOURCE_DIR}
         DESTINATION "include"
         FILES_MATCHING PATTERN "*.h")
 
-install(FILES ${CMAKE_INSTALL_PREFIX}/libwebrtc.h
-        DESTINATION "include/libwebrtc")
-
 #
 # Install library
-#
 install(TARGETS webrtc
-        DESTINATION "lib"
-        COMPONENT Libraries)
+        EXPORT LibWebRTCTargets
+        ARCHIVE DESTINATION lib
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        INCLUDES DESTINATION include)
+
+install(EXPORT LibWebRTCTargets
+        FILE LibWebRTCTargets.cmake
+        DESTINATION ${INSTALL_CMAKE_DIR})
