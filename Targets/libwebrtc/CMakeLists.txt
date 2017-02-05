@@ -1,50 +1,47 @@
 cmake_minimum_required(VERSION 3.0)
 project(libwebrtc)
 
+set(_OBJ_EXT ${CMAKE_CXX_OUTPUT_EXTENSION})
 
-if (WIN32)
-  set(LIBWEBRTC_OBJ_EXT obj)
-elseif (UNIX AND NOT APPLE)
-  set(LIBWEBRTC_OBJ_EXT o)
-elseif (APPLE)
-  set(LIBWEBRTC_OBJ_EXT o)
-endif ()
+file(GLOB_RECURSE _OBJ_FILES
+     ${WEBRTC_OUTPUT_DIR}/obj/*${_OBJ_EXT})
 
-file(GLOB_RECURSE LIBWEBRTC_OBJ_FILES
-     ${LIBWEBRTC_OUTPUT_DIR}/obj/*.${LIBWEBRTC_OBJ_EXT})
+if (NOT _OBJ_EXT STREQUAL ".o")
+  file(GLOB_RECURSE _OBJ_FILES_ASM
+       ${WEBRTC_OUTPUT_DIR}/obj/*.o)
+  list(APPEND _OBJ_FILES ${_OBJ_FILES_ASM})
+endif (NOT _OBJ_EXT STREQUAL ".o")
 
-file(GLOB_RECURSE LIBWEBRTC_OBJ_EXCLUDED
-     ${LIBWEBRTC_OUTPUT_DIR}/obj/third_party/yasm/gen*/*.${LIBWEBRTC_OBJ_EXT}
-     ${LIBWEBRTC_OUTPUT_DIR}/obj/third_party/yasm/re2c/*.${LIBWEBRTC_OBJ_EXT}
-     ${LIBWEBRTC_OUTPUT_DIR}/obj/third_party/yasm/yasm/*.${LIBWEBRTC_OBJ_EXT}
-     ${LIBWEBRTC_OUTPUT_DIR}/obj/third_party/protobuf/protoc/*.${LIBWEBRTC_OBJ_EXT}
-     ${LIBWEBRTC_OUTPUT_DIR}/obj/third_party/protobuf/protobuf_full/*.${LIBWEBRTC_OBJ_EXT}
-     ${LIBWEBRTC_OUTPUT_DIR}/obj/webrtc/examples/*.${LIBWEBRTC_OBJ_EXT}
-     ${LIBWEBRTC_OUTPUT_DIR}/obj/webrtc/tools/*.${LIBWEBRTC_OBJ_EXT}
-     ${LIBWEBRTC_OUTPUT_DIR}/obj/webrtc/modules/video_capture/video_capture/video_capture_external.${LIBWEBRTC_OBJ_EXT}
-     ${LIBWEBRTC_OUTPUT_DIR}/obj/webrtc/modules/video_capture/video_capture/device_info_external.${LIBWEBRTC_OBJ_EXT})
+file(GLOB_RECURSE _OBJ_EXCLUDED
+     ${WEBRTC_OUTPUT_DIR}/obj/third_party/yasm/gen*/*${_OBJ_EXT}
+     ${WEBRTC_OUTPUT_DIR}/obj/third_party/yasm/re2c/*${_OBJ_EXT}
+     ${WEBRTC_OUTPUT_DIR}/obj/third_party/yasm/yasm/*${_OBJ_EXT}
+     ${WEBRTC_OUTPUT_DIR}/obj/third_party/protobuf/protoc/*${_OBJ_EXT}
+     ${WEBRTC_OUTPUT_DIR}/obj/third_party/protobuf/protobuf_full/*${_OBJ_EXT}
+     ${WEBRTC_OUTPUT_DIR}/obj/webrtc/examples/*${_OBJ_EXT}
+     ${WEBRTC_OUTPUT_DIR}/obj/webrtc/tools/*${_OBJ_EXT}
+     ${WEBRTC_OUTPUT_DIR}/obj/webrtc/modules/video_capture/video_capture/video_capture_external${_OBJ_EXT}
+     ${WEBRTC_OUTPUT_DIR}/obj/webrtc/modules/video_capture/video_capture/device_info_external${_OBJ_EXT})
 
-list(LENGTH LIBWEBRTC_OBJ_EXCLUDED LIBWEBRTC_OBJ_EXCLUDED_LEN)
-
-if (${LIBWEBRTC_OBJ_EXCLUDED_LEN} GREATER "0")
-  list(REMOVE_ITEM LIBWEBRTC_OBJ_FILES ${LIBWEBRTC_OBJ_EXCLUDED})
+list(LENGTH _OBJ_EXCLUDED _OBJ_EXCLUDED_LEN)
+if (${_OBJ_EXCLUDED_LEN} GREATER "0")
+  list(REMOVE_ITEM _OBJ_FILES ${_OBJ_EXCLUDED})
 endif ()
 
 add_library(webrtc ${LIBRARY_TYPE} ${_OBJ_FILES})
 
-set_source_files_properties(${LIBWEBRTC_OBJ_FILES} PROPERTIES
+set_source_files_properties(${_OBJ_FILES} PROPERTIES
                             EXTERNAL_OBJECT true
                             GENERATED true)
 
 set_target_properties(webrtc PROPERTIES
                       LINKER_LANGUAGE C
-                      LIBRARY_OUTPUT_DIRECTORY ${LIBWEBRTC_OUTPUT_DIR})
+                      LIBRARY_OUTPUT_DIRECTORY ${WEBRTC_OUTPUT_DIR})
 
 #
 # Install headers
-#
-install(DIRECTORY ${LIBWEBRTC_INCLUDE_DIR}
-        DESTINATION "include/libwebrtc"
+install(DIRECTORY ${WEBRTC_SOURCE_DIR}
+        DESTINATION "include"
         FILES_MATCHING PATTERN "*.h")
 
 install(FILES ${CMAKE_INSTALL_PREFIX}/libwebrtc.h
