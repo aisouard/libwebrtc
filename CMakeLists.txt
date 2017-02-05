@@ -37,11 +37,16 @@ set(LIBWEBRTC_VERSION
     ${LIBWEBRTC_API_VERSION}${LIBWEBRTC_BUILD_VERSION})
 
 #
-# Options
-#
-
+# Options, flags
 option(BUILD_TESTS "Build test binaries" OFF)
 set(NINJA_ARGS "" CACHE STRING "Ninja arguments to pass before compiling WebRTC")
+option(BUILD_SHARED_LIBS "Build WebRTC as a shared library." OFF)
+
+if(BUILD_SHARED_LIBS)
+  set(LIBRARY_TYPE SHARED)
+else()
+  set(LIBRARY_TYPE STATIC)
+endif()
 
 #
 # Offer the user the choice of overriding the installation directories

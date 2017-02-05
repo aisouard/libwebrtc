@@ -35,7 +35,7 @@ if (${LIBWEBRTC_OBJ_EXCLUDED_LEN} GREATER "0")
   list(REMOVE_ITEM LIBWEBRTC_OBJ_FILES ${LIBWEBRTC_OBJ_EXCLUDED})
 endif ()
 
-add_library(webrtc STATIC ${LIBWEBRTC_OBJ_FILES})
+add_library(webrtc ${LIBRARY_TYPE} ${_OBJ_FILES})
 
 set_source_files_properties(${LIBWEBRTC_OBJ_FILES} PROPERTIES
                             EXTERNAL_OBJECT true
