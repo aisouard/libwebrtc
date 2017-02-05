@@ -1,10 +1,23 @@
 # libwebrtc [![License][license-img]][license-href] [![Build Status][travis-img]][travis-href] [![Build Status][appveyor-img]][appveyor-href]
 
-> CMake script for retrieving, building and linking Google's WebRTC into a single static library.
+This repository contains a collection of CMake scripts to help you embed
+Google's native WebRTC implementation inside your project as simple as this:
+
+```
+cmake_minimum_required(VERSION 3.0)
+project(sample)
+
+find_package(LibWebRTC REQUIRED)
+include(${LIBWEBRTC_USE_FILE})
+
+set(SOURCE_FILES main.cpp)
+add_executable(sample ${SOURCE_FILES})
+target_link_libraries(sample ${LIBWEBRTC_LIBRARIES})
+```
 
 ## Status
 
-The following table displays the current state of this project, including 
+The following table displays the current state of this project, including
 supported platforms and architectures.
 
 <table>
@@ -48,7 +61,8 @@ supported platforms and architectures.
 ## Prerequisites
 
 - CMake 3.5 or later,
-- Python 2.7 (optional for Windows)
+- Python 2.7 (optional for Windows since it will use the interpreter located
+  inside the `depot_tools` installation)
 
 ### Debian & Ubuntu
 
@@ -77,7 +91,7 @@ Install the required development packages
   * Universal Windows Apps Development Tools > Tools
   * Universal Windows Apps Development Tools > Windows 10 SDK (**10.0.10586**)
 
-## Getting Started
+## Compiling
 
 Clone the repository, initialize the submodules if `depot_tools` is not
 installed on your system or not defined inside your `PATH` environment variable.
@@ -110,48 +124,32 @@ $ make package
 ```
 
 The library will be located inside the `lib` folder of the current output
-directory. The `include` folder will contain the header files.
+directory. The `include` folder will contain the header files. CMake scripts
+will be placed inside the `lib/cmake/LibWebRTC` directory.
 
 ## Using WebRTC in your project
 
-Copy the `CMakeModules/FindLibWebRTC.cmake` file inside your CMake modules
-directory. Let CMake find your libwebrtc headers and libraries with the
-`find_package(LibWebRTC)` the following CMake variables will be created:
+At the time of writing this README file, there's no proper way to detect any
+installation of the WebRTC library and header files. In the meantime, this CMake
+script generates and declares a `LibWebRTC` package that will be very easy to
+use for your projects.
 
-- **LIBWEBRTC_DEFINITIONS** - Preprocessor definitions, such as enabling C++11
-features, to be used with `add_definitions`
-- **LIBWEBRTC_INCLUDE_DIRS** - Include directories, use it with
-`include_directories`
-- **LIBWEBRTC_LIBRARIES** - List of required libraries to link your software,
-use it with `target_link_libraries`
-
-Here is what a CMakeLists.txt file should look like:
+All you have to do is include the package, then embed the "use file" that will
+automatically find the required libraries, define the proper compiling flags and
+include directories.
 
 ```
-project(sample)
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/CMakeModules)
-
 find_package(LibWebRTC REQUIRED)
+include(${LIBWEBRTC_USE_FILE})
 
-set(SOURCE_FILES main.cpp)
-
-include_directories(${LIBWEBRTC_INCLUDE_DIRS})
-add_definitions(${LIBWEBRTC_DEFINITIONS})
-add_executable(sample ${SOURCE_FILES})
-target_link_libraries(sample ${LIBWEBRTC_LIBRARIES})
+target_link_libraries(my-app ${LIBWEBRTC_LIBRARIES})
 ```
 
-## Advanced Usage
+## Configuration
 
 The library will be compiled and usable on the same host's platform and
 architecture. Here are some CMake flags which could be useful if you need to
 perform cross-compiling.
-
-- **BUILD_SAMPLES**
-
-    Build `PeerConnection` sample, source code located inside the
-    Samples/PeerConnection directory.
 
 - **BUILD_TESTS**
 
