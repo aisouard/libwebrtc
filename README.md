@@ -1,4 +1,4 @@
-# libwebrtc [![License][license-img]][license-href] [![Build Status][travis-img]][travis-href] [![Build Status][appveyor-img]][appveyor-href]
+# libwebrtc [![License][license-img]][license-href] [![Join the chat at https://gitter.im/aisouard/libwebrtc][gitter-img]][gitter-href] [![Build Status][travis-img]][travis-href] [![Build Status][appveyor-img]][appveyor-href]
 
 This repository contains a collection of CMake scripts to help you embed
 Google's native WebRTC implementation inside your project as simple as this:
@@ -206,6 +206,8 @@ Apache License 2.0 © [Axel Isouard][author]
 [appveyor-href]:https://ci.appveyor.com/project/aisouard/libwebrtc
 [travis-img]:https://travis-ci.org/aisouard/libwebrtc.svg?branch=master
 [travis-href]:https://travis-ci.org/aisouard/libwebrtc
+[gitter-img]:https://badges.gitter.im/aisouard/libwebrtc.svg
+[gitter-href]:https://gitter.im/aisouard/libwebrtc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 [osx1011sdk]: https://github.com/phracker/MacOSX-SDKs/releases/download/MacOSX10.11.sdk/MacOSX10.11.sdk.tar.xz
 [vs2015-installer]:https://www.microsoft.com/en-US/download/details.aspx?id=48146
 [twitter]:https://twitter.com/aisouard
