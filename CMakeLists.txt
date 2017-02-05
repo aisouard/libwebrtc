@@ -41,7 +41,6 @@ set(LIBWEBRTC_VERSION
 #
 
 option(BUILD_TESTS "Build test binaries" OFF)
-option(BUILD_SAMPLES "Build samples binaries" OFF)
 set(NINJA_ARGS "" CACHE STRING "Ninja arguments to pass before compiling WebRTC")
 
 #
