@@ -8,7 +8,7 @@ find_package(PythonInterp REQUIRED)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-list(APPEND LIBWEBRTC_LIBRARIES Threads::Threads)
+list(APPEND LIBWEBRTC_LIBRARIES webrtc Threads::Threads)
 
 if (UNIX AND NOT APPLE)
   find_package(X11 REQUIRED)
@@ -28,5 +28,5 @@ endif (APPLE)
 
 if (WIN32)
   list(APPEND LIBWEBRTC_LIBRARIES msdmo.lib wmcodecdspuuid.lib dmoguids.lib
-       ole32.lib secur32.lib)
+       ole32.lib secur32.lib winmm.lib ws2_32.lib)
 endif (WIN32)
