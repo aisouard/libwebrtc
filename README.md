@@ -4,7 +4,7 @@ This repository contains a collection of CMake scripts to help you embed
 Google's native WebRTC implementation inside your project as simple as this:
 
 ```
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.3)
 project(sample)
 
 find_package(LibWebRTC REQUIRED)
@@ -22,37 +22,30 @@ supported platforms and architectures.
 
 <table>
   <tr>
-    <th colspan="3">Linux</th>
-    <th colspan="2">macOS</th>
-    <th colspan="2">Windows</th>
-    <th colspan="1">iOS</th>
-    <th colspan="4">Android</th>
-  </tr>
-  <tr>
+    <td align="center"></td>
     <td align="center">x86</td>
     <td align="center">x64</td>
-    <td align="center">arm</td>
-    <td align="center">x86</td>
-    <td align="center">x64</td>
-    <td align="center">x86</td>
-    <td align="center">x64</td>
-    <td align="center">arm</td>
     <td align="center">arm</td>
     <td align="center">arm64</td>
-    <td align="center">x86</td>
-    <td align="center">x64</td>
   </tr>
   <tr>
+    <th align="center">Linux</th>
     <td align="center">✔</td>
     <td align="center">✔</td>
     <td></td>
     <td></td>
-    <td align="center">✔</td>
-    <td align="center">✔</td>
+  </tr>
+  <tr>
+    <th align="center">macOS</th>
+    <td></td>
     <td align="center">✔</td>
     <td></td>
     <td></td>
-    <td></td>
+  </tr>
+  <tr>
+    <th align="center">Windows</th>
+    <td align="center">✔</td>
+    <td align="center">✔</td>
     <td></td>
     <td></td>
   </tr>
@@ -60,7 +53,7 @@ supported platforms and architectures.
 
 ## Prerequisites
 
-- CMake 3.5 or later,
+- CMake 3.3 or later,
 - Python 2.7 (optional for Windows since it will use the interpreter located
   inside the `depot_tools` installation)
 
@@ -149,6 +142,11 @@ perform cross-compiling.
 - **BUILD_TESTS**
 
     Build WebRTC tests. (not supported yet)
+
+- **BUILD_SHARED_LIB**
+
+    Defaults to OFF, will define the `component_build` gn argument to `true` if
+    enabled. This option will build a shared library instead of a static one.
 
 - **NINJA_ARGS**
 
