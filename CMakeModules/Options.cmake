@@ -17,6 +17,10 @@ set(INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
 set(INSTALL_INCLUDE_DIR include CACHE PATH "Installation directory for header files")
 set(INSTALL_CMAKE_DIR lib/cmake/LibWebRTC CACHE PATH "Installation directory for CMake files")
 
+if (UNIX)
+  set(INSTALL_PKGCONFIG_DIR lib/pkgconfig CACHE PATH "Installation directory for pkg-config script")
+endif (UNIX)
+
 #
 # Make relative paths absolute (needed later on)
 foreach(p LIB BIN INCLUDE CMAKE)

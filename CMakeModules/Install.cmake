@@ -37,7 +37,7 @@ if (UNIX)
   configure_file(${CMAKE_MODULE_PATH}/LibWebRTC.pc.in
                  ${CMAKE_BINARY_DIR}/LibWebRTC.pc @ONLY)
   install(FILES ${CMAKE_BINARY_DIR}/LibWebRTC.pc
-          DESTINATION ${INSTALL_LIB_DIR}/pkg-config
+          DESTINATION ${INSTALL_PKGCONFIG_DIR}
           COMPONENT cmake)
 endif (UNIX)
 
