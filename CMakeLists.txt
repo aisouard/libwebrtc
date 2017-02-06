@@ -8,20 +8,7 @@ cmake_policy(SET CMP0057 NEW)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
     ${CMAKE_SOURCE_DIR}/CMakeModules)
 
-if (CMAKE_CONFIGURATION_TYPES)
-  set(CMAKE_CONFIGURATION_TYPES Debug Release)
-endif (CMAKE_CONFIGURATION_TYPES)
-
-#
-# Required packages
-find_package(Git REQUIRED)
-find_package(DepotTools REQUIRED)
-
-if (WIN32)
-  set(PYTHON_EXECUTABLE ${DEPOTTOOLS_PATH}/python.bat)
-else (WIN32)
-  find_package(PythonInterp 2.7 REQUIRED)
-endif (WIN32)
+include(FindLibraries)
 
 #
 # Set the project's version
