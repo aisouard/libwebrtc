@@ -105,16 +105,6 @@ endif (TARGET_OS STREQUAL "android")
 # Generate build files
 set(_GEN_ARGS use_gold=false target_cpu=\\"${TARGET_CPU}\\" target_os=\\"${TARGET_OS}\\")
 
-if (NOT BUILD_TESTS)
-  set(_GEN_ARGS ${_GEN_ARGS} rtc_include_tests=false)
-endif (NOT BUILD_TESTS)
-
-if (LIBRARY_TYPE STREQUAL STATIC)
-  set(_GEN_ARGS ${_GEN_ARGS} is_component_build=false)
-else (LIBRARY_TYPE STREQUAL STATIC)
-  set(_GEN_ARGS ${_GEN_ARGS} is_component_build=true)
-endif (LIBRARY_TYPE STREQUAL STATIC)
-
 if (MSVC OR XCODE)
   set(_GEN_ARGS ${_GEN_ARGS} is_debug=$<$<CONFIG:Debug>:true>$<$<CONFIG:Release>:false>)
 elseif (CMAKE_BUILD_TYPE MATCHES Debug)
@@ -122,6 +112,18 @@ elseif (CMAKE_BUILD_TYPE MATCHES Debug)
 else (MSVC OR XCODE)
   set(_GEN_ARGS ${_GEN_ARGS} is_debug=false)
 endif (MSVC OR XCODE)
+
+if (BUILD_TESTS)
+  set(_GEN_ARGS ${_GEN_ARGS} rtc_include_tests=true)
+elseif (BUILD_TESTS)
+  set(_GEN_ARGS ${_GEN_ARGS} rtc_include_tests=false)
+endif (BUILD_TESTS)
+
+if (LIBRARY_TYPE STREQUAL STATIC)
+  set(_GEN_ARGS ${_GEN_ARGS} is_component_build=false)
+else (LIBRARY_TYPE STREQUAL STATIC)
+  set(_GEN_ARGS ${_GEN_ARGS} is_component_build=true)
+endif (LIBRARY_TYPE STREQUAL STATIC)
 
 if (WIN32)
   set(_GEN_COMMAND gn gen out/Default --args="${_GEN_ARGS}")
