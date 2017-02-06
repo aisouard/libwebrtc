@@ -1,5 +1,0 @@
-Name: LibWebRTC
-Description: Google's native WebRTC implementation shipped into a single library
-Version: @LIBWEBRTC_VERSION@
-Libs: -L@INSTALL_LIB_DIR@ -std=gnu++0x -lSM -lICE -lX11 -lXext -ldl -pthread -lwebrtc
-Cflags: -I@INSTALL_INCLUDE_DIR@ -DWEBRTC_POSIX -std=gnu++0x -D_GLIBCXX_USE_CXX11_ABI=0

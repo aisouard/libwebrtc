@@ -17,7 +17,7 @@ install(DIRECTORY "${CMAKE_BINARY_DIR}/include/"
 
 #
 # Install CMake Config file
-configure_file(${CMAKE_MODULE_PATH}/LibWebRTCConfig.cmake.in
+configure_file(${CMAKE_MODULE_PATH}/Templates/LibWebRTCConfig.cmake.in
                ${CMAKE_BINARY_DIR}/LibWebRTCConfig.cmake @ONLY)
 install(FILES ${CMAKE_BINARY_DIR}/LibWebRTCConfig.cmake
         DESTINATION ${INSTALL_CMAKE_DIR}
@@ -25,7 +25,7 @@ install(FILES ${CMAKE_BINARY_DIR}/LibWebRTCConfig.cmake
 
 #
 # Install CMake ConfigVersion file
-configure_file(${CMAKE_MODULE_PATH}/LibWebRTCConfigVersion.cmake.in
+configure_file(${CMAKE_MODULE_PATH}/Templates/LibWebRTCConfigVersion.cmake.in
                ${CMAKE_BINARY_DIR}/LibWebRTCConfigVersion.cmake @ONLY)
 install(FILES ${CMAKE_BINARY_DIR}/LibWebRTCConfigVersion.cmake
         DESTINATION ${INSTALL_CMAKE_DIR}
@@ -34,7 +34,7 @@ install(FILES ${CMAKE_BINARY_DIR}/LibWebRTCConfigVersion.cmake
 #
 # Install pkg-config file
 if (UNIX)
-  configure_file(${CMAKE_MODULE_PATH}/LibWebRTC.pc.in
+  configure_file(${CMAKE_MODULE_PATH}/Templates/LibWebRTC.pc.in
                  ${CMAKE_BINARY_DIR}/LibWebRTC.pc @ONLY)
   install(FILES ${CMAKE_BINARY_DIR}/LibWebRTC.pc
           DESTINATION ${INSTALL_PKGCONFIG_DIR}
@@ -43,7 +43,7 @@ endif (UNIX)
 
 #
 # Install CMake Use file
-install(FILES ${CMAKE_MODULE_PATH}/UseLibWebRTC.cmake
+install(FILES ${CMAKE_MODULE_PATH}/Templates/UseLibWebRTC.cmake
         DESTINATION ${INSTALL_CMAKE_DIR}
         COMPONENT cmake)
 
@@ -57,7 +57,7 @@ install(DIRECTORY "${CMAKE_BINARY_DIR}/lib/cmake/LibWebRTC/"
 #
 # Add uninstall target
 configure_file(
-    "${CMAKE_MODULE_PATH}/Uninstall.cmake.in"
+    "${CMAKE_MODULE_PATH}/Templates/Uninstall.cmake.in"
     "${CMAKE_BINARY_DIR}/Uninstall.cmake"
     IMMEDIATE @ONLY)
 
