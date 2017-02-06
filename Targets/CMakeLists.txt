@@ -115,7 +115,7 @@ endif (MSVC OR XCODE)
 
 if (BUILD_TESTS)
   set(_GEN_ARGS ${_GEN_ARGS} rtc_include_tests=true)
-elseif (BUILD_TESTS)
+else (BUILD_TESTS)
   set(_GEN_ARGS ${_GEN_ARGS} rtc_include_tests=false)
 endif (BUILD_TESTS)
 
