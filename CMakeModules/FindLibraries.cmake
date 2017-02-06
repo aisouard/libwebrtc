@@ -5,9 +5,6 @@ find_package(Git REQUIRED)
 find_package(DepotTools REQUIRED)
 find_package(PythonInterp REQUIRED)
 
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-find_package(Threads REQUIRED)
-
 list(APPEND LIBWEBRTC_LIBRARIES webrtc Threads::Threads)
 
 if (UNIX AND NOT APPLE)

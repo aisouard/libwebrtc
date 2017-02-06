@@ -9,6 +9,10 @@ if (LIBWEBRTC_USE_FILE_INCLUDED)
 endif ()
 set(LIBWEBRTC_USE_FILE_INCLUDED 1)
 
+# Enable threading
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
 # Update CMAKE_MODULE_PATH so includes work.
 list(APPEND CMAKE_MODULE_PATH ${LIBWEBRTC_CMAKE_DIR})
 
