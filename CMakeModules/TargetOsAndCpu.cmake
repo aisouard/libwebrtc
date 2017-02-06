@@ -1,5 +1,26 @@
 include(CheckSymbolExists)
 
+#
+# Target OS
+set(TARGET_OS "" CACHE STRING "Target OS, used as --target_os argument")
+set(TARGET_OS_LIST android chromeos ios linux nacl mac win)
+
+if (TARGET_OS STREQUAL "")
+  if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+    set(TARGET_OS "linux")
+  elseif (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    set(TARGET_OS "mac")
+  elseif (CMAKE_SYSTEM_NAME MATCHES "Windows")
+    set(TARGET_OS "win")
+  endif ()
+endif (TARGET_OS STREQUAL "")
+
+if (NOT ${TARGET_OS} IN_LIST TARGET_OS_LIST)
+  message(FATAL_ERROR "Unknown value '${TARGET_OS}' for variable TARGET_OS, options are: ${TARGET_OS_LIST}")
+endif (NOT ${TARGET_OS} IN_LIST TARGET_OS_LIST)
+
+#
+# Target CPU
 function(detect_current_arch)
   if (WIN32)
     check_symbol_exists("_M_X64" "" ARCH_X64)
@@ -18,8 +39,6 @@ function(detect_current_arch)
   endif (WIN32)
 endfunction(detect_current_arch)
 
-#
-# Target CPU
 set(TARGET_CPU "" CACHE STRING "Target CPU, used as --target_cpu argument")
 set(TARGET_CPU_LIST x86 x64 arm arm64 mipsel)
 
