@@ -15,6 +15,12 @@ add_executable(sample ${SOURCE_FILES})
 target_link_libraries(sample ${LIBWEBRTC_LIBRARIES})
 ```
 
+It also produces a `pkg-config` file if you prefer the classic way:
+
+```
+$ g++ `pkg-config --cflags LibWebRTC` main.cpp -o main `pkg-config --libs LibWebRTC`
+```
+
 ## Status
 
 The following table displays the current state of this project, including
@@ -131,6 +137,13 @@ find_package(LibWebRTC REQUIRED)
 include(${LIBWEBRTC_USE_FILE})
 
 target_link_libraries(my-app ${LIBWEBRTC_LIBRARIES})
+```
+
+A pkg-config file is also provided, you can obtain the required compiler and
+linker flags by specifying `LibWebRTC` as the package name.
+
+```
+$ pkg-config --cflags --libs LibWebRTC
 ```
 
 ## Configuration

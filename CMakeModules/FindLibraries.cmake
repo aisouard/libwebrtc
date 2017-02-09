@@ -5,7 +5,7 @@ find_package(Git REQUIRED)
 find_package(DepotTools REQUIRED)
 find_package(PythonInterp REQUIRED)
 
-list(APPEND LIBWEBRTC_LIBRARIES webrtc Threads::Threads)
+list(APPEND LIBWEBRTC_LIBRARIES webrtc)
 
 if (UNIX AND NOT APPLE)
   find_package(X11 REQUIRED)

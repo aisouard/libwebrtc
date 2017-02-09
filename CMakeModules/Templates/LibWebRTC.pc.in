@@ -8,4 +8,4 @@ Description: Google's native WebRTC implementation shipped into a single library
 Version: @LIBWEBRTC_VERSION@
 Libs: @LIBWEBRTC_PC_LIBS@
 Libs.private: @LIBWEBRTC_PC_LIBS_PRIVATE@
-Cflags: -I${includedir}
+Cflags: -I${includedir} @LIBWEBRTC_PC_DEFINITIONS@ @LIBWEBRTC_PC_CXXFLAGS@
