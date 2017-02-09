@@ -94,7 +94,7 @@ Install the required development packages
 
 Clone the repository, initialize the submodules if `depot_tools` is not
 installed on your system or not defined inside your `PATH` environment variable.
-Create an output directory and browse inside it.
+Create an output directory, browse inside it, then run CMake.
 
 ```
 $ git clone https://github.com/aisouard/libwebrtc.git
@@ -103,17 +103,16 @@ $ git submodule init
 $ git submodule update
 $ mkdir out
 $ cd out
+$ cmake ..
 ```
 
 Windows users will have to open the `libwebrtc.sln` located inside the current
 directory output directory and build the `ALL_BUILD` project.
 
-Unix users will just have to run `$ cmake ..` to generate the Makefiles, then
-run the following commands.
+Unix users will just have to run the following `make` commands.
 
 ```
 $ make
-$ make package
 # make install
 ```
 
