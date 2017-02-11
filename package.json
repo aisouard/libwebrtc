@@ -8,7 +8,7 @@
     "url": "https://github.com/aisouard/libwebrtc/releases/download"
   },
   "scripts": {
-    "install": "jake",
+    "install": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,7 +20,6 @@
   "dependencies": {
     "download": "^5.0.2",
     "fs-extra": "^0.30.0",
-    "jake": "^8.0.14",
     "npm": "^3.10.8"
   }
 }
