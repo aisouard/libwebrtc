@@ -19,6 +19,10 @@ set(INSTALL_CMAKE_DIR lib/cmake/LibWebRTC CACHE PATH "Installation directory for
 
 if (UNIX)
   set(INSTALL_PKGCONFIG_DIR lib/pkgconfig CACHE PATH "Installation directory for pkg-config script")
+  if (NOT APPLE)
+    option(BUILD_DEB_PACKAGE "Build Debian .deb package" OFF)
+    option(BUILD_RPM_PACKAGE "Build Red Hat .rpm package" OFF)
+  endif (NOT APPLE)
 endif (UNIX)
 
 #

@@ -151,6 +151,14 @@ The library will be compiled and usable on the same host's platform and
 architecture. Here are some CMake flags which could be useful if you need to
 perform cross-compiling.
 
+- **BUILD_DEB_PACKAGE**
+
+    Generate Debian package, defaults to OFF, available under Linux only.
+
+- **BUILD_RPM_PACKAGE**
+
+    Generate Red Hat package, defaults to OFF, available under Linux only.
+
 - **BUILD_TESTS**
 
     Build WebRTC tests. (not supported yet)
