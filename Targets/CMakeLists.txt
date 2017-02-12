@@ -170,3 +170,4 @@ ExternalProject_Add(
 )
 
 include(Install)
+include(Package)
