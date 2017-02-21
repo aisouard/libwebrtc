@@ -2,9 +2,10 @@ include(ExternalProject)
 include(LibWebRTCCommand)
 include(GClientConfig)
 
-set(_DOWNLOAD_COMMAND ${GCLIENT_EXECUTABLE} sync --revision
-    ${LIBWEBRTC_WEBRTC_REVISION} -D -n)
-set(_BUILD_COMMAND ${PYTHON_EXECUTABLE} src/tools/clang/scripts/update.py)
+set(_DOWNLOAD_COMMAND ${GCLIENT_EXECUTABLE} sync --with_branch_heads --nohooks)
+if (WEBRTC_REVISION)
+  set(_DOWNLOAD_COMMAND --revision ${WEBRTC_REVISION})
+endif (WEBRTC_REVISION)
 
 ExternalProject_Add(
     webrtc-src
@@ -14,11 +15,39 @@ ExternalProject_Add(
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
 
     DOWNLOAD_COMMAND ${PREFIX_EXECUTE} ${_DOWNLOAD_COMMAND}
-    BUILD_COMMAND ${PREFIX_EXECUTE} ${_BUILD_COMMAND}
+    BUILD_COMMAND ""
     INSTALL_COMMAND ""
 )
 
-set(_NEXT_DEPENDS webrtc-src)
+if (NOT WEBRTC_REVISION)
+  libwebrtc_command(
+      NAME webrtc-fetch-refs
+      COMMAND ${GIT_EXECUTABLE} fetch origin ${LIBWEBRTC_WEBRTC_HEAD}
+      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/src"
+      COMMENT "Fetching branch heads"
+      DEPENDS webrtc-src
+  )
+
+  libwebrtc_command(
+      NAME webrtc-checkout-fetch-head
+      COMMAND ${GIT_EXECUTABLE} checkout FETCH_HEAD
+      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/src"
+      COMMENT "Checking out fetch head"
+      DEPENDS webrtc-fetch-refs
+  )
+
+  set(_NEXT_DEPENDS webrtc-checkout-fetch-head)
+endif (NOT WEBRTC_REVISION)
+
+libwebrtc_command(
+    NAME webrtc-update-clang
+    COMMAND ${PYTHON_EXECUTABLE} src/tools/clang/scripts/update.py
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+    COMMENT "Updating clang"
+    DEPENDS ${_NEXT_DEPENDS}
+)
+
+set(_NEXT_DEPENDS webrtc-update-clang)
 if (UNIX AND NOT APPLE)
   libwebrtc_command(
       NAME webrtc-install-sysroot
