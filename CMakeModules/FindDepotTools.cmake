@@ -1,4 +1,4 @@
-find_program(DEPOTTOOLS_GCLIENT_EXECUTABLE
+find_program(GCLIENT_EXECUTABLE
              NAMES gclient gclient.bat
              PATHS ${CMAKE_CURRENT_SOURCE_DIR}/depot_tools)
 
@@ -12,5 +12,5 @@ find_path(DEPOTTOOLS_PATH
 
 include(${CMAKE_ROOT}/Modules/FindPackageHandleStandardArgs.cmake)
 find_package_handle_standard_args(DepotTools
-                                  REQUIRED_VARS DEPOTTOOLS_GCLIENT_EXECUTABLE
+                                  REQUIRED_VARS GCLIENT_EXECUTABLE
                                   FAIL_MESSAGE "Could not find the gclient executable.")

@@ -2,7 +2,7 @@ include(ExternalProject)
 include(LibWebRTCCommand)
 include(GClientConfig)
 
-set(_DOWNLOAD_COMMAND ${DEPOTTOOLS_GCLIENT_EXECUTABLE} sync --revision
+set(_DOWNLOAD_COMMAND ${GCLIENT_EXECUTABLE} sync --revision
     ${LIBWEBRTC_WEBRTC_REVISION} -D -n)
 set(_BUILD_COMMAND ${PYTHON_EXECUTABLE} src/tools/clang/scripts/update.py)
 
