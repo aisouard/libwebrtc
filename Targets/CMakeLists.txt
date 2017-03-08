@@ -4,7 +4,7 @@ include(GClientConfig)
 
 set(_DOWNLOAD_COMMAND ${GCLIENT_EXECUTABLE} sync --with_branch_heads --nohooks)
 if (WEBRTC_REVISION)
-  set(_DOWNLOAD_COMMAND --revision ${WEBRTC_REVISION})
+  set(_DOWNLOAD_COMMAND ${_DOWNLOAD_COMMAND} --revision ${WEBRTC_REVISION})
 endif (WEBRTC_REVISION)
 
 ExternalProject_Add(
@@ -19,6 +19,7 @@ ExternalProject_Add(
     INSTALL_COMMAND ""
 )
 
+set(_NEXT_DEPENDS webrtc-src)
 if (NOT WEBRTC_REVISION)
   libwebrtc_command(
       NAME webrtc-fetch-refs
