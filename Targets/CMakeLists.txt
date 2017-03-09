@@ -155,6 +155,8 @@ else (LIBRARY_TYPE STREQUAL STATIC)
   set(_GEN_ARGS ${_GEN_ARGS} is_component_build=true)
 endif (LIBRARY_TYPE STREQUAL STATIC)
 
+set(_GEN_ARGS ${_GEN_ARGS} ${GN_EXTRA_ARGS})
+
 if (WIN32)
   set(_GEN_COMMAND gn gen out/Default --args="${_GEN_ARGS}")
 elseif (UNIX)
