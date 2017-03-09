@@ -2,8 +2,9 @@
 # Options, flags
 option(BUILD_TESTS "Build test binaries" OFF)
 set(NINJA_ARGS "" CACHE STRING "Ninja arguments to pass before compiling WebRTC")
-option(BUILD_SHARED_LIB "Build WebRTC as a shared library." OFF)
+option(BUILD_SHARED_LIB "Build WebRTC as a shared library" OFF)
 set(WEBRTC_REVISION "" CACHE STRING "WebRTC commit hash to checkout")
+set(WEBRTC_BRANCH_HEAD "${LIBWEBRTC_WEBRTC_HEAD}" CACHE STRING "WebRTC branch head to checkout")
 
 if(BUILD_SHARED_LIB)
   set(LIBRARY_TYPE SHARED)

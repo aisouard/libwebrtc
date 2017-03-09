@@ -23,7 +23,7 @@ set(_NEXT_DEPENDS webrtc-src)
 if (NOT WEBRTC_REVISION)
   libwebrtc_command(
       NAME webrtc-fetch-refs
-      COMMAND ${GIT_EXECUTABLE} fetch origin ${LIBWEBRTC_WEBRTC_HEAD}
+      COMMAND ${GIT_EXECUTABLE} fetch origin ${WEBRTC_BRANCH_HEAD}
       WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/src"
       COMMENT "Fetching branch heads"
       DEPENDS webrtc-src
