@@ -90,6 +90,10 @@ Install the required development packages
   * Universal Windows Apps Development Tools > Tools
   * Universal Windows Apps Development Tools > Windows 10 SDK (**10.0.10586**)
 
+* [Windows 10 SDK][w10sdk] with **Debugging Tools for Windows** or
+  [Windows Driver Kit 10][wdk10] installed in the same Windows 10 SDK
+  installation directory.
+
 ## Compiling
 
 Clone the repository, initialize the submodules if `depot_tools` is not
@@ -223,5 +227,7 @@ Apache License 2.0 © [Axel Isouard][author]
 [gitter-href]:https://gitter.im/aisouard/libwebrtc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 [osx1011sdk]: https://github.com/phracker/MacOSX-SDKs/releases/download/MacOSX10.11.sdk/MacOSX10.11.sdk.tar.xz
 [vs2015-installer]:https://www.microsoft.com/en-US/download/details.aspx?id=48146
+[w10sdk]:https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk
+[wdk10]:https://go.microsoft.com/fwlink/p/?LinkId=526733
 [twitter]:https://twitter.com/aisouard
 [author]:https://axel.isouard.fr
