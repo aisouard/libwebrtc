@@ -9,13 +9,14 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
     ${CMAKE_SOURCE_DIR}/CMakeModules)
 
 find_package(Git REQUIRED)
-find_package(DepotTools REQUIRED)
 
-if (WIN32)
-  set(PYTHON_EXECUTABLE ${DEPOTTOOLS_PATH}/python.bat)
-else (WIN32)
-  find_package(PythonInterp REQUIRED)
-endif (WIN32)
+if (DEPOT_TOOLS_PATH)
+  find_package(DepotTools REQUIRED)
+endif (DEPOT_TOOLS_PATH)
+
+if (NOT WIN32)
+  find_package(PythonInterp 2.7 REQUIRED)
+endif (NOT WIN32)
 
 include(FindLibraries)
 include(Version)
