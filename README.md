@@ -65,7 +65,7 @@ supported platforms and architectures.
 
 ### Debian & Ubuntu
 
-Install the required development packages
+Install the required development packages:
 
 ```
 # apt-get install build-essential libglib2.0-dev libgtk2.0-dev libxtst-dev \
@@ -96,15 +96,12 @@ Install the required development packages
 
 ## Compiling
 
-Clone the repository, initialize the submodules if `depot_tools` is not
-installed on your system or not defined inside your `PATH` environment variable.
-Create an output directory, browse inside it, then run CMake.
+Clone the repository, create an output directory, browse inside it,
+then run CMake.
 
 ```
 $ git clone https://github.com/aisouard/libwebrtc.git
 $ cd libwebrtc
-$ git submodule init
-$ git submodule update
 $ mkdir out
 $ cd out
 $ cmake ..
@@ -171,6 +168,11 @@ perform cross-compiling.
 
     Defaults to OFF, will define the `component_build` gn argument to `true` if
     enabled. This option will build a shared library instead of a static one.
+
+- **DEPOT_TOOLS_PATH**
+
+    Set this variable to your own `depot_tools` directory. This will prevent
+    CMake from fetching the one matching with the desired WebRTC revision.
 
 - **NINJA_ARGS**
 
