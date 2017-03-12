@@ -87,8 +87,8 @@ Install the required development packages
   Make sure that you install the following components:
   
   * Visual C++, which will select three sub-categories including MFC
-  * Universal Windows Apps Development Tools > Tools
-  * Universal Windows Apps Development Tools > Windows 10 SDK (**10.0.10586**)
+  * Universal Windows Apps Development Tools
+    * Tools (1.4.1) and Windows 10 SDK (**10.0.14393**)
 
 * [Windows 10 SDK][w10sdk] with **Debugging Tools for Windows** or
   [Windows Driver Kit 10][wdk10] installed in the same Windows 10 SDK
