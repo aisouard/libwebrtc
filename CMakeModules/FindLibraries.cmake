@@ -1,15 +1,5 @@
 #
 # Find required packages
-
-find_package(Git REQUIRED)
-find_package(DepotTools REQUIRED)
-
-if (WIN32)
-  set(PYTHON_EXECUTABLE ${DEPOTTOOLS_PATH}/python.bat)
-else (WIN32)
-  find_package(PythonInterp REQUIRED)
-endif (WIN32)
-
 list(APPEND LIBWEBRTC_LIBRARIES webrtc)
 
 if (UNIX AND NOT APPLE)
