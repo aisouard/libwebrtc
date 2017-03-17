@@ -1,7 +1,11 @@
 #
 # Generate environment variables
 #
-set(WEBRTC_PATH ${CMAKE_SOURCE_DIR}/depot_tools)
+if (DEPOT_TOOLS_PATH)
+  set(WEBRTC_PATH ${DEPOT_TOOLS_PATH})
+else (DEPOT_TOOLS_PATH)
+  set(WEBRTC_PATH ${CMAKE_BINARY_DIR}/depot_tools)
+endif (DEPOT_TOOLS_PATH)
 
 if (WIN32)
   get_filename_component(DEPOT_TOOLS_PYTHON_PATH

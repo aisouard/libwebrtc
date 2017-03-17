@@ -1,6 +1,7 @@
 #
 # Options, flags
 option(BUILD_TESTS "Build test binaries" OFF)
+set(DEPOT_TOOLS_PATH "" CACHE STRING "Path to your own depot_tools directory")
 set(NINJA_ARGS "" CACHE STRING "Ninja arguments to pass before compiling WebRTC")
 set(GN_EXTRA_ARGS "" CACHE STRING "Extra gn gen arguments to pass before generating build files")
 option(BUILD_SHARED_LIB "Build WebRTC as a shared library" OFF)
