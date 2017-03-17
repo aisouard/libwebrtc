@@ -1,3 +1,8 @@
+if(TARGET_OS_AND_CPU_INCLUDED)
+  return()
+endif(TARGET_OS_AND_CPU_INCLUDED)
+set(TARGET_OS_AND_CPU_INCLUDED true)
+
 include(CheckSymbolExists)
 
 #

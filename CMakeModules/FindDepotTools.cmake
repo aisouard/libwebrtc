@@ -1,3 +1,8 @@
+if(FIND_DEPOT_TOOLS_INCLUDED)
+  return()
+endif(FIND_DEPOT_TOOLS_INCLUDED)
+set(FIND_DEPOT_TOOLS_INCLUDED true)
+
 find_program(GCLIENT_EXECUTABLE
              NAMES gclient gclient.bat
              DOC "Path to gclient executable"

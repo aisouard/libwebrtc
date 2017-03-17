@@ -1,3 +1,8 @@
+if(GCLIENT_CONFIG_INCLUDED)
+  return()
+endif(GCLIENT_CONFIG_INCLUDED)
+set(GCLIENT_CONFIG_INCLUDED true)
+
 #
 # Retrieve WebRTC source code
 #

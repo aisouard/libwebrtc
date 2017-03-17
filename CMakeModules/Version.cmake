@@ -1,3 +1,8 @@
+if(VERSION_INCLUDED)
+  return()
+endif(VERSION_INCLUDED)
+set(VERSION_INCLUDED true)
+
 #
 # Set the project's version
 

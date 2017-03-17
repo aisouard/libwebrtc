@@ -1,3 +1,8 @@
+if(PREFIX_INCLUDED)
+  return()
+endif(PREFIX_INCLUDED)
+set(PREFIX_INCLUDED true)
+
 #
 # Generate environment variables
 #

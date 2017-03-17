@@ -1,3 +1,8 @@
+if(LIBWEBRTC_COMMAND_INCLUDED)
+  return()
+endif(LIBWEBRTC_COMMAND_INCLUDED)
+set(LIBWEBRTC_COMMAND_INCLUDED true)
+
 include(CMakeParseArguments)
 include(Prefix)
 

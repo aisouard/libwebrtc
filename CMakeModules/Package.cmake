@@ -1,3 +1,8 @@
+if(PACKAGE_INCLUDED)
+  return()
+endif(PACKAGE_INCLUDED)
+set(PACKAGE_INCLUDED true)
+
 #
 # Create package
 set(CPACK_PACKAGE_FILE_NAME "libwebrtc-${LIBWEBRTC_VERSION}-${TARGET_OS}-${TARGET_CPU}")
