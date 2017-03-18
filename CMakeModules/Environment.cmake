@@ -1,0 +1,48 @@
+set(_WEBRTC_PATH ${DEPOT_TOOLS_PATH})
+set(_DEPOT_TOOLS_ENV PATH=${_WEBRTC_PATH})
+
+if (WIN32)
+  get_filename_component(DEPOT_TOOLS_PYTHON_PATH
+                         "${_WEBRTC_PATH}/python276_bin"
+                         REALPATH)
+  list(APPEND _WEBRTC_PATH ${DEPOT_TOOLS_PYTHON_PATH})
+endif (WIN32)
+
+list(APPEND _WEBRTC_PATH $ENV{PATH})
+
+if (WIN32)
+  string(REGEX REPLACE "/" "\\\\" _WEBRTC_PATH "${_WEBRTC_PATH}")
+  string(REGEX REPLACE ";" "\\\;" _WEBRTC_PATH "${_WEBRTC_PATH}")
+else (WIN32)
+  string(REGEX REPLACE ";" ":" _WEBRTC_PATH "${_WEBRTC_PATH}")
+endif (WIN32)
+
+get_filename_component(_CHROMIUM_PYTHONPATH
+                       "${CMAKE_SOURCE_DIR}/build"
+                       REALPATH)
+
+if (WIN32)
+  set(PREFIX_FILENAME ${CMAKE_BINARY_DIR}/prefix.bat)
+  set(PREFIX_COMMAND set)
+  set(PREFIX_HEADER "@ECHO OFF")
+  set(PREFIX_EVAL "%*")
+  set(PREFIX_EXECUTE cmd /c ${PREFIX_FILENAME})
+  set(PREFIX_NEWLINE \r\n)
+else (WIN32)
+  set(PREFIX_FILENAME ${CMAKE_BINARY_DIR}/prefix.sh)
+  set(PREFIX_COMMAND export)
+  set(PREFIX_HEADER "")
+  set(PREFIX_EVAL eval\ $@)
+  set(PREFIX_EXECUTE /bin/sh ${PREFIX_FILENAME})
+  set(PREFIX_NEWLINE \n)
+endif (WIN32)
+
+file(WRITE ${PREFIX_FILENAME} "${PREFIX_HEADER}
+${PREFIX_COMMAND} PATH=${_WEBRTC_PATH}
+${PREFIX_COMMAND} PYTHONPATH=${_CHROMIUM_PYTHONPATH}
+${PREFIX_COMMAND} DEPOT_TOOLS_WIN_TOOLCHAIN=0
+${PREFIX_COMMAND} DEPOT_TOOLS_UPDATE=0
+${PREFIX_COMMAND} CHROME_HEADLESS=1
+${PREFIX_EVAL}
+")
+

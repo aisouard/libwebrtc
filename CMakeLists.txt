@@ -23,5 +23,82 @@ if (NOT WIN32)
   find_package(PythonInterp 2.7 REQUIRED)
 endif (NOT WIN32)
 
-add_subdirectory(Targets)
+include(ExternalProject)
+
+if (NOT HAS_OWN_DEPOT_TOOLS)
+  if (WIN32)
+    set(GCLIENT_EXECUTABLE ${CMAKE_BINARY_DIR}/depot_tools/src/depot-tools/gclient.bat)
+  else (WIN32)
+    set(GCLIENT_EXECUTABLE ${CMAKE_BINARY_DIR}/depot_tools/src/depot-tools/gclient)
+  endif (WIN32)
+
+  ExternalProject_Add(
+      depot-tools
+
+      GIT_REPOSITORY https://chromium.googlesource.com/chromium/tools/depot_tools
+
+      PREFIX ${CMAKE_BINARY_DIR}/depot_tools
+
+      CONFIGURE_COMMAND ""
+      UPDATE_COMMAND ""
+      PATCH_COMMAND ""
+      BUILD_COMMAND ""
+      INSTALL_COMMAND ""
+  )
+
+  set(_NEXT_DEPENDS depot-tools)
+  set(DEPOT_TOOLS_PATH ${CMAKE_BINARY_DIR}/depot_tools/src/depot-tools)
+endif (NOT HAS_OWN_DEPOT_TOOLS)
+
+ExternalProject_Add(
+    webrtc-src
+
+    DEPENDS ${_NEXT_DEPENDS}
+    GIT_REPOSITORY https://chromium.googlesource.com/external/webrtc
+
+    PREFIX ${CMAKE_BINARY_DIR}/webrtc
+    BINARY_DIR ${CMAKE_BINARY_DIR}/webrtc/build
+    DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/webrtc/src
+    SOURCE_DIR ${CMAKE_BINARY_DIR}/webrtc/src
+    STAMP_DIR ${CMAKE_BINARY_DIR}/webrtc/stamp
+    TMP_DIR ${CMAKE_BINARY_DIR}/webrtc/tmp
+
+    PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/webrtc/CMakeLists.txt.in ${CMAKE_BINARY_DIR}/webrtc/src/CMakeLists.txt
+    UPDATE_COMMAND ""
+    INSTALL_COMMAND ""
+
+    CMAKE_ARGS
+    -DDEPOT_TOOLS_PATH:PATH=${DEPOT_TOOLS_PATH}
+    -DGCLIENT_EXECUTABLE:PATH=${GCLIENT_EXECUTABLE}
+    -DHAS_OWN_DEPOT_TOOLS:PATH=${HAS_OWN_DEPOT_TOOLS}
+    -DCMAKE_MODULE_PATH:PATH=${CMAKE_MODULE_PATH}
+    -DTARGET_CPU=${TARGET_CPU}
+    -DTARGET_OS=${TARGET_OS}
+    -DWEBRTC_BRANCH_HEAD=${WEBRTC_BRANCH_HEAD}
+    -DWEBRTC_PARENT_DIR:PATH=${CMAKE_BINARY_DIR}/webrtc
+    -DWEBRTC_REVISION=${WEBRTC_REVISION}
+    -DWEBRTC_ROOT_DIR:PATH=${CMAKE_BINARY_DIR}
+)
+
+ExternalProject_Add(
+    libwebrtc
+    DEPENDS webrtc-src
+
+    INSTALL_DIR ${CMAKE_BINARY_DIR}
+    SOURCE_DIR ${CMAKE_SOURCE_DIR}/libwebrtc
+    BINARY_DIR ${CMAKE_BINARY_DIR}/libwebrtc
+
+    CMAKE_ARGS
+    -DLIBRARY_TYPE:STRING=${LIBRARY_TYPE}
+    -DTARGET_OS:STRING=${TARGET_OS}
+    -DWEBRTC_OUTPUT_DIR:PATH=${CMAKE_BINARY_DIR}/webrtc/src/out/Default
+    -DWEBRTC_SOURCE_DIR:PATH=${CMAKE_BINARY_DIR}/webrtc/src/webrtc
+    -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}
+    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+    -DINSTALL_CMAKE_DIR:PATH=${CMAKE_BINARY_DIR}/lib/cmake/LibWebRTC
+)
+
+include(Install)
+include(Package)
+
 export(PACKAGE LibWebRTC)
