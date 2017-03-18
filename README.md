@@ -215,6 +215,16 @@ modifications are working on the three major OS (Windows, macOS and Linux).
 Don't forget to put your name and e-mail address inside the `AUTHORS` file!
 You can also reach me on [Twitter][twitter] for further discussion.
 
+## Acknowledgements
+
+Many thanks to Dr. Alex Gouaillard for being an excellent mentor for this
+project.
+
+Everything started from his
+« [Automating libwebrtc build with CMake][webrtc-dr-alex-cmake] » blog article,
+which was a great source of inspiration for me to create the easiest way to link
+the WebRTC library in any native project.
+
 ## License
 
 Apache License 2.0 © [Axel Isouard][author]
@@ -232,4 +242,5 @@ Apache License 2.0 © [Axel Isouard][author]
 [w10sdk]:https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk
 [wdk10]:https://go.microsoft.com/fwlink/p/?LinkId=526733
 [twitter]:https://twitter.com/aisouard
+[webrtc-dr-alex-cmake]:http://webrtcbydralex.com/index.php/2015/07/22/automating-libwebrtc-build-with-cmake
 [author]:https://axel.isouard.fr
