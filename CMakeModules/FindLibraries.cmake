@@ -1,8 +1,3 @@
-if(FIND_LIBRARIES_INCLUDED)
-  return()
-endif(FIND_LIBRARIES_INCLUDED)
-set(FIND_LIBRARIES_INCLUDED true)
-
 #
 # Find required packages
 list(APPEND LIBWEBRTC_LIBRARIES webrtc)

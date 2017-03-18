@@ -1,8 +1,3 @@
-if(OPTIONS_INCLUDED)
-  return()
-endif(OPTIONS_INCLUDED)
-set(OPTIONS_INCLUDED true)
-
 #
 # Options, flags
 option(BUILD_TESTS "Build test binaries" OFF)

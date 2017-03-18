@@ -1,8 +1,3 @@
-if(INSTALL_INCLUDED)
-  return()
-endif(INSTALL_INCLUDED)
-set(INSTALL_INCLUDED true)
-
 #
 # Install library
 file(GLOB_RECURSE _LIBRARY_FILES
