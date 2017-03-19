@@ -41,7 +41,7 @@ function (libwebrtc_execute)
     message(FATAL_ERROR "-- " ${COMMAND_ERROR})
   endif (NOT _OUTPUT)
 
-  if (COMMAND_STAMP_FILE)
+  if (COMMAND_STAMPFILE)
     file(WRITE ${STAMP_FILE} ${_OUTPUT})
   endif (COMMAND_STAMP_FILE)
 
