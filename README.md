@@ -45,8 +45,8 @@ supported platforms and architectures.
     <th align="center">macOS</th>
     <td></td>
     <td align="center">✔</td>
-    <td></td>
-    <td></td>
+    <td align="center">-</td>
+    <td align="center">-</td>
   </tr>
   <tr>
     <th align="center">Windows</th>
@@ -146,6 +146,35 @@ linker flags by specifying `LibWebRTC` as the package name.
 $ pkg-config --cflags --libs LibWebRTC
 ```
 
+## Fetching a specific revision
+
+The latest working release will be fetched by default, unless you decide to
+retrieve a specific commit by setting it's hash into the **WEBRTC_REVISION**
+CMake variable, or another branch head ref into the **WEBRTC_BRANCH_HEAD**
+variable.
+
+```
+$ cmake -DWEBRTC_REVISION=be22d51 ..
+$ cmake -DWEBRTC_BRANCH_HEAD=refs/branch-heads/57 ..
+```
+
+If both variables are set, it will focus on fetching the commit defined inside
+**WEBRTC_REVISION**.
+
+## Managing depot_tools
+
+CMake will retrieve the latest revision of the `depot_tools` repository. It will
+get the WebRTC repository's commit date, then check-out `depot_tools` to the
+commit having the closest date to WebRTC's, in order to ensure a high
+compatibility with `gclient` and other tools.
+
+It is possible to prevent this behavior by specifying the location to your own
+`depot_tools` repository by defining the **DEPOT_TOOLS_PATH** variable.
+
+```
+$ cmake -DDEPOT_TOOLS_PATH=/opt/depot_tools ..
+```
+
 ## Configuration
 
 The library will be compiled and usable on the same host's platform and
@@ -173,6 +202,10 @@ perform cross-compiling.
 
     Set this variable to your own `depot_tools` directory. This will prevent
     CMake from fetching the one matching with the desired WebRTC revision.
+
+- **GN_EXTRA_ARGS**
+
+    Add extra arguments to the `gn gen --args` parameter.
 
 - **NINJA_ARGS**
 
@@ -205,6 +238,15 @@ perform cross-compiling.
     - `arm`
     - `arm64`
     - `mipsel`
+
+- **WEBRTC_BRANCH_HEAD**
+
+    Set the branch head ref to retrieve, it is set to the latest working one.
+    This variable is ignored if **WEBRTC_REVISION** is set.
+
+- **WEBRTC_REVISION**
+
+    Set a specific commit hash to check-out.
 
 ## Contributing
 
