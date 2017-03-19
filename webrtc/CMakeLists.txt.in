@@ -11,37 +11,31 @@ endif (WIN32)
 include(DepotTools)
 include(GClient)
 include(Environment)
+include(LibWebRTCCommand)
 
-message(STATUS "Synchronizing webrtc")
-set(_SYNC_COMMAND ${GCLIENT_EXECUTABLE} sync --nohooks)
-execute_process(COMMAND ${PREFIX_EXECUTE} ${_SYNC_COMMAND}
-                WORKING_DIRECTORY ${WEBRTC_PARENT_DIR}
-                RESULT_VARIABLE _SYNCHRONIZED_WEBRTC)
+libwebrtc_command(
+    NAME webrtc-sync
+    COMMAND ${GCLIENT_EXECUTABLE} sync --nohooks
+    WORKING_DIRECTORY "${WEBRTC_PARENT_DIR}"
+    COMMENT "Synchronizing WebRTC"
+)
 
-if (NOT _SYNCHRONIZED_WEBRTC EQUAL 0)
-  message(FATAL_ERROR "Unable to synchronize webrtc ${PREFIX_EXECUTE} ${_SYNC_COMMAND}")
-endif (NOT _SYNCHRONIZED_WEBRTC EQUAL 0)
-
-message(STATUS "Updating clang")
-set(_UPDATE_CLANG_COMMAND ${PYTHON_EXECUTABLE} src/tools/clang/scripts/update.py)
-execute_process(COMMAND ${PREFIX_EXECUTE} ${_UPDATE_CLANG_COMMAND}
-                WORKING_DIRECTORY ${WEBRTC_PARENT_DIR}
-                RESULT_VARIABLE _CLANG_UPDATED)
-
-if (NOT _CLANG_UPDATED EQUAL 0)
-  message(FATAL_ERROR "Unable to update clang")
-endif (NOT _CLANG_UPDATED EQUAL 0)
+libwebrtc_command(
+    NAME webrtc-clang
+    COMMAND ${PYTHON_EXECUTABLE} src/tools/clang/scripts/update.py
+    WORKING_DIRECTORY "${WEBRTC_PARENT_DIR}"
+    COMMENT "Updating clang"
+    DEPENDS webrtc-sync
+)
 
 if (UNIX AND NOT APPLE)
-  message(STATUS "Retrieving sysroot")
-  set(_SYSROOT_COMMAND ${PYTHON_EXECUTABLE} ${WEBRTC_PARENT_DIR}/src/build/linux/sysroot_scripts/install-sysroot.py --running-as-hook)
-  execute_process(COMMAND ${PREFIX_EXECUTE} ${_SYSROOT_COMMAND}
-                  WORKING_DIRECTORY ${WEBRTC_PARENT_DIR}
-                  RESULT_VARIABLE _SYSROOT_RETRIEVED)
-
-  if (NOT _SYSROOT_RETRIEVED EQUAL 0)
-    message(FATAL_ERROR "Unable to retrieve the sysroot")
-  endif (NOT _SYSROOT_RETRIEVED EQUAL 0)
+  libwebrtc_command(
+      NAME webrtc-toolchain
+      COMMAND ${PYTHON_EXECUTABLE} ${WEBRTC_PARENT_DIR}/src/build/linux/sysroot_scripts/install-sysroot.py --running-as-hook
+      WORKING_DIRECTORY "${WEBRTC_PARENT_DIR}"
+      COMMENT "Retrieving sysroot"
+      DEPENDS webrtc-sync
+  )
 
   set(_PLATFORM linux*)
   set(_FOLDER linux64)
@@ -49,62 +43,58 @@ elseif (APPLE)
   set(_PLATFORM darwin)
   set(_FOLDER mac)
 elseif (WIN32)
-  message(STATUS "Retrieving Visual Studio toolchain")
-  set(_TOOLCHAIN_COMMAND ${PYTHON_EXECUTABLE} src/build/vs_toolchain.py update)
-  execute_process(COMMAND ${PREFIX_EXECUTE} ${_TOOLCHAIN_COMMAND}
-                  WORKING_DIRECTORY ${WEBRTC_PARENT_DIR}
-                  RESULT_VARIABLE _VS_TOOLCHAIN_RETRIEVED)
-
-  if (NOT _VS_TOOLCHAIN_RETRIEVED EQUAL 0)
-    message(FATAL_ERROR "Unable to retrieve Visual Studio toolchain")
-  endif (NOT _VS_TOOLCHAIN_RETRIEVED EQUAL 0)
+  libwebrtc_command(
+      NAME webrtc-toolchain
+      COMMAND ${PYTHON_EXECUTABLE} src/build/vs_toolchain.py update
+      WORKING_DIRECTORY "${WEBRTC_PARENT_DIR}"
+      COMMENT "Retrieving Visual Studio toolchain"
+      DEPENDS webrtc-sync
+  )
 
   set(_PLATFORM win32)
   set(_FOLDER win)
   set(_SUFFIX .exe)
 endif (UNIX AND NOT APPLE)
 
-message(STATUS "Fetching gn${_SUFFIX} for ${_PLATFORM}")
 set(_GN_COMMAND download_from_google_storage --no_resume --platform=${_PLATFORM}
     --no_auth --bucket chromium-gn
     -s src/buildtools/${_FOLDER}/gn${_SUFFIX}.sha1)
-execute_process(COMMAND ${PREFIX_EXECUTE} ${_GN_COMMAND}
-                WORKING_DIRECTORY ${WEBRTC_PARENT_DIR}
-                RESULT_VARIABLE _GN_RETRIEVED)
 
-if (NOT _GN_RETRIEVED EQUAL 0)
-  message(FATAL_ERROR "Unable to retrieve clang-format${_SUFFIX}")
-endif (NOT _GN_RETRIEVED EQUAL 0)
+libwebrtc_command(
+    NAME webrtc-gn
+    COMMAND ${_GN_COMMAND}
+    WORKING_DIRECTORY "${WEBRTC_PARENT_DIR}"
+    COMMENT "Fetching gn${_SUFFIX} for ${_PLATFORM}"
+    DEPENDS webrtc-sync
+)
 
-message(STATUS "Fetching clang-format${_SUFFIX} for ${_PLATFORM}")
 set(_CLANG_FORMAT_COMMAND download_from_google_storage --no_resume
     --platform=${_PLATFORM} --no_auth --bucket chromium-clang-format
     -s src/buildtools/${_FOLDER}/clang-format${_SUFFIX}.sha1)
-execute_process(COMMAND ${PREFIX_EXECUTE} ${_CLANG_FORMAT_COMMAND}
-                WORKING_DIRECTORY ${WEBRTC_PARENT_DIR}
-                RESULT_VARIABLE _CLANG_FORMAT_RETRIEVED)
 
-if (NOT _CLANG_FORMAT_RETRIEVED EQUAL 0)
-  message(FATAL_ERROR "Unable to retrieve clang-format${_SUFFIX}")
-endif (NOT _CLANG_FORMAT_RETRIEVED EQUAL 0)
+libwebrtc_command(
+    NAME webrtc-clang-format
+    COMMAND ${_CLANG_FORMAT_COMMAND}
+    WORKING_DIRECTORY "${WEBRTC_PARENT_DIR}"
+    COMMENT "Fetching clang-format${_SUFFIX} for ${_PLATFORM}"
+    DEPENDS webrtc-sync
+)
 
 include(Gn)
 
-message(STATUS "Generating build files: ${_GEN_COMMAND}")
-execute_process(COMMAND ${PREFIX_EXECUTE} ${_GEN_COMMAND}
-                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-                RESULT_VARIABLE _BUILD_GENERATED)
+libwebrtc_command(
+    NAME webrtc-generate
+    COMMAND ${_GEN_COMMAND}
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    COMMENT "Generating build files"
+    DEPENDS webrtc-clang webrtc-toolchain webrtc-gn webrtc-clang-format
+)
 
-if (NOT _BUILD_GENERATED EQUAL 0)
-  message(FATAL_ERROR "Unable to execute ${_GEN_COMMAND}")
-endif (NOT _BUILD_GENERATED EQUAL 0)
-
-message(STATUS "Running ninja")
-set(_NINJA_COMMAND ninja ${NINJA_ARGS} -C out/Default)
-execute_process(COMMAND ${PREFIX_EXECUTE} ${_NINJA_COMMAND}
-                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-                RESULT_VARIABLE _NINJA_DONE)
-
-if (NOT _NINJA_DONE EQUAL 0)
-  message(FATAL_ERROR "Unable to build webrtc")
-endif (NOT _NINJA_DONE EQUAL 0)
+set(_NINJA_COMMAND ninja ${NINJA_ARGS} -C out/Default pc)
+libwebrtc_command(
+    NAME webrtc-build
+    COMMAND ${_NINJA_COMMAND}
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    COMMENT "Running ninja"
+    DEPENDS webrtc-generate
+)
