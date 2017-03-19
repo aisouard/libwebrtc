@@ -2,15 +2,17 @@ if (HAS_OWN_DEPOT_TOOLS)
   return()
 endif (HAS_OWN_DEPOT_TOOLS)
 
-if (WEBRTC_REVISION)
-  message(STATUS "Retrieving date for commit ${WEBRTC_REVISION}")
-  execute_process(COMMAND ${GIT_EXECUTABLE} log -1 --format=%ci ${WEBRTC_REVISION}
-                  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-                  OUTPUT_VARIABLE _WEBRTC_COMMIT_DATE)
+include(LibWebRTCExecute)
 
-  if (NOT _WEBRTC_COMMIT_DATE)
-    message(FATAL_ERROR "-- Unable to find webrtc commit date at ${WEBRTC_REVISION}")
-  endif (NOT _WEBRTC_COMMIT_DATE)
+if (WEBRTC_REVISION)
+  libwebrtc_execute(
+      COMMAND ${GIT_EXECUTABLE} log -1 --format=%ci ${WEBRTC_REVISION}
+      OUTPUT_VARIABLE _WEBRTC_COMMIT_DATE
+      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+      STAMPFILE webrtc-commit-date
+      STATUS "Retrieving date for commit ${WEBRTC_REVISION}"
+      ERROR "Unable to find webrtc commit date at ${WEBRTC_REVISION}"
+  )
 elseif (WEBRTC_BRANCH_HEAD)
   message(STATUS "Retrieving branch-heads refspecs")
   execute_process(COMMAND ${GIT_EXECUTABLE} config remote.origin.fetch +refs/branch-heads/*:refs/remotes/branch-heads/* ^\\+refs/branch-heads/\\*:.*$
