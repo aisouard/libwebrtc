@@ -15,38 +15,11 @@ if (WEBRTC_REVISION)
   )
 elseif (WEBRTC_BRANCH_HEAD)
   libwebrtc_execute(
-      COMMAND ${GIT_EXECUTABLE} config remote.origin.fetch +refs/branch-heads/*:refs/remotes/branch-heads/* ^\\+refs/branch-heads/\\*:.*$
-      OUTPUT_VARIABLE _WEBRTC_CONFIG_FETCH
-      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-      STAMPFILE webrtc-config-fetch
-      STATUS "Setting up branch-heads refspecs"
-      ERROR "Unable to add branch-heads refspec to the git config"
-  )
-
-  libwebrtc_execute(
-      COMMAND ${GIT_EXECUTABLE} fetch origin ${WEBRTC_BRANCH_HEAD}
-      OUTPUT_VARIABLE _WEBRTC_FETCH
-      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-      STAMPFILE webrtc-fetch-branch-heads
-      STATUS "Fetching ${WEBRTC_BRANCH_HEAD}"
-      ERROR "Unable to fetch ${WEBRTC_BRANCH_HEAD}"
-  )
-
-  libwebrtc_execute(
-      COMMAND ${GIT_EXECUTABLE} checkout FETCH_HEAD
-      OUTPUT_VARIABLE _WEBRTC_CHECKOUT
-      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-      STAMPFILE webrtc-checkout-branch-head
-      STATUS "Checking out ${WEBRTC_BRANCH_HEAD}"
-      ERROR "Unable to checkout ${WEBRTC_BRANCH_HEAD}"
-  )
-
-  libwebrtc_execute(
       COMMAND ${GIT_EXECUTABLE} log -1 --format=%ci
       OUTPUT_VARIABLE _WEBRTC_COMMIT_DATE
       WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
       STAMPFILE webrtc-branch-head-commit-date
-      STATUS "Retrieving date for commit ${WEBRTC_BRANCH_HEAD}"
+      STATUS "Retrieving date for ${WEBRTC_BRANCH_HEAD}"
       ERROR "Unable to retrieve the commit date for ${WEBRTC_BRANCH_HEAD}"
   )
 else (WEBRTC_REVISION)
