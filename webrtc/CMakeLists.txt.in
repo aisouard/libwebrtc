@@ -95,7 +95,7 @@ libwebrtc_command(
     DEPENDS webrtc-clang ${_DEPENDENCIES}
 )
 
-set(_NINJA_COMMAND ninja ${NINJA_ARGS} -C out/Default pc)
+set(_NINJA_COMMAND ninja ${NINJA_ARGS} -C ${_NINJA_BUILD_DIR} pc)
 libwebrtc_command(
     NAME webrtc-build
     COMMAND ${_NINJA_COMMAND}

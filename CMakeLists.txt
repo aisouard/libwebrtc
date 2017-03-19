@@ -80,6 +80,14 @@ ExternalProject_Add(
     -DWEBRTC_ROOT_DIR:PATH=${CMAKE_BINARY_DIR}
 )
 
+if (MSVC OR XCODE)
+  set(_CONFIG $<$<CONFIG:Debug>:Debug>$<$<CONFIG:Release>:Release>$<$<CONFIG:RelWithDebInfo>:Release>$<$<CONFIG:MinSizeRel>:Release>)
+elseif (CMAKE_BUILD_TYPE MATCHES Debug)
+  set(_CONFIG Debug)
+else (MSVC OR XCODE)
+  set(_CONFIG Release)
+endif (MSVC OR XCODE)
+
 ExternalProject_Add(
     libwebrtc
     DEPENDS webrtc-src
@@ -91,7 +99,7 @@ ExternalProject_Add(
     CMAKE_ARGS
     -DLIBRARY_TYPE:STRING=${LIBRARY_TYPE}
     -DTARGET_OS:STRING=${TARGET_OS}
-    -DWEBRTC_OUTPUT_DIR:PATH=${CMAKE_BINARY_DIR}/webrtc/src/out/Default
+    -DWEBRTC_OUTPUT_DIR:PATH=${CMAKE_BINARY_DIR}/webrtc/src/out/$<$<CONFIG:Debug>:Debug>$<$<CONFIG:Release>:Release>$<$<CONFIG:RelWithDebInfo>:Release>$<$<CONFIG:MinSizeRel>:Release>
     -DWEBRTC_SOURCE_DIR:PATH=${CMAKE_BINARY_DIR}/webrtc/src/webrtc
     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}
     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
