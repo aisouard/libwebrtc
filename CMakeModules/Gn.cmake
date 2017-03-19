@@ -1,7 +1,7 @@
 set(_GEN_ARGS "use_gold=false target_cpu=\\\"${TARGET_CPU}\\\" target_os=\\\"${TARGET_OS}\\\"")
 
 if (MSVC OR XCODE)
-  set(_GEN_ARGS "${_GEN_ARGS} is_debug=false")
+  set(_GEN_ARGS ${_GEN_ARGS} is_debug=$<$<CONFIG:Debug>:true>$<$<CONFIG:Release>:false>$<$<CONFIG:RelWithDebInfo>:false>$<$<CONFIG:MinSizeRel>:false>)
 elseif (CMAKE_BUILD_TYPE MATCHES Debug)
   set(_GEN_ARGS "${_GEN_ARGS} is_debug=true")
 else (MSVC OR XCODE)
