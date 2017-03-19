@@ -35,15 +35,16 @@ function (libwebrtc_execute)
 
   execute_process(COMMAND ${COMMAND_COMMAND}
                   WORKING_DIRECTORY ${COMMAND_WORKING_DIRECTORY}
-                  OUTPUT_VARIABLE _OUTPUT)
+                  OUTPUT_VARIABLE _OUTPUT
+                  RESULT_VARIABLE _RESULT)
 
-  if (NOT _OUTPUT)
+  if (NOT _RESULT EQUAL 0)
     message(FATAL_ERROR "-- " ${COMMAND_ERROR})
-  endif (NOT _OUTPUT)
+  endif (NOT _RESULT EQUAL 0)
 
   if (COMMAND_STAMPFILE)
     file(WRITE ${STAMP_FILE} ${_OUTPUT})
-  endif (COMMAND_STAMP_FILE)
+  endif (COMMAND_STAMPFILE)
 
   if (COMMAND_OUTPUT_VARIABLE)
     set(${COMMAND_OUTPUT_VARIABLE} ${_OUTPUT} PARENT_SCOPE)
