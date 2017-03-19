@@ -209,11 +209,7 @@ perform cross-compiling.
 
 - **NINJA_ARGS**
 
-    Arguments to pass while executing the `ninja` command. For instance, you can
-    define the number of cores you would like to use, in order to speed-up the
-    build process:
-    
-    `cmake -DNINJA_ARGS="-j 4" ..`
+    Arguments to pass while executing the `ninja` command.
 
 - **TARGET_OS**
 
