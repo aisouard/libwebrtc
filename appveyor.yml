@@ -18,3 +18,5 @@ before_build:
 artifacts:
   - path: libwebrtc-0.0.1-rc.4-win32-x64.7z
     name: libwebrtc-0.0.1-rc.4-win32-x64.7z
+
+test: off

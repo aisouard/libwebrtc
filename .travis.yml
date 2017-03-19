@@ -43,7 +43,7 @@ install:
 - git submodule update
 - mkdir out
 - cd out
-- cmake -DGN_EXTRA_ARGS="clang_use_chrome_plugins=false" ..
+- cmake ..
 
 script:
 - make -j 4 package
