@@ -16,7 +16,7 @@ before_build:
   - cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX=c:\projects\libwebrtc .
 
 artifacts:
-  - path: libwebrtc-0.0.1-rc.4-win32-x64.7z
-    name: libwebrtc-0.0.1-rc.4-win32-x64.7z
+  - path: libwebrtc-0.0.1-rc.4-win-x64.zip
+    name: libwebrtc-0.0.1-rc.4-win-x64.zip
 
 test: off
