@@ -27,6 +27,7 @@ libwebrtc_command(
     COMMENT "Updating clang"
     DEPENDS webrtc-sync
 )
+set(_DEPENDENCIES webrtc-clang)
 
 if (UNIX AND NOT APPLE)
   libwebrtc_command(
@@ -36,6 +37,7 @@ if (UNIX AND NOT APPLE)
       COMMENT "Retrieving sysroot"
       DEPENDS webrtc-sync
   )
+  set(_DEPENDENCIES ${_DEPENDENCIES} webrtc-toolchain)
 
   set(_PLATFORM linux*)
   set(_FOLDER linux64)
@@ -50,6 +52,7 @@ elseif (WIN32)
       COMMENT "Retrieving Visual Studio toolchain"
       DEPENDS webrtc-sync
   )
+  set(_DEPENDENCIES ${_DEPENDENCIES} webrtc-toolchain)
 
   set(_PLATFORM win32)
   set(_FOLDER win)
@@ -67,6 +70,7 @@ libwebrtc_command(
     COMMENT "Fetching gn${_SUFFIX} for ${_PLATFORM}"
     DEPENDS webrtc-sync
 )
+set(_DEPENDENCIES ${_DEPENDENCIES} webrtc-gn)
 
 set(_CLANG_FORMAT_COMMAND download_from_google_storage --no_resume
     --platform=${_PLATFORM} --no_auth --bucket chromium-clang-format
@@ -79,6 +83,7 @@ libwebrtc_command(
     COMMENT "Fetching clang-format${_SUFFIX} for ${_PLATFORM}"
     DEPENDS webrtc-sync
 )
+set(_DEPENDENCIES ${_DEPENDENCIES} webrtc-clang-format)
 
 include(Gn)
 
@@ -87,7 +92,7 @@ libwebrtc_command(
     COMMAND ${_GEN_COMMAND}
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     COMMENT "Generating build files"
-    DEPENDS webrtc-clang webrtc-toolchain webrtc-gn webrtc-clang-format
+    DEPENDS webrtc-clang ${_DEPENDENCIES}
 )
 
 set(_NINJA_COMMAND ninja ${NINJA_ARGS} -C out/Default pc)
