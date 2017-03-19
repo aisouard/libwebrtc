@@ -21,4 +21,10 @@ if (GN_EXTRA_ARGS)
   set(_GEN_ARGS ${_GEN_ARGS} ${GN_EXTRA_ARGS})
 endif (GN_EXTRA_ARGS)
 
-set(_GEN_COMMAND gn gen ${_NINJA_BUILD_DIR} --args=\"${_GEN_ARGS}\")
+if (WIN32)
+  set(_GN_EXECUTABLE gn.bat)
+else (WIN32)
+  set(_GN_EXECUTABLE gn)
+endif (WIN32)
+
+set(_GEN_COMMAND ${_GN_EXECUTABLE} gen ${_NINJA_BUILD_DIR} --args=\"${_GEN_ARGS}\")

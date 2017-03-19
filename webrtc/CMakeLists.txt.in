@@ -57,9 +57,10 @@ elseif (WIN32)
   set(_PLATFORM win32)
   set(_FOLDER win)
   set(_SUFFIX .exe)
+  set(_SCRIPT_SUFFIX .bat)
 endif (UNIX AND NOT APPLE)
 
-set(_GN_COMMAND download_from_google_storage --no_resume --platform=${_PLATFORM}
+set(_GN_COMMAND download_from_google_storage${_SCRIPT_SUFFIX} --no_resume --platform=${_PLATFORM}
     --no_auth --bucket chromium-gn
     -s src/buildtools/${_FOLDER}/gn${_SUFFIX}.sha1)
 
@@ -72,7 +73,7 @@ libwebrtc_command(
 )
 set(_DEPENDENCIES ${_DEPENDENCIES} webrtc-gn)
 
-set(_CLANG_FORMAT_COMMAND download_from_google_storage --no_resume
+set(_CLANG_FORMAT_COMMAND download_from_google_storage${_SCRIPT_SUFFIX} --no_resume
     --platform=${_PLATFORM} --no_auth --bucket chromium-clang-format
     -s src/buildtools/${_FOLDER}/clang-format${_SUFFIX}.sha1)
 
