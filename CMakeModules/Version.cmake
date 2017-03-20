@@ -1,6 +1,3 @@
-#
-# Set the project's version
-
 set(LIBWEBRTC_MAJOR_VERSION 0)
 set(LIBWEBRTC_MINOR_VERSION 0)
 set(LIBWEBRTC_PATCH_VERSION 1)

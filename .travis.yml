@@ -43,10 +43,10 @@ install:
 - git submodule update
 - mkdir out
 - cd out
-- cmake -DNINJA_ARGS="-j 4" -DGN_EXTRA_ARGS="clang_use_chrome_plugins=false" ..
+- cmake ..
 
 script:
-- make package
+- make -j 4 package
 
 deploy:
   provider: releases

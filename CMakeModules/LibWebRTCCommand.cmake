@@ -1,9 +1,14 @@
+if(LIBWEBRTC_COMMAND_INCLUDED)
+  return()
+endif(LIBWEBRTC_COMMAND_INCLUDED)
+set(LIBWEBRTC_COMMAND_INCLUDED true)
+
 include(CMakeParseArguments)
-include(Prefix)
+include(Environment)
 
 function(libwebrtc_command)
-  set(ONE_VALUE_ARGS NAME COMMENT DEPENDS WORKING_DIRECTORY)
-  set(MULTI_VALUE_ARGS COMMAND)
+  set(ONE_VALUE_ARGS NAME COMMENT WORKING_DIRECTORY)
+  set(MULTI_VALUE_ARGS COMMAND DEPENDS)
   cmake_parse_arguments(COMMAND "" "${ONE_VALUE_ARGS}" "${MULTI_VALUE_ARGS}" ${ARGN} )
 
   set(CMF_DIR ${CMAKE_BINARY_DIR}/CMakeFiles)
@@ -19,5 +24,7 @@ function(libwebrtc_command)
 
   add_custom_target(${COMMAND_NAME} ALL DEPENDS ${STAMP_FILE})
 
-  add_dependencies(${COMMAND_NAME} ${COMMAND_DEPENDS})
+  if (COMMAND_DEPENDS)
+    add_dependencies(${COMMAND_NAME} ${COMMAND_DEPENDS})
+  endif (COMMAND_DEPENDS)
 endfunction()

@@ -1,11 +1,16 @@
 #
 # Options, flags
 option(BUILD_TESTS "Build test binaries" OFF)
+set(DEPOT_TOOLS_PATH "" CACHE STRING "Path to your own depot_tools directory")
 set(NINJA_ARGS "" CACHE STRING "Ninja arguments to pass before compiling WebRTC")
 set(GN_EXTRA_ARGS "" CACHE STRING "Extra gn gen arguments to pass before generating build files")
 option(BUILD_SHARED_LIB "Build WebRTC as a shared library" OFF)
 set(WEBRTC_REVISION "" CACHE STRING "WebRTC commit hash to checkout")
 set(WEBRTC_BRANCH_HEAD "${LIBWEBRTC_WEBRTC_HEAD}" CACHE STRING "WebRTC branch head to checkout")
+
+if (DEPOT_TOOLS_PATH)
+  set(HAS_OWN_DEPOT_TOOLS 1)
+endif (DEPOT_TOOLS_PATH)
 
 if(BUILD_SHARED_LIB)
   set(LIBRARY_TYPE SHARED)

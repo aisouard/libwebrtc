@@ -1,0 +1,146 @@
+cmake_minimum_required(VERSION 3.3)
+project(webrtc)
+
+find_package(Git REQUIRED)
+if (WIN32)
+  set(PYTHON_EXECUTABLE ${DEPOT_TOOLS_PATH}/python.bat)
+else (WIN32)
+  find_package(PythonInterp 2.7 REQUIRED)
+endif (WIN32)
+
+include(LibWebRTCExecute)
+
+if (WEBRTC_REVISION)
+  libwebrtc_execute(
+      COMMAND ${GIT_EXECUTABLE} checkout ${WEBRTC_REVISION}
+      OUTPUT_VARIABLE _WEBRTC_CHECKOUT
+      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+      STAMPFILE webrtc-checkout-commit
+      STATUS "Checking out webrtc to commit ${WEBRTC_REVISION}"
+      ERROR "Unable to checkout webrtc to commit ${WEBRTC_REVISION}"
+  )
+elseif (WEBRTC_BRANCH_HEAD)
+  libwebrtc_execute(
+      COMMAND ${GIT_EXECUTABLE} config remote.origin.fetch +refs/branch-heads/*:refs/remotes/branch-heads/* ^\\+refs/branch-heads/\\*:.*$
+      OUTPUT_VARIABLE _WEBRTC_CONFIG_FETCH
+      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+      STAMPFILE webrtc-config-fetch
+      STATUS "Setting up branch-heads refspecs"
+      ERROR "Unable to add branch-heads refspec to the git config"
+  )
+
+  libwebrtc_execute(
+      COMMAND ${GIT_EXECUTABLE} fetch origin ${WEBRTC_BRANCH_HEAD}
+      OUTPUT_VARIABLE _WEBRTC_FETCH
+      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+      STAMPFILE webrtc-fetch-branch-heads
+      STATUS "Fetching ${WEBRTC_BRANCH_HEAD}"
+      ERROR "Unable to fetch ${WEBRTC_BRANCH_HEAD}"
+  )
+
+  libwebrtc_execute(
+      COMMAND ${GIT_EXECUTABLE} checkout FETCH_HEAD
+      OUTPUT_VARIABLE _WEBRTC_CHECKOUT
+      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+      STAMPFILE webrtc-checkout-branch-head
+      STATUS "Checking out ${WEBRTC_BRANCH_HEAD}"
+      ERROR "Unable to checkout ${WEBRTC_BRANCH_HEAD}"
+  )
+endif (WEBRTC_REVISION)
+
+include(DepotTools)
+include(GClient)
+include(Environment)
+include(LibWebRTCCommand)
+
+libwebrtc_command(
+    NAME webrtc-sync
+    COMMAND ${GCLIENT_EXECUTABLE} sync --nohooks
+    WORKING_DIRECTORY "${WEBRTC_PARENT_DIR}"
+    COMMENT "Synchronizing WebRTC"
+)
+
+libwebrtc_command(
+    NAME webrtc-clang
+    COMMAND ${PYTHON_EXECUTABLE} src/tools/clang/scripts/update.py
+    WORKING_DIRECTORY "${WEBRTC_PARENT_DIR}"
+    COMMENT "Updating clang"
+    DEPENDS webrtc-sync
+)
+set(_DEPENDENCIES webrtc-clang)
+
+if (UNIX AND NOT APPLE)
+  libwebrtc_command(
+      NAME webrtc-toolchain
+      COMMAND ${PYTHON_EXECUTABLE} ${WEBRTC_PARENT_DIR}/src/build/linux/sysroot_scripts/install-sysroot.py --running-as-hook
+      WORKING_DIRECTORY "${WEBRTC_PARENT_DIR}"
+      COMMENT "Retrieving sysroot"
+      DEPENDS webrtc-sync
+  )
+  set(_DEPENDENCIES ${_DEPENDENCIES} webrtc-toolchain)
+
+  set(_PLATFORM linux*)
+  set(_FOLDER linux64)
+elseif (APPLE)
+  set(_PLATFORM darwin)
+  set(_FOLDER mac)
+elseif (WIN32)
+  libwebrtc_command(
+      NAME webrtc-toolchain
+      COMMAND ${PYTHON_EXECUTABLE} src/build/vs_toolchain.py update
+      WORKING_DIRECTORY "${WEBRTC_PARENT_DIR}"
+      COMMENT "Retrieving Visual Studio toolchain"
+      DEPENDS webrtc-sync
+  )
+  set(_DEPENDENCIES ${_DEPENDENCIES} webrtc-toolchain)
+
+  set(_PLATFORM win32)
+  set(_FOLDER win)
+  set(_SUFFIX .exe)
+  set(_SCRIPT_SUFFIX .bat)
+endif (UNIX AND NOT APPLE)
+
+set(_GN_COMMAND download_from_google_storage${_SCRIPT_SUFFIX} --no_resume --platform=${_PLATFORM}
+    --no_auth --bucket chromium-gn
+    -s src/buildtools/${_FOLDER}/gn${_SUFFIX}.sha1)
+
+libwebrtc_command(
+    NAME webrtc-gn
+    COMMAND ${_GN_COMMAND}
+    WORKING_DIRECTORY "${WEBRTC_PARENT_DIR}"
+    COMMENT "Fetching gn${_SUFFIX} for ${_PLATFORM}"
+    DEPENDS webrtc-sync
+)
+set(_DEPENDENCIES ${_DEPENDENCIES} webrtc-gn)
+
+set(_CLANG_FORMAT_COMMAND download_from_google_storage${_SCRIPT_SUFFIX} --no_resume
+    --platform=${_PLATFORM} --no_auth --bucket chromium-clang-format
+    -s src/buildtools/${_FOLDER}/clang-format${_SUFFIX}.sha1)
+
+libwebrtc_command(
+    NAME webrtc-clang-format
+    COMMAND ${_CLANG_FORMAT_COMMAND}
+    WORKING_DIRECTORY "${WEBRTC_PARENT_DIR}"
+    COMMENT "Fetching clang-format${_SUFFIX} for ${_PLATFORM}"
+    DEPENDS webrtc-sync
+)
+set(_DEPENDENCIES ${_DEPENDENCIES} webrtc-clang-format)
+
+include(Gn)
+
+libwebrtc_command(
+    NAME webrtc-generate
+    COMMAND ${_GEN_COMMAND}
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    COMMENT "Generating build files"
+    DEPENDS webrtc-clang ${_DEPENDENCIES}
+)
+
+set(_NINJA_COMMAND ninja ${NINJA_ARGS} -C ${_NINJA_BUILD_DIR} pc)
+libwebrtc_command(
+    NAME webrtc-build
+    COMMAND ${_NINJA_COMMAND}
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    COMMENT "Running ninja"
+    DEPENDS webrtc-generate
+)

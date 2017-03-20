@@ -3,7 +3,7 @@
 This repository contains a collection of CMake scripts to help you embed
 Google's native WebRTC implementation inside your project as simple as this:
 
-```
+```cmake
 cmake_minimum_required(VERSION 3.3)
 project(sample)
 
@@ -45,8 +45,8 @@ supported platforms and architectures.
     <th align="center">macOS</th>
     <td></td>
     <td align="center">✔</td>
-    <td></td>
-    <td></td>
+    <td align="center">-</td>
+    <td align="center">-</td>
   </tr>
   <tr>
     <th align="center">Windows</th>
@@ -65,7 +65,7 @@ supported platforms and architectures.
 
 ### Debian & Ubuntu
 
-Install the required development packages
+Install the required development packages:
 
 ```
 # apt-get install build-essential libglib2.0-dev libgtk2.0-dev libxtst-dev \
@@ -96,15 +96,12 @@ Install the required development packages
 
 ## Compiling
 
-Clone the repository, initialize the submodules if `depot_tools` is not
-installed on your system or not defined inside your `PATH` environment variable.
-Create an output directory, browse inside it, then run CMake.
+Clone the repository, create an output directory, browse inside it,
+then run CMake.
 
 ```
 $ git clone https://github.com/aisouard/libwebrtc.git
 $ cd libwebrtc
-$ git submodule init
-$ git submodule update
 $ mkdir out
 $ cd out
 $ cmake ..
@@ -135,7 +132,7 @@ All you have to do is include the package, then embed the "use file" that will
 automatically find the required libraries, define the proper compiling flags and
 include directories.
 
-```
+```cmake
 find_package(LibWebRTC REQUIRED)
 include(${LIBWEBRTC_USE_FILE})
 
@@ -147,6 +144,35 @@ linker flags by specifying `LibWebRTC` as the package name.
 
 ```
 $ pkg-config --cflags --libs LibWebRTC
+```
+
+## Fetching a specific revision
+
+The latest working release will be fetched by default, unless you decide to
+retrieve a specific commit by setting it's hash into the **WEBRTC_REVISION**
+CMake variable, or another branch head ref into the **WEBRTC_BRANCH_HEAD**
+variable.
+
+```
+$ cmake -DWEBRTC_REVISION=be22d51 ..
+$ cmake -DWEBRTC_BRANCH_HEAD=refs/branch-heads/57 ..
+```
+
+If both variables are set, it will focus on fetching the commit defined inside
+**WEBRTC_REVISION**.
+
+## Managing depot_tools
+
+CMake will retrieve the latest revision of the `depot_tools` repository. It will
+get the WebRTC repository's commit date, then check-out `depot_tools` to the
+commit having the closest date to WebRTC's, in order to ensure a high
+compatibility with `gclient` and other tools.
+
+It is possible to prevent this behavior by specifying the location to your own
+`depot_tools` repository by defining the **DEPOT_TOOLS_PATH** variable.
+
+```
+$ cmake -DDEPOT_TOOLS_PATH=/opt/depot_tools ..
 ```
 
 ## Configuration
@@ -172,13 +198,18 @@ perform cross-compiling.
     Defaults to OFF, will define the `component_build` gn argument to `true` if
     enabled. This option will build a shared library instead of a static one.
 
+- **DEPOT_TOOLS_PATH**
+
+    Set this variable to your own `depot_tools` directory. This will prevent
+    CMake from fetching the one matching with the desired WebRTC revision.
+
+- **GN_EXTRA_ARGS**
+
+    Add extra arguments to the `gn gen --args` parameter.
+
 - **NINJA_ARGS**
 
-    Arguments to pass while executing the `ninja` command. For instance, you can
-    define the number of cores you would like to use, in order to speed-up the
-    build process:
-    
-    `cmake -DNINJA_ARGS="-j 4" ..`
+    Arguments to pass while executing the `ninja` command.
 
 - **TARGET_OS**
 
@@ -204,6 +235,15 @@ perform cross-compiling.
     - `arm64`
     - `mipsel`
 
+- **WEBRTC_BRANCH_HEAD**
+
+    Set the branch head ref to retrieve, it is set to the latest working one.
+    This variable is ignored if **WEBRTC_REVISION** is set.
+
+- **WEBRTC_REVISION**
+
+    Set a specific commit hash to check-out.
+
 ## Contributing
 
 Feel free to open an issue if you wish a bug to be fixed, to discuss a new
@@ -212,6 +252,16 @@ modifications are working on the three major OS (Windows, macOS and Linux).
 
 Don't forget to put your name and e-mail address inside the `AUTHORS` file!
 You can also reach me on [Twitter][twitter] for further discussion.
+
+## Acknowledgements
+
+Many thanks to Dr. Alex Gouaillard for being an excellent mentor for this
+project.
+
+Everything started from his
+« [Automating libwebrtc build with CMake][webrtc-dr-alex-cmake] » blog article,
+which was a great source of inspiration for me to create the easiest way to link
+the WebRTC library in any native project.
 
 ## License
 
@@ -230,4 +280,5 @@ Apache License 2.0 © [Axel Isouard][author]
 [w10sdk]:https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk
 [wdk10]:https://go.microsoft.com/fwlink/p/?LinkId=526733
 [twitter]:https://twitter.com/aisouard
+[webrtc-dr-alex-cmake]:http://webrtcbydralex.com/index.php/2015/07/22/automating-libwebrtc-build-with-cmake
 [author]:https://axel.isouard.fr
