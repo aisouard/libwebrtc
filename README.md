@@ -193,11 +193,6 @@ perform cross-compiling.
 
     Build WebRTC tests. (not supported yet)
 
-- **BUILD_SHARED_LIB**
-
-    Defaults to OFF, will define the `component_build` gn argument to `true` if
-    enabled. This option will build a shared library instead of a static one.
-
 - **DEPOT_TOOLS_PATH**
 
     Set this variable to your own `depot_tools` directory. This will prevent
