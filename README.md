@@ -189,10 +189,6 @@ perform cross-compiling.
 
     Generate Red Hat package, defaults to OFF, available under Linux only.
 
-- **BUILD_TESTS**
-
-    Build WebRTC tests. (not supported yet)
-
 - **DEPOT_TOOLS_PATH**
 
     Set this variable to your own `depot_tools` directory. This will prevent
