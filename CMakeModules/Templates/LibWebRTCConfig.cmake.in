@@ -1,33 +1,35 @@
 # - Config file for 'LibWebRTC' package
 # It defines the following variables
 #
-#  LIBWEBRTC_INCLUDE_DIRS    - include directories
-#  LIBWEBRTC_LIBRARY_DIRS    - library directories
-#  LIBWEBRTC_LIBRARIES       - libraries to link against
-#  LIBWEBRTC_CMAKE_DIR       - path to the CMake modules
-#  LIBWEBRTC_USE_FILE        - path to the CMake use file
+#  LIBWEBRTC_INCLUDE_DIRS       - include directories
+#  LIBWEBRTC_LIBRARY_DIRS       - library directories
+#  LIBWEBRTC_LIBRARIES          - libraries to link against
+#  LIBWEBRTC_CMAKE_DIR          - path to the CMake modules
+#  LIBWEBRTC_USE_FILE           - path to the CMake use file
 #
 # - Version variables:
-#  LIBWEBRTC_MAJOR_VERSION   - major version
-#  LIBWEBRTC_MINOR_VERSION   - minor version
-#  LIBWEBRTC_PATCH_VERSION   - patch version
-#  LIBWEBRTC_BUILD_VERSION   - version suffix, release candidate etc
-#  LIBWEBRTC_WEBRTC_REVISION - WebRTC's Git revision used for that release
-#  LIBWEBRTC_API_VERSION     - full version without build prefix
-#  LIBWEBRTC_VERSION         - full version with build prefix
+#  LIBWEBRTC_MAJOR_VERSION      - major version
+#  LIBWEBRTC_MINOR_VERSION      - minor version
+#  LIBWEBRTC_PATCH_VERSION      - patch version
+#  LIBWEBRTC_BUILD_VERSION      - version suffix, release candidate etc
+#  LIBWEBRTC_WEBRTC_REVISION    - WebRTC's Git revision used for that release
+#  LIBWEBRTC_WEBRTC_BRANCH_HEAD - WebRTC's Git branch head refspec used for that release
+#  LIBWEBRTC_API_VERSION        - full version without build prefix
+#  LIBWEBRTC_VERSION            - full version with build prefix
 #
 # - Library type and targets variables:
-#  LIBWEBRTC_TARGET_OS       - android, chromeos, ios, linux, nacl, mac or win
-#  LIBWEBRTC_TARGET_CPU      - x86, x64, arm, arm64 or mipsel
+#  LIBWEBRTC_TARGET_OS          - android, chromeos, ios, linux, nacl, mac or win
+#  LIBWEBRTC_TARGET_CPU         - x86, x64, arm, arm64 or mipsel
 
 # LibWebRTC version number
 set(LIBWEBRTC_MAJOR_VERSION "@LIBWEBRTC_MAJOR_VERSION@")
 set(LIBWEBRTC_MINOR_VERSION "@LIBWEBRTC_MINOR_VERSION@")
 set(LIBWEBRTC_PATCH_VERSION "@LIBWEBRTC_PATCH_VERSION@")
 set(LIBWEBRTC_BUILD_VERSION "@LIBWEBRTC_BUILD_VERSION@")
-set(LIBWEBRTC_WEBRTC_REVISION "@LIBWEBRTC_WEBRTC_REVISION@")
 set(LIBWEBRTC_API_VERSION "@LIBWEBRTC_API_VERSION@")
 set(LIBWEBRTC_VERSION "@LIBWEBRTC_VERSION@")
+set(LIBWEBRTC_WEBRTC_REVISION "@WEBRTC_REVISION@")
+set(LIBWEBRTC_WEBRTC_BRANCH_HEAD "@WEBRTC_BRANCH_HEAD@")
 
 # LibWebRTC library type, target OS and target CPU
 set(LIBWEBRTC_TARGET_OS "@TARGET_OS@")
