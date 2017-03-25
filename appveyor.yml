@@ -1,9 +1,25 @@
 os: Visual Studio 2015
 
-platform:
-  - x64
+matrix:
+  fast_finish: true
 
-configuration: Release
+environment:
+  matrix:
+    - platform: x86
+      configuration: Debug
+      CMAKE_GENERATOR: "Visual Studio 14 2015"
+
+    - platform: x86
+      configuration: Release
+      CMAKE_GENERATOR: "Visual Studio 14 2015"
+
+    - platform: x64
+      configuration: Debug
+      CMAKE_GENERATOR: "Visual Studio 14 2015 Win64"
+
+    - platform: x64
+      configuration: Release
+      CMAKE_GENERATOR: "Visual Studio 14 2015 Win64"
 
 clone_folder: c:\projects\libwebrtc
 
@@ -13,9 +29,18 @@ build:
 before_build:
   - cd c:\projects\libwebrtc
   - git submodule update --init --recursive
-  - cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX=c:\projects\libwebrtc .
+  - cmake -G %CMAKE_GENERATOR% -DCMAKE_INSTALL_PREFIX=c:\projects\libwebrtc .
 
 artifacts:
+  - path: libwebrtc-0.0.1-rc.4-win-x86-debug.zip
+    name: libwebrtc-0.0.1-rc.4-win-x86-debug.zip
+
+  - path: libwebrtc-0.0.1-rc.4-win-x86.zip
+    name: libwebrtc-0.0.1-rc.4-win-x86.zip
+
+  - path: libwebrtc-0.0.1-rc.4-win-x64-debug.zip
+    name: libwebrtc-0.0.1-rc.4-win-x64-debug.zip
+
   - path: libwebrtc-0.0.1-rc.4-win-x64.zip
     name: libwebrtc-0.0.1-rc.4-win-x64.zip
 
