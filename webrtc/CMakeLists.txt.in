@@ -122,7 +122,7 @@ libwebrtc_command(
     COMMAND ${_CLANG_FORMAT_COMMAND}
     WORKING_DIRECTORY "${WEBRTC_PARENT_DIR}"
     COMMENT "Fetching clang-format${_SUFFIX} for ${_PLATFORM}"
-    DEPENDS webrtc-sync
+    DEPENDS webrtc-gn
 )
 set(_DEPENDENCIES ${_DEPENDENCIES} webrtc-clang-format)
 
@@ -133,7 +133,7 @@ libwebrtc_command(
     COMMAND ${_GEN_COMMAND}
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     COMMENT "Generating build files"
-    DEPENDS webrtc-clang ${_DEPENDENCIES}
+    DEPENDS ${_DEPENDENCIES}
 )
 
 set(_NINJA_COMMAND ninja ${NINJA_ARGS} -C ${_NINJA_BUILD_DIR} pc)
