@@ -115,6 +115,18 @@ ExternalProject_Add(
     -DWEBRTC_SOURCE_DIR:PATH=${CMAKE_BINARY_DIR}/webrtc/src/webrtc
 )
 
+if (BUILD_SAMPLE)
+  ExternalProject_Add(
+      sample
+      DEPENDS libwebrtc
+      SOURCE_DIR ${CMAKE_SOURCE_DIR}/sample
+      INSTALL_COMMAND ""
+
+      CMAKE_ARGS
+      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+  )
+endif (BUILD_SAMPLE)
+
 include(Install)
 include(Package)
 

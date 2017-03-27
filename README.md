@@ -191,6 +191,10 @@ perform cross-compiling.
 
     Generate Red Hat package, defaults to OFF, available under Linux only.
 
+- **BUILD_SAMPLE**
+
+    Build an executable located inside the `sample` folder.
+
 - **DEPOT_TOOLS_PATH**
 
     Set this variable to your own `depot_tools` directory. This will prevent

@@ -63,7 +63,7 @@ install:
 - git submodule update
 - mkdir out
 - cd out
-- cmake -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE -DTARGET_CPU=$TARGET_CPU ..
+- cmake -DBUILD_SAMPLE=1 -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE -DCMAKE_INSTALL_PREFIX=. -DTARGET_CPU=$TARGET_CPU ..
 
 script:
 - make -j 4 package
