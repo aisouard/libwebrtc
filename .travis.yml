@@ -69,7 +69,7 @@ script:
 - make -j 4 package
 
 before_deploy:
-  - export TRAVIS_ARTIFACTS=$(libwebrtc-*.tar.gz)
+  - export TRAVIS_ARTIFACTS=$(ls libwebrtc-*.tar.gz)
 
 deploy:
   provider: releases
