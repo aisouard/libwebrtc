@@ -52,3 +52,10 @@ install(TARGETS webrtc
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         INCLUDES DESTINATION include)
+
+install(EXPORT LibWebRTCTargets
+        FILE LibWebRTCTargets.cmake
+        DESTINATION ${INSTALL_CMAKE_DIR})
+
+install(FILES ${CMAKE_MODULE_PATH}/Templates/UseLibWebRTC.cmake
+        DESTINATION ${INSTALL_CMAKE_DIR})
