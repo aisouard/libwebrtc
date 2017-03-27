@@ -17,7 +17,7 @@ file(GLOB_RECURSE _OBJ_EXCLUDED
      ${WEBRTC_OUTPUT_DIR}/obj/third_party/yasm/re2c/*${_OBJ_EXT}
      ${WEBRTC_OUTPUT_DIR}/obj/third_party/yasm/yasm/*${_OBJ_EXT}
      ${WEBRTC_OUTPUT_DIR}/obj/third_party/protobuf/protoc/*${_OBJ_EXT}
-     ${WEBRTC_OUTPUT_DIR}/obj/third_party/protobuf/protobuf_full/*${_OBJ_EXT}
+     ${WEBRTC_OUTPUT_DIR}/obj/third_party/protobuf/protobuf_lite/*${_OBJ_EXT}
      ${WEBRTC_OUTPUT_DIR}/obj/webrtc/examples/*${_OBJ_EXT}
      ${WEBRTC_OUTPUT_DIR}/obj/webrtc/tools/*${_OBJ_EXT}
      ${WEBRTC_OUTPUT_DIR}/obj/webrtc/modules/video_capture/video_capture/video_capture_external${_OBJ_EXT}
