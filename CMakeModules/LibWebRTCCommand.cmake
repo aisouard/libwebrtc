@@ -11,7 +11,7 @@ function(libwebrtc_command)
   set(MULTI_VALUE_ARGS COMMAND DEPENDS)
   cmake_parse_arguments(COMMAND "" "${ONE_VALUE_ARGS}" "${MULTI_VALUE_ARGS}" ${ARGN} )
 
-  set(CMF_DIR ${CMAKE_BINARY_DIR}/CMakeFiles)
+  set(CMF_DIR ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
   set(STAMP_FILE "${CMF_DIR}/${COMMAND_NAME}-complete")
 
   add_custom_command(

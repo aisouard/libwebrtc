@@ -11,7 +11,7 @@ function (libwebrtc_execute)
   set(MULTI_VALUE_ARGS COMMAND)
   cmake_parse_arguments(COMMAND "" "${ONE_VALUE_ARGS}" "${MULTI_VALUE_ARGS}" ${ARGN})
 
-  set(CMF_DIR ${CMAKE_BINARY_DIR}/CMakeFiles)
+  set(CMF_DIR ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
 
   if (COMMAND_STAMPFILE)
     set(STAMP_FILE "${CMF_DIR}/${COMMAND_STAMPFILE}")
