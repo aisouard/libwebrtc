@@ -59,13 +59,13 @@ supported platforms and architectures.
 
 ## Prerequisites
 
-- CMake 3.3 or later,
+- CMake 3.3 or later
 - Python 2.7 (optional for Windows since it will use the interpreter located
   inside the `depot_tools` installation)
 
 ### Debian & Ubuntu
 
-Install the required development packages:
+- Required development packages:
 
 ```
 # apt-get install build-essential libglib2.0-dev libgtk2.0-dev libxtst-dev \
@@ -74,23 +74,25 @@ Install the required development packages:
                   libudev-dev
 ```
 
+- GCC & G++ 4.8 or later, for C++11 support
+
 ### macOS
 
-- OS X 10.11 or later,
+- OS X 10.11 or later
 - Xcode 7.3.1 or later
 
 ### Windows
 
-* Windows 7 x64 or later,
-* Visual Studio 2015 **with updates** - Download the [Installer][vs2015-installer]
+- Windows 7 x64 or later
+- Visual Studio 2015 **with updates** - Download the [Installer][vs2015-installer]
 
   Make sure that you install the following components:
   
-  * Visual C++, which will select three sub-categories including MFC
-  * Universal Windows Apps Development Tools
-    * Tools (1.4.1) and Windows 10 SDK (**10.0.14393**)
+  - Visual C++, which will select three sub-categories including MFC
+  - Universal Windows Apps Development Tools
+    - Tools (1.4.1) and Windows 10 SDK (**10.0.14393**)
 
-* [Windows 10 SDK][w10sdk] with **Debugging Tools for Windows** or
+- [Windows 10 SDK][w10sdk] with **Debugging Tools for Windows** or
   [Windows Driver Kit 10][wdk10] installed in the same Windows 10 SDK
   installation directory.
 
