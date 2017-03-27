@@ -13,26 +13,27 @@ configuration:
 
 clone_folder: c:\projects\libwebrtc
 
-build:
-  project: PACKAGE.vcxproj
-
 before_build:
   - cd c:\projects\libwebrtc
   - if "%platform%"=="x86" set CMAKE_GENERATOR_NAME=Visual Studio 14 2015
   - if "%platform%"=="x64" set CMAKE_GENERATOR_NAME=Visual Studio 14 2015 Win64
   - cmake -G "%CMAKE_GENERATOR_NAME%" -DBUILD_SAMPLE=1 -DCMAKE_BUILD_TYPE=%configuration% -DCMAKE_INSTALL_PREFIX=c:\projects\libwebrtc .
 
+build:
+  project: PACKAGE.vcxproj
+
 artifacts:
-  - path: libwebrtc-0.0.1-rc.4-win-x86.zip
-    name: libwebrtc-0.0.1-rc.4-win-x86.zip
+  - path: libwebrtc-*.zip
+    name: Releases
 
-  - path: libwebrtc-0.0.1-rc.4-win-x86-debug.zip
-    name: libwebrtc-0.0.1-rc.4-win-x86-debug.zip
-
-  - path: libwebrtc-0.0.1-rc.4-win-x64.zip
-    name: libwebrtc-0.0.1-rc.4-win-x64.zip
-
-  - path: libwebrtc-0.0.1-rc.4-win-x64-debug.zip
-    name: libwebrtc-0.0.1-rc.4-win-x64-debug.zip
+deploy:
+  provider: GitHub
+  auth_token:
+    secure: QQrYk1F7DLgQ9eht+J6hvDiDRu8a+AKKwsOetybrL8B32UYxlNJKSZIpD0yHPVsx
+  artifact: /libwebrtc-.*\.zip/
+  draft: false
+  prerelease: false
+  on:
+    appveyor_repo_tag: true
 
 test: off

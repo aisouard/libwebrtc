@@ -68,19 +68,16 @@ install:
 script:
 - make -j 4 package
 
+before_deploy:
+  - export TRAVIS_ARTIFACTS=$(libwebrtc-*.tar.gz)
+
 deploy:
   provider: releases
   api_key:
     secure: UazaqOOoifs5xE/xw+tjVnFAkl6MMJeZSW7B0DXX0wnHorKM5K72q9Ms3JYvJIp6DDV3vIeX/Yv/WQCnfRkDDhcbLohGZoOj2X3q53RSfJiOq/iIyPiPTRmkk3jQRBOvXl5zLePNaXU2vBuSgcM8az+wGjxaDLUB+EebSGRHPbXrGSnDDHaNnmb4Zm7SZ2DpL5ubRDlLTHst7Jh7OigrIblYKNCzwEc7UQsFNzLnu7dyZT4hF2Y+2KYl/3vUUkUGxu0AxVG7zilnjJE7O5gX76r+SQXs151uWwZeH41NNPxRSod51LKQS/V/I4afjjTaYC5+9lSUdNkOpEGrxU+61hSJvNGxL6rTqfiBTAOiJdMR3u4OmF+B72O0nUUpsNtlkSPBK9402Z65LH/UI2BIJ/oMfkjNSzTNTHvB+n+18nFryzUmgEJ4CEy7Yx5HGO1vXCP4OsHGAu5YCkDGV2uVttiYHlm2qWgTY59cQt61h1saQWMwj6Uivhz8XrS86K0r/YAS30t+7+/xG6dneXgctM9oYjIbVCFnImsE30FpWlCJvGnJzo37wctbTQscHs5iuqjt1an7AhQgOTMQwmtyyg32D6N9e4n+RJA9pEj3Qtpi51LVD1cdCahbZ1l4bURlNueqfB3d4oZvr9o/QNjm+qH/FRUWjAmWtbBr16ZXfiA=
-  file:
-    - libwebrtc-$TRAVIS_TAG-linux-x86.tar.gz
-    - libwebrtc-$TRAVIS_TAG-linux-x64.tar.gz
-    - libwebrtc-$TRAVIS_TAG-linux-x86-debug.tar.gz
-    - libwebrtc-$TRAVIS_TAG-linux-x64-debug.tar.gz
-    - libwebrtc-$TRAVIS_TAG-mac-x64.tar.gz
-    - libwebrtc-$TRAVIS_TAG-mac-x64-debug.tar.gz
+  file_glob: true
+  file: "${TRAVIS_ARTIFACTS}"
   skip_cleanup: true
-  overwrite: true
   on:
     tags: true
     repo: aisouard/libwebrtc
