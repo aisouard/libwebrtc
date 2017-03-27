@@ -26,5 +26,5 @@ endif (APPLE)
 
 if (WIN32)
   list(APPEND LIBWEBRTC_LIBRARIES msdmo.lib wmcodecdspuuid.lib dmoguids.lib
-       ole32.lib secur32.lib winmm.lib ws2_32.lib)
+       crypt32.lib iphlpapi.lib ole32.lib secur32.lib winmm.lib ws2_32.lib)
 endif (WIN32)
