@@ -109,8 +109,17 @@ $ cd out
 $ cmake ..
 ```
 
-Windows users will have to open the `libwebrtc.sln` located inside the current
-directory output directory and build the `ALL_BUILD` project.
+Windows users **must** add the Win64 suffix to their Visual Studio generator
+name if they want to build the library for 64-bit platforms, they'll omit it for
+32-bit builds and define the `TARGET_CPU` variable accordingly.
+
+```
+> cmake -G "Visual Studio 14 2015" -DTARGET_CPU=x86
+> cmake -G "Visual Studio 14 2015 Win64"
+```
+
+Then they'll have to open the `libwebrtc.sln` located inside the current output
+directory and build the `ALL_BUILD` project.
 
 Unix users will just have to run the following `make` commands.
 
@@ -122,6 +131,18 @@ $ make
 The library will be located inside the `lib` folder of the current output
 directory. The `include` folder will contain the header files. CMake scripts
 will be placed inside the `lib/cmake/LibWebRTC` directory.
+
+## Debug and Release configurations
+
+If you are using XCode or Visual Studio, you can simply switch between the Debug
+and Release configuration from your IDE. The debugging flags will be
+appended to the generator's parameters.
+
+Otherwise, you must define the `CMAKE_BUILD_TYPE` variable to `Debug`.
+
+```
+$ cmake -DCMAKE_BUILD_TYPE=Debug ..
+```
 
 ## Using WebRTC in your project
 
