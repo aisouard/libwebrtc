@@ -137,6 +137,11 @@ libwebrtc_command(
 )
 
 set(_NINJA_COMMAND ninja ${NINJA_ARGS} -C ${_NINJA_BUILD_DIR} webrtc system_wrappers_default libjingle_peerconnection)
+
+if (BUILD_TESTS)
+  set(_NINJA_COMMAND ${_NINJA_COMMAND} webrtc_tests)
+endif (BUILD_TESTS)
+
 libwebrtc_command(
     NAME webrtc-build
     COMMAND ${_NINJA_COMMAND}
