@@ -212,6 +212,10 @@ perform cross-compiling.
 
     Generate Red Hat package, defaults to OFF, available under Linux only.
 
+- **BUILD_TESTS**
+
+    Build WebRTC unit tests and mocked classes such as `FakeAudioCaptureModule`.
+
 - **BUILD_SAMPLE**
 
     Build an executable located inside the `sample` folder.
