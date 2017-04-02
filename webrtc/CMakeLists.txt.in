@@ -70,9 +70,17 @@ libwebrtc_command(
 set(_DEPENDENCIES webrtc-clang)
 
 if (UNIX AND NOT APPLE)
+  set(SYSROOT_ARCH ${TARGET_CPU})
+
+  if (SYSROOT_ARCH STREQUAL "x64")
+    set(SYSROOT_ARCH "amd64")
+  elseif (SYSROOT_ARCH STREQUAL "x86")
+    set(SYSROOT_ARCH "i386")
+  endif (SYSROOT_ARCH STREQUAL "x64")
+
   libwebrtc_command(
       NAME webrtc-toolchain
-      COMMAND ${PYTHON_EXECUTABLE} ${WEBRTC_PARENT_DIR}/src/build/linux/sysroot_scripts/install-sysroot.py --arch=${TARGET_CPU} --running-as-hook
+      COMMAND ${PYTHON_EXECUTABLE} ${WEBRTC_PARENT_DIR}/src/build/linux/sysroot_scripts/install-sysroot.py --arch=${SYSROOT_ARCH} --running-as-hook
       WORKING_DIRECTORY "${WEBRTC_PARENT_DIR}"
       COMMENT "Retrieving sysroot"
       DEPENDS webrtc-sync
