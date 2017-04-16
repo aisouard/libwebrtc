@@ -80,7 +80,7 @@ if (UNIX AND NOT APPLE)
 
   libwebrtc_command(
       NAME webrtc-toolchain
-      COMMAND ${PYTHON_EXECUTABLE} ${WEBRTC_PARENT_DIR}/src/build/linux/sysroot_scripts/install-sysroot.py --arch=${SYSROOT_ARCH} --running-as-hook
+      COMMAND ${PYTHON_EXECUTABLE} ${WEBRTC_PARENT_DIR}/src/build/linux/sysroot_scripts/install-sysroot.py --arch=${SYSROOT_ARCH}
       WORKING_DIRECTORY "${WEBRTC_PARENT_DIR}"
       COMMENT "Retrieving sysroot"
       DEPENDS webrtc-sync
