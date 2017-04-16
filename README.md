@@ -266,6 +266,22 @@ perform cross-compiling.
 
     Set a specific commit hash to check-out.
 
+### ARM-related configuration variables
+
+The following variables will be used when **TARGET_CPU** is set to `arm` or
+`arm64`:
+
+- **ARM_VERSION**
+- **ARM_ARCH**
+- **ARM_FPU**
+- **ARM_FLOAT_ABI**
+- **ARM_TUNE**
+- **ARM_USE_NEON**
+- **ARM_USE_THUMB**
+    
+    Add `-mthumb` compile flag, default value set to ON, can be disabled by
+    setting the value to OFF.
+
 ## Contributing
 
 Feel free to open an issue if you wish a bug to be fixed, to discuss a new
