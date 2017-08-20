@@ -4,27 +4,14 @@ endif (HAS_OWN_DEPOT_TOOLS)
 
 include(LibWebRTCExecute)
 
-if (WEBRTC_REVISION)
-  libwebrtc_execute(
-      COMMAND ${GIT_EXECUTABLE} log -1 --format=%ci ${WEBRTC_REVISION}
-      OUTPUT_VARIABLE _WEBRTC_COMMIT_DATE
-      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-      STAMPFILE webrtc-revision-commit-date
-      STATUS "Retrieving date for commit ${WEBRTC_REVISION}"
-      ERROR "Unable to find webrtc commit date at ${WEBRTC_REVISION}"
-  )
-elseif (WEBRTC_BRANCH_HEAD)
-  libwebrtc_execute(
-      COMMAND ${GIT_EXECUTABLE} log -1 --format=%ci
-      OUTPUT_VARIABLE _WEBRTC_COMMIT_DATE
-      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-      STAMPFILE webrtc-branch-head-commit-date
-      STATUS "Retrieving date for ${WEBRTC_BRANCH_HEAD}"
-      ERROR "Unable to retrieve the commit date for ${WEBRTC_BRANCH_HEAD}"
-  )
-else (WEBRTC_REVISION)
-  message(FATAL_ERROR "-- Both WEBRTC_REVISION and WEBRTC_BRANCH_HEAD variables are undefined")
-endif (WEBRTC_REVISION)
+libwebrtc_execute(
+    COMMAND ${GIT_EXECUTABLE} log -1 --format=%ci ${WEBRTC_REVISION}
+    OUTPUT_VARIABLE _WEBRTC_COMMIT_DATE
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    STAMPFILE webrtc-revision-commit-date
+    STATUS "Retrieving date for commit ${WEBRTC_REVISION}"
+    ERROR "Unable to find webrtc commit date at ${WEBRTC_REVISION}"
+)
 
 string(STRIP ${_WEBRTC_COMMIT_DATE} _WEBRTC_COMMIT_DATE)
 libwebrtc_execute(

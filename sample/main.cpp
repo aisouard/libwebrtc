@@ -24,11 +24,17 @@
 #include <Windows.h>
 #endif
 
+#include "config.h"
+
 int main(int argc, char **argv) {
 #ifdef WIN32
   rtc::EnsureWinsockInit();
+#if LIBWEBRTC_WEBRTC_BRANCH_HEAD > 59
   rtc::Win32SocketServer w32_ss;
   rtc::Win32Thread w32_thread(&w32_ss);
+#else
+  rtc::Win32Thread w32_thread;
+#endif
   rtc::ThreadManager::Instance()->SetCurrentThread(&w32_thread);
 #endif
 

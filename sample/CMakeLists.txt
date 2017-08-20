@@ -4,6 +4,10 @@ project(sample)
 find_package(LibWebRTC REQUIRED)
 include(${LIBWEBRTC_USE_FILE})
 
+configure_file("config.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.h")
+
+include_directories("${CMAKE_CURRENT_BINARY_DIR}")
+
 set(SOURCE_FILES main.cpp)
 add_executable(sample ${SOURCE_FILES})
 target_link_libraries(sample ${LIBWEBRTC_LIBRARIES})
