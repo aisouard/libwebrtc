@@ -41,8 +41,8 @@ set_target_properties(webrtc PROPERTIES
 
 #
 # Install headers
-install(DIRECTORY ${WEBRTC_SOURCE_DIR}
-        DESTINATION "include"
+install(DIRECTORY "${WEBRTC_SOURCE_DIR}/"
+        DESTINATION "include/webrtc"
         FILES_MATCHING PATTERN "*.h")
 
 #
