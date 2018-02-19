@@ -1,23 +1,21 @@
-os: Visual Studio 2015
+os: Visual Studio 2017
 
 matrix:
   fast_finish: true
 
 platform:
-  - x86
   - x64
 
 configuration:
   - Debug
   - Release
 
-clone_folder: c:\projects\libwebrtc
+clone_folder: c:\libwebrtc
 
 before_build:
-  - cd c:\projects\libwebrtc
-  - if "%platform%"=="x86" set CMAKE_GENERATOR_NAME=Visual Studio 14 2015
-  - if "%platform%"=="x64" set CMAKE_GENERATOR_NAME=Visual Studio 14 2015 Win64
-  - cmake -G "%CMAKE_GENERATOR_NAME%" -DBUILD_SAMPLE=1 -DCMAKE_BUILD_TYPE=%configuration% -DCMAKE_INSTALL_PREFIX=c:\projects\libwebrtc .
+  - cd c:s\libwebrtc
+  - set CMAKE_GENERATOR_NAME=Visual Studio 15 2017 Win64
+  - cmake -G "%CMAKE_GENERATOR_NAME%" -DCMAKE_BUILD_TYPE=%configuration% -DCMAKE_INSTALL_PREFIX=c:\libwebrtc .
 
 build:
   project: PACKAGE.vcxproj
@@ -27,13 +25,15 @@ artifacts:
     name: Releases
 
 deploy:
-  provider: GitHub
-  auth_token:
-    secure: QQrYk1F7DLgQ9eht+J6hvDiDRu8a+AKKwsOetybrL8B32UYxlNJKSZIpD0yHPVsx
-  artifact: /libwebrtc-.*\.zip/
-  draft: false
-  prerelease: false
-  on:
-    appveyor_repo_tag: true
+  provider: S3
+  access_key_id:
+    secure: 9UzCzcHa6axJAMo8navzOZcJzrofwd8rR/kZmmR1fEc=
+  secret_access_key:
+    secure: juuUIloppJdgPrLQZr4eSVwYuf/MK8QmaOWtjLVnIfxxqutbKsWyIA3pU/SjTJMk
+  bucket: libwebrtc
+  region: us-west-2
+  unzip: false
+  set_public: false
+  artifact: Releases
 
 test: off
