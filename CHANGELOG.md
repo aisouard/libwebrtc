@@ -1,5 +1,15 @@
 # Changelog
 
+## Version 1.1
+
+*TBD*
+
+[View Issues][v1.1-issues]
+
+**Features:**
+
+- Added `BUILD_TESTS` CMake configuration variable
+
 ## Version 1.0
 
 *March 27, 2017*
@@ -39,4 +49,5 @@
 - Removed BUILD_TESTS flag for now
 - Fixed static linking
 
+[v1.1-issues]:https://github.com/aisouard/libwebrtc/milestone/1
 [v1.0-issues]:https://github.com/aisouard/libwebrtc/milestone/1

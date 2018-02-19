@@ -4,7 +4,8 @@ project(libwebrtc)
 set(_OBJ_EXT ${CMAKE_CXX_OUTPUT_EXTENSION})
 
 file(GLOB_RECURSE _OBJ_FILES
-     ${WEBRTC_OUTPUT_DIR}/obj/*${_OBJ_EXT})
+     ${WEBRTC_OUTPUT_DIR}/obj/*${_OBJ_EXT}
+     ${WEBRTC_OUTPUT_DIR}/clang_x64/obj/*${_OBJ_EXT})
 
 if (NOT _OBJ_EXT STREQUAL ".o")
   file(GLOB_RECURSE _OBJ_FILES_ASM
@@ -40,8 +41,8 @@ set_target_properties(webrtc PROPERTIES
 
 #
 # Install headers
-install(DIRECTORY ${WEBRTC_SOURCE_DIR}
-        DESTINATION "include"
+install(DIRECTORY "${WEBRTC_SOURCE_DIR}/"
+        DESTINATION "include/webrtc"
         FILES_MATCHING PATTERN "*.h")
 
 #
