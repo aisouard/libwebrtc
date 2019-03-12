@@ -76,11 +76,21 @@ if (UNIX AND NOT APPLE)
     set(SYSROOT_ARCH "amd64")
   elseif (SYSROOT_ARCH STREQUAL "x86")
     set(SYSROOT_ARCH "i386")
+  elseif (SYSROOT_ARCH STREQUAL "arm64")
+    if (TARGET_OS STREQUAL "android")
+      set(SYSROOT_ARCH ${CMAKE_HOST_SYSTEM_PROCESSOR})
+      if (SYSROOT_ARCH STREQUAL "x86_64")
+        set(SYSROOT_ARCH "amd64")
+      elseif (SYSROOT_ARCH STQEQUAL "x86")
+        set(SYSROOT_ARCH "i386")
+      endif()
+    endif()
   endif (SYSROOT_ARCH STREQUAL "x64")
+
 
   libwebrtc_command(
       NAME webrtc-toolchain
-      COMMAND ${PYTHON_EXECUTABLE} ${WEBRTC_PARENT_DIR}/src/build/linux/sysroot_scripts/install-sysroot.py --arch=${SYSROOT_ARCH} --running-as-hook
+      COMMAND ${PYTHON_EXECUTABLE} ${WEBRTC_PARENT_DIR}/src/build/linux/sysroot_scripts/install-sysroot.py --arch=${SYSROOT_ARCH}
       WORKING_DIRECTORY "${WEBRTC_PARENT_DIR}"
       COMMENT "Retrieving sysroot"
       DEPENDS webrtc-sync
@@ -133,6 +143,15 @@ libwebrtc_command(
     DEPENDS webrtc-gn
 )
 set(_DEPENDENCIES ${_DEPENDENCIES} webrtc-clang-format)
+
+libwebrtc_command(
+    NAME webrtc-util-lastchange
+    COMMAND ${PYTHON_EXECUTABLE} src/build/util/lastchange.py -o src/build/util/LASTCHANGE
+    WORKING_DIRECTORY "${WEBRTC_PARENT_DIR}"
+    COMMENT "Generating build util LASTCHANGE file"
+    DEPENDS ${_DEPENDENCIES}
+)
+set(_DEPENDENCIES ${_DEPENDENCIES} webrtc-util-lastchange)
 
 include(Gn)
 
