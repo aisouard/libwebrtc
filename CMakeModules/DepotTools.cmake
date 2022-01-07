@@ -28,7 +28,7 @@ endif (WEBRTC_REVISION)
 
 string(STRIP ${_WEBRTC_COMMIT_DATE} _WEBRTC_COMMIT_DATE)
 libwebrtc_execute(
-    COMMAND ${GIT_EXECUTABLE} rev-list -n 1 --before=\"${_WEBRTC_COMMIT_DATE}\" master
+    COMMAND ${GIT_EXECUTABLE} rev-list -n 1 --before=\"${_WEBRTC_COMMIT_DATE}\" main
     OUTPUT_VARIABLE _DEPOT_TOOLS_COMMIT
     WORKING_DIRECTORY ${DEPOT_TOOLS_PATH}
     STAMPFILE webrtc-depot-tools-date
