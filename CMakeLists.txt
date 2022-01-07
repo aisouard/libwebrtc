@@ -36,6 +36,7 @@ if (NOT HAS_OWN_DEPOT_TOOLS)
       depot-tools
 
       GIT_REPOSITORY https://chromium.googlesource.com/chromium/tools/depot_tools
+      GIT_TAG main
 
       PREFIX ${CMAKE_BINARY_DIR}/depot_tools
 
